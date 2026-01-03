@@ -6,6 +6,26 @@ ball:SetScale(4)
 ball:SetMassScale(0.000001)
 ball:SetPhysicalMaterial('nanos-world::PM_RubberBouncy')
 
+-- Thruster
+function SpawnThruster(vehicle)
+  local thruster1 = Prop(Vector(0, 0, 0), Rotator(), "nanos-world::SM_Jet_Thruster", CollisionType.StaticOnly, true, GrabMode.Disabled)
+  local thruster2 = Prop(Vector(0, 0, 0), Rotator(), "nanos-world::SM_Jet_Thruster", CollisionType.StaticOnly, true, GrabMode.Disabled)
+  thruster1:AttachTo(vehicle, AttachmentRule.SnapToTarget, "", 1)
+  thruster2:AttachTo(vehicle, AttachmentRule.SnapToTarget, "", 1)
+  thruster1:SetRelativeLocation(Vector(-150, 40, 45))
+  thruster2:SetRelativeLocation(Vector(-150, -40, 45))
+
+  local particle1 = Particle(Vector(), Rotator(), "nanos-world::P_Fire", false, true)
+  particle1:AttachTo(thruster1, AttachmentRule.SnapToTarget, "", 0)
+  particle1:SetRelativeLocation(Vector(-40, 0, 0))
+  particle1:Deactivate()
+
+  local particle2 = Particle(Vector(), Rotator(), "nanos-world::P_Fire", false, true)
+  particle2:AttachTo(thruster2, AttachmentRule.SnapToTarget, "", 0)
+  particle2:SetRelativeLocation(Vector(-40, 0, 0))
+  particle2:Deactivate()
+end
+
 -- Vehicle
 local vehicleSpawnPoint = Vector(0, 0, 100)
 function SpawnVehicle(character)
@@ -28,8 +48,14 @@ function SpawnVehicle(character)
 
   vehicle:RecreatePhysics()
 
+  SpawnThruster(vehicle)
+
   character:EnterVehicle(vehicle)
   character:SetVisibility(false)
+
+  Timer.SetInterval(function()
+    print(vehicle:GetVelocity())
+  end, 500)
 end
 
 -- Player
@@ -55,10 +81,31 @@ end)
 Events.SubscribeRemote("StartNitro", function(player)
   print('Start Nitro')
 	local vehicle = player:GetControlledCharacter():GetVehicle()
-  vehicle:SetEngineSetup(4500, 10000, 1000, 0.02, 5, 600)
+  -- vehicle:SetEngineSetup(4500, 10000, 1000, 0.02, 5, 600)
+  vehicle:SetForce(Vector(5000000, 0, 0))
+  
+  local thrusters = vehicle:GetAttachedEntities()
+  for _, thruster in pairs(thrusters) do
+    local particles = thruster:GetAttachedEntities()
+    for _, particle in pairs(particles) do
+      particle:Activate()
+    end
+  end
+
 end)
 Events.SubscribeRemote("StopNitro", function(player)
   print('Stop Nitro')
 	local vehicle = player:GetControlledCharacter():GetVehicle()
-  vehicle:SetEngineSetup(1000, 8000, 1000, 0.02, 5, 600)
+  -- vehicle:SetEngineSetup(1000, 8000, 1000, 0.02, 5, 600)
+
+  local thrusters = vehicle:GetAttachedEntities()
+  for _, thruster in pairs(thrusters) do
+    local particles = thruster:GetAttachedEntities()
+    for _, particle in pairs(particles) do
+      particle:Deactivate()
+    end
+  end
+
+  vehicle:SetForce(Vector(0, 0, 0))
 end)
+
