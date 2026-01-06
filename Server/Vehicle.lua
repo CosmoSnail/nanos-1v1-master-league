@@ -23,5 +23,5 @@ function SpawnVehicle(character)
 
   character:EnterVehicle(vehicle)
   character:SetVisibility(false)
-  
+
 end
