@@ -3,13 +3,28 @@ Package.Require('Tables.lua')
 
 function SpawnPlayer(player)
   local character = Character(Vector(0, 0, 100), Rotator(0, 0, 0), "nanos-world::SK_Mannequin")
-  character:SetTeam(GetTeamToJoin())
+  local team = GetTeamToJoin()
+  character:SetTeam(team)
+
   player:Possess(character)
+  if team == Team.TeamA then
+      player:SetCameraRotation(Rotator(0, 0, 0))
+  else
+      player:SetCameraRotation(Rotator(0, 180, 0))
+  end
 
   SpawnVehicle(character)
 end
 
-function GetTeamToJoin() 
+function InitPlayers()
+    Player.Subscribe("Spawn", SpawnPlayer)
+
+    for _, player in pairs(Player.GetAll()) do
+        SpawnPlayer(player)
+    end
+end
+
+function GetTeamToJoin()
     local teamACount = 0
     local teamBCount = 0
 
@@ -29,13 +44,5 @@ function GetTeamToJoin()
         return Team.TeamA
     else
         return Team.TeamB
-    end
-end
-
-function InitPlayers()
-    Player.Subscribe("Spawn", SpawnPlayer)
-
-    for _, player in pairs(Player.GetAll()) do
-        SpawnPlayer(player)
     end
 end
