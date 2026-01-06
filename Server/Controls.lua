@@ -1,5 +1,5 @@
 Events.SubscribeRemote("Jump", function(player)
-	local vehicle = player:GetControlledCharacter():GetVehicle()
+    local vehicle = player:GetControlledCharacter():GetVehicle()
   vehicle:AddImpulse(Vector(0, 0, 1000000))
 end)
 

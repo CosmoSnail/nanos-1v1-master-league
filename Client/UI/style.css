@@ -1,0 +1,192 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&display=swap');
+
+/* =========================
+   BASE
+========================= */
+body {
+  margin: 0;
+  background: transparent;
+}
+
+/* =========================
+   CONTAINER
+========================= */
+.timer-container {
+  width: 512px;
+
+  position: absolute;
+  top: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  padding: 16px 32px;
+  border-radius: 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+
+  text-align: center;
+  background: rgba(0, 0, 0, 0.15);
+}
+
+/* =========================
+   NEON BORDER (RASTRO)
+========================= */
+.timer-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 255, 255, 1),
+    transparent
+  );
+
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+
+  animation: borderRun 3s linear infinite;
+  pointer-events: none;
+}
+
+.timer-container::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+
+  box-shadow:
+    0 0 8px rgba(0, 255, 255, 0.5),
+    0 0 18px rgba(0, 200, 255, 0.4);
+
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+@keyframes borderRun {
+  from { background-position: 0% 50%; }
+  to   { background-position: 300% 50%; }
+}
+
+/* =========================
+   TIMER
+========================= */
+.timer {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 48px;
+  font-weight: 800;
+
+  min-width: 5ch;
+  color: #eaffff;
+
+  letter-spacing: 6px;
+
+  text-shadow:
+    0 0 6px rgba(0, 255, 255, 0.9),
+    0 0 12px rgba(0, 200, 255, 0.8),
+    0 0 24px rgba(0, 150, 255, 0.7),
+    0 0 48px rgba(0, 120, 255, 0.6);
+
+  animation: timerPulse 2.5s ease-in-out infinite;
+}
+
+/* =========================
+   SCORES (BASE)
+========================= */
+.score {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 40px;
+  font-weight: 800;
+
+  min-width: 2ch;
+  text-align: center;
+}
+
+/* =========================
+   SCORE LEFT (BLUE)
+========================= */
+.score-left {
+  color: #e0f7ff;
+
+  text-shadow:
+    0 0 6px rgba(0, 180, 255, 1),
+    0 0 14px rgba(0, 140, 255, 0.9),
+    0 0 30px rgba(0, 100, 255, 0.8);
+
+  animation: scorePulseBlue 2.5s ease-in-out infinite;
+}
+
+@keyframes scorePulseBlue {
+  0%, 100% {
+    text-shadow:
+      0 0 6px rgba(0, 180, 255, 0.6),
+      0 0 14px rgba(0, 140, 255, 0.5);
+  }
+  50% {
+    text-shadow:
+      0 0 10px rgba(0, 200, 255, 1),
+      0 0 24px rgba(0, 160, 255, 0.9),
+      0 0 40px rgba(0, 120, 255, 0.8);
+  }
+}
+
+/* =========================
+   SCORE RIGHT (ORANGE)
+========================= */
+.score-right {
+  color: #fff1dc;
+
+  text-shadow:
+    0 0 6px rgba(255, 150, 0, 1),
+    0 0 14px rgba(255, 120, 0, 0.9),
+    0 0 30px rgba(255, 90, 0, 0.8);
+
+  animation: scorePulseOrange 2.5s ease-in-out infinite;
+}
+
+@keyframes scorePulseOrange {
+  0%, 100% {
+    text-shadow:
+      0 0 6px rgba(255, 150, 0, 0.6),
+      0 0 14px rgba(255, 120, 0, 0.5);
+  }
+  50% {
+    text-shadow:
+      0 0 10px rgba(255, 180, 0, 1),
+      0 0 24px rgba(255, 140, 0, 0.9),
+      0 0 40px rgba(255, 100, 0, 0.8);
+  }
+}
+
+/* =========================
+   TIMER PULSE
+========================= */
+@keyframes timerPulse {
+  0% {
+    text-shadow:
+      0 0 6px rgba(0, 255, 255, 0.6),
+      0 0 12px rgba(0, 200, 255, 0.5),
+      0 0 24px rgba(0, 150, 255, 0.4);
+  }
+  50% {
+    text-shadow:
+      0 0 10px rgba(0, 255, 255, 1),
+      0 0 20px rgba(0, 200, 255, 0.9),
+      0 0 40px rgba(0, 150, 255, 0.8);
+  }
+  100% {
+    text-shadow:
+      0 0 6px rgba(0, 255, 255, 0.6),
+      0 0 12px rgba(0, 200, 255, 0.5),
+      0 0 24px rgba(0, 150, 255, 0.4);
+  }
+}

@@ -1,6 +1,6 @@
 Ball = Prop.Inherit("Ball")
 
-local spawnPosition = Vector(0, 0, 0)
+local spawnPosition = Vector(0, 0, 100)
 local scale = 5
 local massScale = 0.0001
 
@@ -11,9 +11,19 @@ function InitBall()
     ball:SetScale(scale)
     ball:SetMassScale(massScale)
     ball:SetPhysicalMaterial('nanos-world::PM_Rubber')
+
+    local trigger = Trigger(spawnPosition, Rotator(), Vector(650), TriggerType.Sphere, true, Color(1, 0, 0), {"Vehicle"})
+    trigger:AttachTo(ball, AttachmentRule.SnapToTarget, nil, 0, false)
+    trigger:SetRelativeLocation(Vector(0, 0, 0))
+
+    trigger:Subscribe("BeginOverlap", function(trigger, vehicle)
+        local playerName = vehicle:GetPassenger(0):GetPlayer():GetName()
+        Chat.BroadcastMessage(playerName .. " hit the ball!")
+    end)
 end
 
 function ResetBall()
     ball:Destroy()
     InitBall()
 end
+

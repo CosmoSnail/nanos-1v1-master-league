@@ -1,3 +1,5 @@
+main_hud = WebUI("Main HUD", "file://UI/index.html")
+
 Input.Register("Jump", "SpaceBar")
 Input.Register("Nitro", "LeftShift")
 
@@ -13,4 +15,18 @@ Input.Bind("Nitro", InputEvent.Released, function()
 end)
 
 Sky.Spawn()
-Sky.SetTimeOfDay(16, 30)
+Sky.SetSkyMode(SkyMode.Space)
+Sky.SetMoonScale(50)
+Sky.SetMoonGlowIntensity(25)
+Sky.SetMoonLightIntensity(250)
+Sky.Reconstruct()
+
+Events.SubscribeRemote("UpdateTime", function(time)
+  main_hud:CallEvent("UpdateTime", time)
+end)
+Events.SubscribeRemote("UpdateScoreA", function(score)
+  main_hud:CallEvent("UpdateScoreA", score)
+end)
+Events.SubscribeRemote("UpdateScoreB", function(score)
+  main_hud:CallEvent("UpdateScoreB", score)
+end)
