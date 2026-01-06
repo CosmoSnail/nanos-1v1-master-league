@@ -6,4 +6,4 @@ Package.Require("Controls.lua")
 Package.Require("Goal.lua")
 
 InitPlayers()
-SpawnBall()
+InitBall()

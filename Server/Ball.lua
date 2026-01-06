@@ -1,9 +1,19 @@
 Ball = Prop.Inherit("Ball")
 
-function SpawnBall()
-    local ball = Ball(Vector(3000, 0, 100), Rotator(), "nanos-world::SM_Ball_VR")
+local spawnPosition = Vector(0, 0, 0)
+local scale = 5
+local massScale = 0.0001
 
-    ball:SetScale(5)
-    ball:SetMassScale(0.0001)
+local ball
+
+function InitBall()
+    ball = Ball(spawnPosition, Rotator(), "nanos-world::SM_Ball_VR")
+    ball:SetScale(scale)
+    ball:SetMassScale(massScale)
     ball:SetPhysicalMaterial('nanos-world::PM_Rubber')
+end
+
+function ResetBall()
+    ball:Destroy()
+    InitBall()
 end
