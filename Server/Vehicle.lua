@@ -37,7 +37,7 @@ function SpawnVehicle(character)
     end)
 
     SpawnThruster(vehicle)
-    AttachVehicleLights(vehicle)
+    AttachVehicleLights(vehicle, character:GetTeam())
 
     character:EnterVehicle(vehicle)
     character:SetVisibility(false)

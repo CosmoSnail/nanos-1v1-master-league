@@ -24,3 +24,14 @@ function Ternary(condition, ifTrue, ifFalse)
         return ifFalse
     end
 end
+
+function GetAttachedEntitiesByClass(entity, class)
+    local attachedEntities = entity:GetAttachedEntities()
+    local filteredEntities = Filter(
+        attachedEntities,
+        function(attachedEntity)
+            return attachedEntity:IsA(class)
+        end
+    )
+    return filteredEntities
+end

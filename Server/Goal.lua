@@ -4,23 +4,23 @@ Package.Require("Tables.lua")
 local triggerA = Trigger(Config.GoalPointA, Rotator(), Vector(950, 4500, 800), TriggerType.Box, Config.ShowTriggers, Config.ColorA, {"Prop"})
 triggerA:Subscribe("BeginOverlap", function(self, other)
     if other:IsA(Ball) then
-        HandleGoal(other, Team.TeamA)
+        HandleGoal(other, Team.TeamB)
     end
 end)
 
 local triggerB = Trigger(Config.GoalPointB, Rotator(), Vector(950, 4500, 800), TriggerType.Box, Config.ShowTriggers, Config.ColorB, {"Prop"})
 triggerB:Subscribe("BeginOverlap", function(self, other)
     if other:IsA(Ball) then
-        HandleGoal(other, Team.TeamB)
+        HandleGoal(other, Team.TeamA)
     end
 end)
 
-function HandleGoal(ball, team)
+function HandleGoal(ball, teamScored)
     if Game.State ~= State.Running then
         return
     end
 
-    if team == Team.TeamA then
+    if teamScored == Team.TeamA then
         print("Team A scored! " .. "(" .. Game.LastPlayerHitBall:GetName() .. ")")
         Game.ScoreA = Game.ScoreA + 1
         Events.BroadcastRemote("UpdateScoreA", Game.ScoreA)
@@ -62,7 +62,7 @@ function AttachGoalLights(team)
         Ternary(team == Team.TeamA, Config.GoalPointA, Config.GoalPointB),
         Ternary(team == Team.TeamA, Rotator(90, 180, 0), Rotator(90, 0, 0)), -- Relevant only for Rect and Spot light types
         Ternary(team == Team.TeamA, Config.ColorA, Config.ColorB), -- Color
-        LightType.Spot, -- Light type
+        LightType.Point, -- Light type
         3000, -- Per-light intensity
         10000, -- Attenuation Radius
         44, -- Cone Angle

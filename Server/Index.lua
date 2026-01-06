@@ -82,3 +82,7 @@ Timer.SetInterval(function()
         return
     end
 end, 1000)
+
+Server.Subscribe("Tick", function(delta_time)
+  UpdateBallRibbon()
+end)
