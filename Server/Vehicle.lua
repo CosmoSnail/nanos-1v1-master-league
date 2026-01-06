@@ -65,23 +65,37 @@ function ResetVehicles()
 end
 
 function IncrementCurrentSpawnPoint(team)
+    local step = 100
+
+    local function MirrorAroundCenter(current, center)
+        local offset = current.Y - center.Y
+        return center + Vector(0, -offset, 0)
+    end
+
     if team == Team.TeamA then
-        if Game.CurrentSpawnPointA.Y == Config.SpawnPointA.Y then
-            Game.CurrentSpawnPointA = Game.CurrentSpawnPointA + Vector(0, 100, 0)
+        local center = Config.SpawnPointA
+        local current = Game.CurrentSpawnPointA
+
+        if current.Y == center.Y then
+            Game.CurrentSpawnPointA = current + Vector(0, step, 0)
             return
-        elseif Game.CurrentSpawnPointA.Y > Config.SpawnPointA.Y then
-            Game.CurrentSpawnPointA = Game.CurrentSpawnPointA * (-1)
+        elseif current.Y > center.Y then
+            Game.CurrentSpawnPointA = MirrorAroundCenter(current, center)
         else
-            Game.CurrentSpawnPointA = Game.CurrentSpawnPointA * (-1) + Vector(0, 100, 0)
+            Game.CurrentSpawnPointA = MirrorAroundCenter(current, center) + Vector(0, step, 0)
         end
+
     elseif team == Team.TeamB then
-        if Game.CurrentSpawnPointB.Y == Config.SpawnPointA.Y then
-            Game.CurrentSpawnPointB = Game.CurrentSpawnPointB + Vector(0, 100, 0)
+        local center = Config.SpawnPointB
+        local current = Game.CurrentSpawnPointB
+
+        if current.Y == center.Y then
+            Game.CurrentSpawnPointB = current + Vector(0, step, 0)
             return
-        elseif Game.CurrentSpawnPointB.Y > Config.SpawnPointA.Y then
-            Game.CurrentSpawnPointB = Game.CurrentSpawnPointB * (-1)
+        elseif current.Y > center.Y then
+            Game.CurrentSpawnPointB = MirrorAroundCenter(current, center)
         else
-            Game.CurrentSpawnPointB = Game.CurrentSpawnPointB * (-1) + Vector(0, 100, 0)
+            Game.CurrentSpawnPointB = MirrorAroundCenter(current, center) + Vector(0, step, 0)
         end
     end
 end
