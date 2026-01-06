@@ -17,8 +17,9 @@ function InitBall()
     trigger:SetRelativeLocation(Vector(0, 0, 0))
 
     trigger:Subscribe("BeginOverlap", function(trigger, vehicle)
-        local playerName = vehicle:GetPassenger(0):GetPlayer():GetName()
-        Chat.BroadcastMessage(playerName .. " hit the ball!")
+        local player = vehicle:GetPassenger(0):GetPlayer()
+        Chat.BroadcastMessage(player:GetName() .. " hit the ball!")
+        Game.LastPlayerHitBall = player
     end)
 end
 

@@ -4,9 +4,10 @@ Game = {
     ScoreB = 0,
     CurrentSpawnPointA = Vector(),
     CurrentSpawnPointB = Vector(),
+    LastPlayerHitBall = {},
 }
 
 Team = {
     TeamA = 1,
-    TeamB = 2
+    TeamB = 2,
 }
