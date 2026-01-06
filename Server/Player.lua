@@ -50,3 +50,14 @@ function GetTeamToJoin()
         return Team.TeamB
     end
 end
+
+Player.Subscribe("Destroy", function(player)
+	local character = player:GetControlledCharacter()
+	if character then
+        local vehicle = character:GetVehicle()
+        if vehicle then
+            vehicle:Destroy()
+        end
+		character:Destroy()
+	end
+end)

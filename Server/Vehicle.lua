@@ -65,7 +65,7 @@ function ResetVehicles()
 end
 
 function IncrementCurrentSpawnPoint(team)
-    local step = 100
+    local step = 600
 
     local function MirrorAroundCenter(current, center)
         local offset = current.Y - center.Y

@@ -1,7 +1,7 @@
 Package.Require("Tables.lua")
 
 Config = {
-    LogLevel = LogLevel.GameChat,
+    LogLevel = LogLevel.Console,
     ShowTriggers = false,
     GameDuration = 5 * 60,
     CountDownDuration = 5,
