@@ -14,6 +14,10 @@ function SpawnPlayer(player)
   end
 
   SpawnVehicle(character)
+
+  if Game.State ~= State.Running then
+      character:SetInputEnabled(false)
+  end
 end
 
 function InitPlayers()

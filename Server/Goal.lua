@@ -1,14 +1,14 @@
 Package.Require("Ball.lua")
 Package.Require("Tables.lua")
 
-local triggerA = Trigger(Vector(14000, 0, 900), Rotator(), Vector(950, 4500, 800), TriggerType.Box, true, Color(1, 0, 0), {"Prop"})
+local triggerA = Trigger(Vector(14000, 0, 900), Rotator(), Vector(950, 4500, 800), TriggerType.Box, Config.ShowTriggers, Color(1, 0, 0), {"Prop"})
 triggerA:Subscribe("BeginOverlap", function(self, other)
     if other:IsA(Ball) then
         HandleGoal(other, Team.TeamA)
     end
 end)
 
-local triggerB = Trigger(Vector(-14000, 0, 900), Rotator(), Vector(950, 4500, 800), TriggerType.Box, true, Color(0, 0, 1), {"Prop"})
+local triggerB = Trigger(Vector(-14000, 0, 900), Rotator(), Vector(950, 4500, 800), TriggerType.Box, Config.ShowTriggers, Color(0, 0, 1), {"Prop"})
 triggerB:Subscribe("BeginOverlap", function(self, other)
     if other:IsA(Ball) then
         HandleGoal(other, Team.TeamB)
@@ -16,12 +16,16 @@ triggerB:Subscribe("BeginOverlap", function(self, other)
 end)
 
 function HandleGoal(ball, team)
+    if Game.State ~= State.Running then
+        return
+    end
+
     if team == Team.TeamA then
-        Chat.BroadcastMessage("Team A scored! " .. "(" .. Game.LastPlayerHitBall:GetName() .. ")")
+        print("Team A scored! " .. "(" .. Game.LastPlayerHitBall:GetName() .. ")")
         Game.ScoreA = Game.ScoreA + 1
         Events.BroadcastRemote("UpdateScoreA", Game.ScoreA)
     else
-        Chat.BroadcastMessage("Team B scored! " .. "(" .. Game.LastPlayerHitBall:GetName() .. ")")
+        print("Team B scored! " .. "(" .. Game.LastPlayerHitBall:GetName() .. ")")
         Game.ScoreB = Game.ScoreB + 1
         Events.BroadcastRemote("UpdateScoreB", Game.ScoreB)
     end
@@ -34,7 +38,9 @@ function HandleGoal(ball, team)
     )
     particle:SetScale(50)
     ImpulseAllVehicles(ball:GetLocation())
-    ResetBall()
+    Game.State = State.Scored
+    Game.ScoredTimer = Config.ScoredDuration
+    DestroyBall()
 end
 
 function ImpulseAllVehicles(fromLocation)
