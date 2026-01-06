@@ -1,3 +1,5 @@
+Package.Require("Utils.lua")
+
 Events.SubscribeRemote("Jump", function(player)
   if Game.State ~= State.Running and Game.State ~= State.Scored then
     return
@@ -15,9 +17,9 @@ Events.SubscribeRemote("StartNitro", function(player)
   -- vehicle:SetEngineSetup(4500, 10000, 1000, 0.02, 5, 600)
   vehicle:SetForce(Vector(5000000, 0, 0))
 
-  local thrusters = vehicle:GetAttachedEntities()
+  local thrusters = GetVehicleThrusters(vehicle)
   for _, thruster in pairs(thrusters) do
-    local particles = thruster:GetAttachedEntities()
+    local particles = GetAttachedParticles(thruster)
     for _, particle in pairs(particles) do
       particle:Activate()
     end
@@ -33,9 +35,9 @@ Events.SubscribeRemote("StopNitro", function(player)
   local vehicle = player:GetControlledCharacter():GetVehicle()
   -- vehicle:SetEngineSetup(1000, 8000, 1000, 0.02, 5, 600)
 
-  local thrusters = vehicle:GetAttachedEntities()
+  local thrusters = GetVehicleThrusters(vehicle)
   for _, thruster in pairs(thrusters) do
-    local particles = thruster:GetAttachedEntities()
+    local particles = GetAttachedParticles(thruster)
     for _, particle in pairs(particles) do
       particle:Deactivate()
     end
@@ -43,3 +45,23 @@ Events.SubscribeRemote("StopNitro", function(player)
 
   vehicle:SetForce(Vector(0, 0, 0))
 end)
+
+function GetVehicleThrusters(vehicle)
+  local thrusters = Filter(
+    vehicle:GetAttachedEntities(),
+    function(entity)
+      return entity:IsA(Prop)
+    end
+  )
+  return thrusters
+end
+
+function GetAttachedParticles(thruster)
+  local particles = Filter(
+    thruster:GetAttachedEntities(),
+    function(entity)
+      return entity:IsA(Particle)
+    end
+  )
+  return particles
+end

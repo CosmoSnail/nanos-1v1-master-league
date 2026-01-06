@@ -37,6 +37,7 @@ function SpawnVehicle(character)
     end)
 
     SpawnThruster(vehicle)
+    AttachVehicleLights(vehicle)
 
     character:EnterVehicle(vehicle)
     character:SetVisibility(false)
@@ -96,6 +97,51 @@ function IncrementCurrentSpawnPoint(team)
             Game.CurrentSpawnPointB = MirrorAroundCenter(current, center)
         else
             Game.CurrentSpawnPointB = MirrorAroundCenter(current, center) + Vector(0, step, 0)
+        end
+    end
+end
+
+function AttachVehicleLights(vehicle, team)
+    local showPositions = false
+    local light_data = {
+        { pos = Vector(40, 0, 130), intensity = 4 },
+        -- { pos = Vector(150, 0, 150), intensity = 1 },
+        -- { pos = Vector(-130, 0, 150), intensity = 5 },
+        -- { pos = Vector(0, 140, 80), intensity = 1 },
+        -- { pos = Vector(0, -140, 80), intensity = 1 },
+    }
+    for _, data in ipairs(light_data) do
+        local light = Light(
+            Vector(),
+            Rotator(), -- Relevant only for Rect and Spot light types
+            Ternary(team == Team.TeamA, Config.ColorA, Config.ColorB), -- Color
+            LightType.Point, -- Point Light type
+            data.intensity, -- Per-light intensity
+            140, -- Attenuation Radius
+            44, -- Cone Angle
+            0, -- Inner Cone Angle Percent
+            5000, -- Max Draw Distance
+            true, -- Inverse squared falloff
+            false, -- Cast Shadows?
+            true -- Enabled?
+        )
+
+        light:AttachTo(vehicle, AttachmentRule.SnapToTarget, "", 1)
+        light:SetRelativeLocation(data.pos)
+
+        if showPositions then
+            local trigger = Trigger(
+                light:GetLocation(),
+                Rotator(),
+                Vector(10),
+                TriggerType.Sphere,
+                true,
+                Color(0, 1, 0),
+                { "Vehicle" }
+            )
+
+            trigger:AttachTo(light, AttachmentRule.SnapToTarget, "", 1)
+            trigger:SetRelativeLocation(Vector())
         end
     end
 end
