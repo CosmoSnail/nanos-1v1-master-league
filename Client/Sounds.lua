@@ -5,12 +5,6 @@ local ScoreSounds = {
 
 local soundtrack
 
-function PlayRandomScoreSound()
-    local randomSound = ScoreSounds[math.random(#ScoreSounds)]
-    randomSound:SetVolume(0.6)
-    randomSound:Play()
-end
-
 function StartSoundtrack()
     soundtrack = Sound(Vector(), "package://nanos-1v1-master-league/Client/Sounds/Soundtrack_1.mp3", true, false, true, SoundType.Music)
     soundtrack:SetVolume(0.25)
