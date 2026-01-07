@@ -12,7 +12,7 @@ function InitBall()
     ball:SetMassScale(massScale)
     ball:SetPhysicalMaterial('nanos-world::PM_Rubber')
 
-    local trigger = Trigger(Config.BallSpawnPoint, Rotator(), Vector(665), TriggerType.Sphere, Config.ShowTriggers, Color(0, 1, 0), {"Vehicle"})
+    local trigger = Trigger(Config.BallSpawnPoint, Rotator(), Vector(670), TriggerType.Sphere, Config.ShowTriggers, Color(0, 1, 0), {"Vehicle"})
     trigger:AttachTo(ball, AttachmentRule.SnapToTarget, nil, 0, false)
     trigger:SetRelativeLocation(Vector(0, 0, 0))
 

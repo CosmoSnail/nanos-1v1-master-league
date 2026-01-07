@@ -35,3 +35,9 @@ function GetAttachedEntitiesByClass(entity, class)
     )
     return filteredEntities
 end
+
+function FormatTime(seconds)
+    local minutes = math.floor(seconds / 60)
+    local secs = seconds % 60
+    return string.format("%02d:%02d", minutes, secs)
+end

@@ -24,13 +24,19 @@ function HandleGoal(ball, teamScored)
         print("Team A scored! " .. "(" .. Game.LastPlayerHitBall:GetName() .. ")")
         Game.ScoreA = Game.ScoreA + 1
         Events.BroadcastRemote("UpdateScoreA", Game.ScoreA)
-        Events.BroadcastRemote("PlayScoreSound")
+        
     else
         print("Team B scored! " .. "(" .. Game.LastPlayerHitBall:GetName() .. ")")
         Game.ScoreB = Game.ScoreB + 1
         Events.BroadcastRemote("UpdateScoreB", Game.ScoreB)
-        Events.BroadcastRemote("PlayScoreSound")
     end
+
+    Events.BroadcastRemote("GoalScored", {
+        playerName = Game.LastPlayerHitBall:GetName(),
+        playerImageUrl = Game.LastPlayerHitBall:GetAccountIconURL(),
+        team = teamScored,
+    })
+    
     local particle = Particle(
         ball:GetLocation(),
         Rotator(0, 0, 0),
@@ -67,8 +73,8 @@ function AttachGoalLights(team)
         LightType.Point, -- Light type
         3000, -- Per-light intensity
         10000, -- Attenuation Radius
-        44, -- Cone Angle
-        100, -- Inner Cone Angle Percent
+        60, -- Cone Angle
+        300, -- Inner Cone Angle Percent
         50000, -- Max Draw Distance
         true, -- Inverse squared falloff
         false, -- Cast Shadows?

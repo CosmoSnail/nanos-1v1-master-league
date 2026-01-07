@@ -1,16 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&display=swap');
 
-/* =========================
-   BASE
-========================= */
+/* =====================================================
+   BASE / RESET
+===================================================== */
 body {
   margin: 0;
   background: transparent;
 }
 
-/* =========================
-   CONTAINER
-========================= */
+/* =====================================================
+   HUD - TIMER & SCORE CONTAINER
+===================================================== */
 .timer-container {
   width: 512px;
 
@@ -29,11 +29,13 @@ body {
 
   text-align: center;
   background: rgba(0, 0, 0, 0.15);
+
+  isolation: isolate; /* mantém efeitos visuais isolados */
 }
 
-/* =========================
-   NEON BORDER (RASTRO)
-========================= */
+/* =====================================================
+   HUD NEON BORDER (ANIMATED TRACE)
+===================================================== */
 .timer-container::before {
   content: '';
   position: absolute;
@@ -48,10 +50,10 @@ body {
     transparent
   );
 
+  /* Mask technique to create hollow neon border */
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  /* Standard unprefixed mask for compatibility */
   mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  /* Preserve WebKit composite fallback (xor) and standard value */
+
   -webkit-mask-composite: xor;
   mask-composite: exclude;
 
@@ -71,6 +73,9 @@ body {
   pointer-events: none;
 }
 
+/* =====================================================
+   BORDER ANIMATION
+===================================================== */
 @keyframes borderRun {
   from {
     background-position: 0% 50%;
@@ -80,18 +85,17 @@ body {
   }
 }
 
-/* =========================
-   TIMER
-========================= */
+/* =====================================================
+   TIMER (CENTER)
+===================================================== */
 .timer {
   font-family: 'Orbitron', sans-serif;
   font-size: 48px;
   font-weight: 800;
 
   min-width: 5ch;
-  color: #eaffff;
-
   letter-spacing: 6px;
+  color: #eaffff;
 
   text-shadow: 0 0 6px rgba(0, 255, 255, 0.9), 0 0 12px rgba(0, 200, 255, 0.8),
     0 0 24px rgba(0, 150, 255, 0.7), 0 0 48px rgba(0, 120, 255, 0.6);
@@ -99,9 +103,27 @@ body {
   animation: timerPulse 2.5s ease-in-out infinite;
 }
 
-/* =========================
+/* =====================================================
+   TIMER PULSE ANIMATION
+===================================================== */
+@keyframes timerPulse {
+  0% {
+    text-shadow: 0 0 6px rgba(0, 255, 255, 0.6), 0 0 12px rgba(0, 200, 255, 0.5),
+      0 0 24px rgba(0, 150, 255, 0.4);
+  }
+  50% {
+    text-shadow: 0 0 10px rgba(0, 255, 255, 1), 0 0 20px rgba(0, 200, 255, 0.9),
+      0 0 40px rgba(0, 150, 255, 0.8);
+  }
+  100% {
+    text-shadow: 0 0 6px rgba(0, 255, 255, 0.6), 0 0 12px rgba(0, 200, 255, 0.5),
+      0 0 24px rgba(0, 150, 255, 0.4);
+  }
+}
+
+/* =====================================================
    SCORES (BASE)
-========================= */
+===================================================== */
 .score {
   font-family: 'Orbitron', sans-serif;
   font-size: 40px;
@@ -111,9 +133,9 @@ body {
   text-align: center;
 }
 
-/* =========================
-   SCORE LEFT (BLUE)
-========================= */
+/* =====================================================
+   SCORE — LEFT TEAM (BLUE)
+===================================================== */
 .score-left {
   color: #e0f7ff;
 
@@ -134,43 +156,148 @@ body {
   }
 }
 
-/* =========================
-   SCORE RIGHT (ORANGE)
-========================= */
+/* =====================================================
+   SCORE — RIGHT TEAM (RED)
+===================================================== */
 .score-right {
-  color: #fff1dc;
+  color: #ffe3e3;
 
-  text-shadow: 0 0 6px rgba(255, 150, 0, 1), 0 0 14px rgba(255, 120, 0, 0.9),
-    0 0 30px rgba(255, 90, 0, 0.8);
+  text-shadow: 0 0 6px rgba(255, 60, 60, 1), 0 0 14px rgba(255, 30, 30, 0.9),
+    0 0 30px rgba(200, 0, 0, 0.8);
 
-  animation: scorePulseOrange 2.5s ease-in-out infinite;
+  animation: scorePulseRed 2.5s ease-in-out infinite;
 }
 
-@keyframes scorePulseOrange {
+@keyframes scorePulseRed {
   0%,
   100% {
-    text-shadow: 0 0 6px rgba(255, 150, 0, 0.6), 0 0 14px rgba(255, 120, 0, 0.5);
+    text-shadow: 0 0 6px rgba(255, 60, 60, 0.6), 0 0 14px rgba(255, 30, 30, 0.5);
   }
   50% {
-    text-shadow: 0 0 10px rgba(255, 180, 0, 1), 0 0 24px rgba(255, 140, 0, 0.9),
-      0 0 40px rgba(255, 100, 0, 0.8);
+    text-shadow: 0 0 10px rgba(255, 120, 120, 1),
+      0 0 24px rgba(255, 60, 60, 0.9), 0 0 40px rgba(200, 0, 0, 0.8);
   }
 }
 
-/* =========================
-   TIMER PULSE
-========================= */
-@keyframes timerPulse {
-  0% {
-    text-shadow: 0 0 6px rgba(0, 255, 255, 0.6), 0 0 12px rgba(0, 200, 255, 0.5),
-      0 0 24px rgba(0, 150, 255, 0.4);
+/* =====================================================
+   GOAL BANNER — CONTAINER PRINCIPAL
+===================================================== */
+.score-container {
+  width: 100%;
+  height: 280px;
+
+  position: fixed;
+  top: 50%;
+  left: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /* Beam interno */
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.12),
+    rgba(255, 40, 40, 0.7),
+    rgba(160, 0, 0, 0.85)
+  );
+
+  /* Centralização vertical + animação GSAP */
+  transform-origin: center;
+  transform: translateY(-50%) scaleY(0);
+
+  /* Glow pulsante */
+  animation: goalGlowPulse 2s ease-in-out infinite;
+
+  isolation: isolate;
+  overflow: hidden;
+}
+
+/* =====================================================
+   GOAL BANNER — GLOW EXTERNO (HALO)
+===================================================== */
+.score-container::after {
+  content: '';
+  position: absolute;
+  inset: -16px;
+
+  background: rgba(255, 40, 40, 0.7);
+  filter: blur(30px);
+
+  opacity: 0.85;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* =====================================================
+   GOAL BANNER — BORDA NEON ANIMADA
+===================================================== */
+.score-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 160, 160, 1),
+    rgba(255, 60, 60, 1),
+    rgba(255, 160, 160, 1),
+    transparent
+  );
+
+  /* Hollow neon border (mask technique) */
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+
+  animation: goalBorderRun 1.6s linear infinite;
+  pointer-events: none;
+}
+
+/* =====================================================
+   GOAL TEXT
+===================================================== */
+.score-container span {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 80px;
+  font-weight: 800;
+  color: #ffffff;
+
+  letter-spacing: 64px;
+  white-space: nowrap;
+
+  display: inline-block;
+  will-change: transform;
+
+  /* Texto neon */
+  text-shadow: 0 0 8px rgba(255, 255, 255, 1), 0 0 16px rgba(255, 180, 180, 1),
+    0 0 32px rgba(255, 60, 60, 0.9), 0 0 64px rgba(200, 0, 0, 0.8);
+}
+
+/* =====================================================
+   GOAL — ANIMAÇÕES AUXILIARES
+===================================================== */
+@keyframes goalGlowPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 24px rgba(255, 50, 100, 0.4),
+      0 0 64px rgba(255, 20, 80, 0.3);
   }
   50% {
-    text-shadow: 0 0 10px rgba(0, 255, 255, 1), 0 0 20px rgba(0, 200, 255, 0.9),
-      0 0 40px rgba(0, 150, 255, 0.8);
+    box-shadow: 0 0 40px rgba(255, 80, 130, 0.8),
+      0 0 96px rgba(255, 40, 100, 0.6);
   }
-  100% {
-    text-shadow: 0 0 6px rgba(0, 255, 255, 0.6), 0 0 12px rgba(0, 200, 255, 0.5),
-      0 0 24px rgba(0, 150, 255, 0.4);
+}
+
+@keyframes goalBorderRun {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    background-position: 300% 50%;
   }
 }

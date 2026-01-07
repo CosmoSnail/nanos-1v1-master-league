@@ -1,19 +1,138 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!-- =====================================================
+         META / BASE
+    ====================================================== -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- =====================================================
+         STYLES
+    ====================================================== -->
     <link rel="stylesheet" href="style.css" />
   </head>
+
   <body>
-    <div class="timer-container">
+    <!-- =====================================================
+         HUD — TIMER & SCORE
+    ====================================================== -->
+    <div id="timer-container" class="timer-container">
+      <!-- Team A Score (Blue) -->
       <span id="team-a-score" class="score score-left">0</span>
 
+      <!-- Match Timer -->
       <span id="timer" class="timer">00:00</span>
 
+      <!-- Team B Score (Orange) -->
       <span id="team-b-score" class="score score-right">0</span>
     </div>
 
+    <!-- =====================================================
+         GOAL BANNER (FULL WIDTH EVENT UI)
+    ====================================================== -->
+    <div id="score-container" class="score-container">
+      <span>GOAL!</span>
+    </div>
+
+    <!-- =====================================================
+         LIBRARIES
+         (Sempre antes de qualquer código que use elas)
+    ====================================================== -->
+    <script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
+
+    <script>
+      window.timerTl = gsap.timeline()
+
+      timerTl.from('#timer', {
+        y: -12,
+        opacity: 0,
+        scale: 0.9,
+        duration: 0.8,
+        ease: 'elastic.out(1, 0.6)',
+      })
+
+      gsap.to('#timer', {
+        scale: 1.04,
+        duration: 2.2,
+        ease: 'sine.inOut',
+        repeat: -1,
+        yoyo: true,
+        delay: 0.4,
+      })
+    </script>
+
+    <!-- =====================================================
+         GOAL ANIMATION TIMELINE
+    ====================================================== -->
+    <script>
+      /* -----------------------------------------------------
+         GOAL ANIMATION — SINGLE RESPONSIBILITY TIMELINE
+         Controls:
+         - enter
+         - idle loop
+         - exit
+      ----------------------------------------------------- */
+      window.goalTl = gsap.timeline({
+        paused: true,
+      })
+
+      /* =====================
+         ENTER
+      ===================== */
+      goalTl.to('#score-container', {
+        scaleY: 1,
+        duration: 0.4,
+        ease: 'power4.out',
+      })
+
+      /* =====================
+         TEXT IMPACT
+      ===================== */
+      goalTl.fromTo(
+        '#score-container span',
+        {
+          letterSpacing: '64px',
+          scaleX: 1.4,
+        },
+        {
+          letterSpacing: '8px',
+          scaleX: 1,
+          duration: 0.8,
+          ease: 'elastic.out(1, 0.45)',
+        },
+        '-=0.2'
+      )
+
+      /* =====================
+         IDLE LOOP (VISIBLE STATE)
+      ===================== */
+      goalTl.to('#score-container span', {
+        scaleX: 1.25,
+        duration: 0.9,
+        ease: 'sine.inOut',
+        repeat: -1,
+        yoyo: true,
+      })
+
+      /* =====================
+         HOLD TIME
+      ===================== */
+      goalTl.to({}, { duration: 5 })
+
+      /* =====================
+         EXIT
+      ===================== */
+      goalTl.to('#score-container', {
+        scaleY: 0,
+        duration: 0.35,
+        ease: 'power3.in',
+      })
+    </script>
+
+    <!-- =====================================================
+         GAME / HUD LOGIC
+    ====================================================== -->
     <script src="index.js"></script>
   </body>
 </html>
