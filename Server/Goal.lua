@@ -24,10 +24,12 @@ function HandleGoal(ball, teamScored)
         print("Team A scored! " .. "(" .. Game.LastPlayerHitBall:GetName() .. ")")
         Game.ScoreA = Game.ScoreA + 1
         Events.BroadcastRemote("UpdateScoreA", Game.ScoreA)
+        Events.BroadcastRemote("PlayScoreSound")
     else
         print("Team B scored! " .. "(" .. Game.LastPlayerHitBall:GetName() .. ")")
         Game.ScoreB = Game.ScoreB + 1
         Events.BroadcastRemote("UpdateScoreB", Game.ScoreB)
+        Events.BroadcastRemote("PlayScoreSound")
     end
     local particle = Particle(
         ball:GetLocation(),

@@ -1,32 +1,24 @@
+Package.Require("Sky.lua")
+Package.Require("Inputs.lua")
+Package.Require("Sounds.lua")
+
 main_hud = WebUI("Main HUD", "file://UI/index.html")
 
-Input.Register("Jump", "SpaceBar")
-Input.Register("Nitro", "LeftShift")
-
-Input.Bind("Jump", InputEvent.Pressed, function()
-	Events.CallRemote("Jump")
-end)
-
-Input.Bind("Nitro", InputEvent.Pressed, function()
-	Events.CallRemote("StartNitro")
-end)
-Input.Bind("Nitro", InputEvent.Released, function()
-	Events.CallRemote("StopNitro")
-end)
-
-Sky.Spawn()
-Sky.SetSkyMode(SkyMode.Space)
-Sky.SetMoonScale(50)
-Sky.SetMoonGlowIntensity(25)
-Sky.SetMoonLightIntensity(250)
-Sky.Reconstruct()
+InitSky()
+StartSoundtrack()
 
 Events.SubscribeRemote("UpdateTime", function(time)
   main_hud:CallEvent("UpdateTime", time)
 end)
+
 Events.SubscribeRemote("UpdateScoreA", function(score)
   main_hud:CallEvent("UpdateScoreA", score)
 end)
+
 Events.SubscribeRemote("UpdateScoreB", function(score)
   main_hud:CallEvent("UpdateScoreB", score)
+end)
+
+Events.SubscribeRemote("PlayScoreSound", function()
+  PlayRandomScoreSound()
 end)
