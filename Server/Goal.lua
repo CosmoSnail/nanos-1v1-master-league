@@ -24,7 +24,7 @@ function HandleGoal(ball, teamScored)
         print("Team A scored! " .. "(" .. Game.LastPlayerHitBall:GetName() .. ")")
         Game.ScoreA = Game.ScoreA + 1
         Events.BroadcastRemote("UpdateScoreA", Game.ScoreA)
-        
+
     else
         print("Team B scored! " .. "(" .. Game.LastPlayerHitBall:GetName() .. ")")
         Game.ScoreB = Game.ScoreB + 1
@@ -36,7 +36,7 @@ function HandleGoal(ball, teamScored)
         playerImageUrl = Game.LastPlayerHitBall:GetAccountIconURL(),
         team = teamScored,
     })
-    
+
     local particle = Particle(
         ball:GetLocation(),
         Rotator(0, 0, 0),
@@ -71,14 +71,15 @@ function AttachGoalLights(team)
         Ternary(team == Team.TeamA, Rotator(90, 180, 0), Rotator(90, 0, 0)), -- Relevant only for Rect and Spot light types
         Ternary(team == Team.TeamA, Config.ColorA, Config.ColorB), -- Color
         LightType.Point, -- Light type
-        3000, -- Per-light intensity
+        250, -- Per-light intensity
         10000, -- Attenuation Radius
         60, -- Cone Angle
-        300, -- Inner Cone Angle Percent
-        50000, -- Max Draw Distance
+        0, -- Inner Cone Angle Percent
+        80000, -- Max Draw Distance
         true, -- Inverse squared falloff
         false, -- Cast Shadows?
-        true -- Enabled?
+        true, -- Enabled?
+        10000
     )
 
     if showPositions then
