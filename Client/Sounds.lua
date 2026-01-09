@@ -22,7 +22,12 @@ function PlayRandomScoreSound()
     soundtrack:SetVolume(0.01)
     local buzzerSound = Sound(Vector(), ScoreSounds[math.random(#ScoreSounds)], true)
     buzzerSound:SetVolume(buzzerVolume)
-    buzzerSound:FadeOut(20, 0.0, true)
+    Timer.SetTimeout(
+        function()
+            buzzerSound:FadeOut(19, 0.0, true)
+        end,
+        1000
+    )
 
     goalSoundTime = Timer.SetTimeout(function()
         soundtrack:SetVolume(soundTrackVolume)
