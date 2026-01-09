@@ -9,6 +9,8 @@ Game = {
     CountDownTimer = 0,
     ScoredTimer = 0,
     EndedTimer = 0,
+    HatA = {},
+    HatB = {},
 }
 
 Team = {

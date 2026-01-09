@@ -39,10 +39,20 @@ function SpawnVehicle(character)
     SpawnThruster(vehicle)
     AttachVehicleLights(vehicle, character:GetTeam())
     AttachVehiclePlayerName(vehicle, character:GetPlayer():GetName())
+    AttachVehicleHat(vehicle, character:GetTeam())
 
     character:EnterVehicle(vehicle)
     character:SetVisibility(false)
 
+end
+
+function AttachVehicleHat(vehicle, team)
+    local hatConfig = Ternary(team == Team.TeamA, Game.HatA, Game.HatB)
+    local hat = StaticMesh(Vector(), Rotator(), hatConfig.name, CollisionType.NoCollision)
+    hat:SetScale(Vector(hatConfig.scale))
+    hat:AttachTo(vehicle, AttachmentRule.SnapToTarget, "", 0)
+    hat:SetRelativeLocation(hatConfig.location)
+    hat:SetRelativeRotation(hatConfig.rotation)
 end
 
 function ResetVehicles() 
@@ -156,7 +166,7 @@ function AttachVehiclePlayerName(vehicle, name)
         Vector(),
         Rotator(),
         name,
-        Vector(0.4),
+        Vector(0.6),
         Color(1, 1, 1),
         FontType.OpenSans,
         TextRenderAlignCamera.FaceCamera
@@ -164,5 +174,5 @@ function AttachVehiclePlayerName(vehicle, name)
 
     text:AttachTo(vehicle, AttachmentRule.SnapToTarget, "", 1)
     -- -10 * (#name / 2)
-    text:SetRelativeLocation(Vector(0, 0, 170))
+    text:SetRelativeLocation(Vector(0, 0, 280))
 end

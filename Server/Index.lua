@@ -5,6 +5,7 @@ Package.Require("Log.lua")
 print("Server Started")
 
 Package.Require("Config.lua")
+Package.Require("Hats.lua")
 Package.Require("Utils.lua")
 Package.Require("Player.lua")
 Package.Require("Ball.lua")
@@ -22,6 +23,10 @@ function InitGame()
     Game.CurrentSpawnPointA = Config.SpawnPointA
     Game.CurrentSpawnPointB = Config.SpawnPointB
     Game.LastPlayerHitBall = nil
+    Game.HatA = GetRandomHat()
+    repeat
+        Game.HatB = GetRandomHat()
+    until Game.HatB.name ~= Game.HatA.name or #Hats <= 1
     Events.BroadcastRemote("UpdateTime", Game.Timer)
     Events.BroadcastRemote("UpdateScoreA", Game.ScoreA)
     Events.BroadcastRemote("UpdateScoreB", Game.ScoreB)

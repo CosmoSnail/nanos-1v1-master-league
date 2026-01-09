@@ -39,7 +39,7 @@ function ToggleRibbon(team)
     ribbon:SetParameterColor("Color", Ternary(team == Team.TeamA, Config.ColorA, Config.ColorB))
     ribbon:SetParameterFloat("SpawnRate", 50.0)
     ribbon:SetParameterFloat("LifeTime", 0.3)
-    ribbon:SetParameterFloat("RibbonWidth", 20.0)
+    ribbon:SetParameterFloat("RibbonWidth", 30.0)
     ribbon:AttachTo(ball, AttachmentRule.SnapToTarget, "", 0)
 end
 
