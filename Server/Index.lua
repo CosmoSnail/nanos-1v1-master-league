@@ -11,6 +11,7 @@ Package.Require("Ball.lua")
 Package.Require("Controls.lua")
 Package.Require("Goal.lua")
 Package.Require("Tables.lua")
+Package.Require("Chat.lua")
 
 function InitGame()
     Game.State = State.CountDown
@@ -34,7 +35,7 @@ TogglePlayersInput(false)
 Timer.SetInterval(function()
     if Game.State == State.CountDown then
         Game.CountDownTimer = Game.CountDownTimer - 1
-        Events.BroadcastRemote("UpdateCountDownTime", Game.Timer)
+        Events.BroadcastRemote("UpdateCountDownTime", Game.CountDownTimer)
         if (Game.CountDownTimer <= 0) then
             Game.State = State.Running
             print("Game Resumed!")
@@ -62,7 +63,9 @@ Timer.SetInterval(function()
         if (Game.Timer <= 0) then
             Game.State = State.Ended
             Game.EndedTimer = Config.EndedDuration
-            print("Game Over! Final Score - Team A: " .. tostring(Game.ScoreA) .. " | Team B: " .. tostring(Game.ScoreB))
+            print("Game Over! Final Score - Team Blue: " .. tostring(Game.ScoreA) .. " | Team Red: " .. tostring(Game.ScoreB))
+            Chat.BroadcastMessage("Game Over! Final Score - Team Blue: " .. tostring(Game.ScoreA) .. " | Team Red: " .. tostring(Game.ScoreB))
+            Chat.BroadcastMessage("New game starting in " .. tostring(Config.EndedDuration) .. " seconds...")
             TogglePlayersInput(false)
             return
         end

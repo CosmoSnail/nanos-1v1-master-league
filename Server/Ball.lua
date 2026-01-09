@@ -66,3 +66,9 @@ function UpdateBallRibbon()
         return
     end
 end
+
+function TeleportBall(location)
+    if ball and ball:IsValid() then
+        ball:SetLocation(location)
+    end
+end

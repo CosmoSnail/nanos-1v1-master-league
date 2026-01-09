@@ -38,6 +38,7 @@ function SpawnVehicle(character)
 
     SpawnThruster(vehicle)
     AttachVehicleLights(vehicle, character:GetTeam())
+    AttachVehiclePlayerName(vehicle, character:GetPlayer():GetName())
 
     character:EnterVehicle(vehicle)
     character:SetVisibility(false)
@@ -144,4 +145,24 @@ function AttachVehicleLights(vehicle, team)
             trigger:SetRelativeLocation(Vector())
         end
     end
+end
+
+function AttachVehiclePlayerName(vehicle, name)
+    if not Config.ShowNamesOnVehicles then
+        return
+    end
+
+    local text = TextRender(
+        Vector(),
+        Rotator(),
+        name,
+        Vector(0.4),
+        Color(1, 1, 1),
+        FontType.OpenSans,
+        TextRenderAlignCamera.FaceCamera
+    )
+
+    text:AttachTo(vehicle, AttachmentRule.SnapToTarget, "", 1)
+    -- -10 * (#name / 2)
+    text:SetRelativeLocation(Vector(0, 0, 170))
 end

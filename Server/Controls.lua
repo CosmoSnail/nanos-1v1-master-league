@@ -65,3 +65,7 @@ function GetAttachedParticles(thruster)
   )
   return particles
 end
+
+function CheckInAirRotation()
+  
+end
