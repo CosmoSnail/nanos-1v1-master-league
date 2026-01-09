@@ -21,19 +21,19 @@ function HandleGoal(ball, teamScored)
     end
 
     if teamScored == Team.TeamA then
-        print("Team A scored! " .. "(" .. Game.LastPlayerHitBall:GetName() .. ")")
+        print("Team A scored! " .. "(" .. GetLastPlayerHitBall():GetName() .. ")")
         Game.ScoreA = Game.ScoreA + 1
         Events.BroadcastRemote("UpdateScoreA", Game.ScoreA)
 
     else
-        print("Team B scored! " .. "(" .. Game.LastPlayerHitBall:GetName() .. ")")
+        print("Team B scored! " .. "(" .. GetLastPlayerHitBall():GetName() .. ")")
         Game.ScoreB = Game.ScoreB + 1
         Events.BroadcastRemote("UpdateScoreB", Game.ScoreB)
     end
 
     Events.BroadcastRemote("GoalScored", {
-        playerName = Game.LastPlayerHitBall:GetName(),
-        playerImageUrl = Game.LastPlayerHitBall:GetAccountIconURL(),
+        playerName = GetLastPlayerHitBall():GetName(),
+        playerImageUrl = GetLastPlayerHitBall():GetAccountIconURL(),
         team = teamScored,
     })
 

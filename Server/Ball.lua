@@ -72,3 +72,13 @@ function TeleportBall(location)
         ball:SetLocation(location)
     end
 end
+
+function GetLastPlayerHitBall()
+    if Game.LastPlayerHitBall then
+        return Game.LastPlayerHitBall
+    end
+    return {
+        GetName = function() return "nil" end,
+        GetAccountIconURL = function() return "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Atheism_symbol_syreeni.svg/1280px-Atheism_symbol_syreeni.svg.png" end
+    }
+end

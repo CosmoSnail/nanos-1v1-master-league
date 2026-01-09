@@ -13,8 +13,6 @@ Commands["/goal"] = function(player, args)
         TeleportBall(Config.GoalPointA)
     elseif team == "blue" then
         TeleportBall(Config.GoalPointB)
-    else
-        TeleportBall(Config.GoalPointA)
     end
 end
 
