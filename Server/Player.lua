@@ -18,6 +18,9 @@ function SpawnPlayer(player)
   if Game.State ~= State.Running then
       character:SetInputEnabled(false)
   end
+
+  Events.BroadcastRemote("UpdateScoreA", Game.ScoreA)
+  Events.BroadcastRemote("UpdateScoreB", Game.ScoreB)
 end
 
 function InitPlayers()
