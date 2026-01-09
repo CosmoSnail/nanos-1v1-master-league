@@ -4,6 +4,7 @@ Config = {
     LogLevel = LogLevel.Console,
     ShowTriggers = false,
     EnableCommands = false,
+    ShowHats = true,
     ShowNamesOnVehicles = false,
     GameDuration = 5 * 60,
     CountDownDuration = 4,

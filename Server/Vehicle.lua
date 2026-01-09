@@ -47,6 +47,9 @@ function SpawnVehicle(character)
 end
 
 function AttachVehicleHat(vehicle, team)
+    if not Config.ShowHats then
+        return
+    end
     local hatConfig = Ternary(team == Team.TeamA, Game.HatA, Game.HatB)
     local hat = StaticMesh(Vector(), Rotator(), hatConfig.name, CollisionType.NoCollision)
     hat:SetScale(Vector(hatConfig.scale))
