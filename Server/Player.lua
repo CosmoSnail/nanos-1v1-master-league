@@ -2,25 +2,28 @@ Package.Require('Vehicle.lua')
 Package.Require('Tables.lua')
 
 function SpawnPlayer(player)
-  local character = Character(Vector(0, 0, 100), Rotator(0, 0, 0), "nanos-world::SK_Mannequin")
-  local team = GetTeamToJoin()
-  character:SetTeam(team)
 
-  player:Possess(character)
-  if team == Team.TeamA then
-      player:SetCameraRotation(Rotator(0, 0, 0))
-  else
-      player:SetCameraRotation(Rotator(0, 180, 0))
-  end
+    local character = Character(Vector(0, 0, 100), Rotator(0, 0, 0), "nanos-world::SK_Mannequin")
+    local team = GetTeamToJoin()
+    character:SetTeam(team)
 
-  SpawnVehicle(character)
+    player:Possess(character)
 
-  if Game.State ~= State.Running then
-      character:SetInputEnabled(false)
-  end
+	player:SetCameraArmLength(200, true)
+    if team == Team.TeamA then
+        player:SetCameraRotation(Rotator(0, 0, 0))
+    else
+        player:SetCameraRotation(Rotator(0, 180, 0))
+    end
 
-  Events.BroadcastRemote("UpdateScoreA", Game.ScoreA)
-  Events.BroadcastRemote("UpdateScoreB", Game.ScoreB)
+    SpawnVehicle(character)
+
+    if Game.State ~= State.Running then
+        character:SetInputEnabled(false)
+    end
+
+    Events.BroadcastRemote("UpdateScoreA", Game.ScoreA)
+    Events.BroadcastRemote("UpdateScoreB", Game.ScoreB)
 end
 
 function InitPlayers()
