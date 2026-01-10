@@ -11,7 +11,7 @@ local soundTrackVolume = 0.25
 local buzzerVolume = 0.3
 
 function StartSoundtrack()
-    soundtrack = Sound(Vector(), "package://nanos-1v1-master-league/Client/Sounds/Soundtrack_1.mp3", true, false, true, SoundType.Music)
+    soundtrack = Sound(Vector(), "package://nanos-1v1-master-league/Client/Sounds/Soundtrack_1.mp3", true, false, SoundType.Music, 1, 1, 400, 3600, AttenuationFunction.Linear, false, SoundLoopMode.Forever, true)
     soundtrack:SetVolume(soundTrackVolume)
 end
 
