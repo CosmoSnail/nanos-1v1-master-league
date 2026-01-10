@@ -27,6 +27,7 @@ function InitGame()
     repeat
         Game.HatB = GetRandomHat()
     until Game.HatB.name ~= Game.HatA.name or #Hats <= 1
+    ShuffleTeams()
     Events.BroadcastRemote("UpdateTime", Game.Timer)
     Events.BroadcastRemote("UpdateScoreA", Game.ScoreA)
     Events.BroadcastRemote("UpdateScoreB", Game.ScoreB)

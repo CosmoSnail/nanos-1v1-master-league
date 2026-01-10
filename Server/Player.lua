@@ -54,6 +54,33 @@ function GetTeamToJoin()
     end
 end
 
+function ShuffleTeams()
+    local players = Player.GetAll()
+    local count = #players
+    local indices = {}
+    for i = 1, count do
+        indices[i] = i
+    end
+
+    -- shuffle indices (Fisher–Yates)
+    for i = count, 2, -1 do
+        local j = math.random(i)
+        indices[i], indices[j] = indices[j], indices[i]
+    end
+    local half = math.ceil(count / 2)
+    for i = 1, count do
+        local player = players[indices[i]]
+        local character = player:GetControlledCharacter()
+        if character then
+            if i <= half then
+                character:SetTeam(Team.TeamA)
+            else
+                character:SetTeam(Team.TeamB)
+            end
+        end
+    end
+end
+
 Player.Subscribe("Destroy", function(player)
 	local character = player:GetControlledCharacter()
 	if character then
