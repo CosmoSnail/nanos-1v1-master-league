@@ -1,4 +1,4 @@
-local Hats = {
+Hats = {
     {
         name = "polygon-hats::CulturalHat",
         rotation = Rotator(0, 0, 0),
