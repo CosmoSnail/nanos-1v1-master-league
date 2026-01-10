@@ -1,7 +1,7 @@
 local Commands = {}
 
 Commands["/reload"] = function(player, args)
-    Server.ReloadPackage("nanos-1v1-master-league")
+    Server.ReloadPackage(Package.GetName())
 end
 
 Commands["/goal"] = function(player, args)

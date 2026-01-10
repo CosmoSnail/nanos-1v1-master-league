@@ -1,1 +1,1 @@
-# nanos-1v1-master-league
+# Nanos World Master League Champions

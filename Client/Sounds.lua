@@ -1,8 +1,10 @@
+local SoundsDir = "package://" .. Package.GetName() .. "/Client/Sounds/"
+
 local ScoreSounds = {
-    "package://nanos-world-master-league-champions/Client/Sounds/GoalBuzzer_1.ogg",
-    "package://nanos-world-master-league-champions/Client/Sounds/GoalBuzzer_2.ogg",
-    "package://nanos-world-master-league-champions/Client/Sounds/GoalBuzzer_3.ogg",
-    "package://nanos-world-master-league-champions/Client/Sounds/GoalBuzzer_4.ogg",
+    SoundsDir .. "GoalBuzzer_1.ogg",
+    SoundsDir .. "GoalBuzzer_2.ogg",
+    SoundsDir .. "GoalBuzzer_3.ogg",
+    SoundsDir .. "GoalBuzzer_4.ogg",
 }
 
 local soundtrack
@@ -11,7 +13,7 @@ local soundTrackVolume = 0.25
 local buzzerVolume = 0.3
 
 function StartSoundtrack()
-    soundtrack = Sound(Vector(), "package://nanos-world-master-league-champions/Client/Sounds/Soundtrack_1.mp3", true, false, SoundType.Music, 1, 1, 400, 3600, AttenuationFunction.Linear, false, SoundLoopMode.Forever, true)
+    soundtrack = Sound(Vector(), SoundsDir .. "Soundtrack_1.mp3", true, false, SoundType.Music, 1, 1, 400, 3600, AttenuationFunction.Linear, false, SoundLoopMode.Forever, true)
     soundtrack:SetVolume(soundTrackVolume)
 end
 
@@ -30,5 +32,5 @@ function PlayRandomScoreSound()
 end
 
 function PlayEndSound()
-    Sound(Vector(), "package://nanos-world-master-league-champions/Client/Sounds/EndBuzzer.wav", true)
+    Sound(Vector(), SoundsDir .. "EndBuzzer.wav", true)
 end
