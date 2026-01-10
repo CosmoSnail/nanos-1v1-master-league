@@ -12,7 +12,7 @@ function InitBall()
     ball:SetMassScale(massScale)
     ball:SetPhysicalMaterial('nanos-world::PM_Rubber')
 
-    local trigger = Trigger(Config.BallSpawnPoint, Rotator(), Vector(670), TriggerType.Sphere, Config.ShowTriggers, Color(0, 1, 0), {"Vehicle"})
+    local trigger = Trigger(Config.BallSpawnPoint, Rotator(), 670, TriggerType.Sphere, Config.ShowTriggers, Color(0, 1, 0), {"Vehicle"})
     trigger:AttachTo(ball, AttachmentRule.SnapToTarget, nil, 0, false)
     trigger:SetRelativeLocation(Vector(0, 0, 0))
 
@@ -81,4 +81,13 @@ function GetLastPlayerHitBall()
         GetName = function() return "nil" end,
         GetAccountIconURL = function() return "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Atheism_symbol_syreeni.svg/1280px-Atheism_symbol_syreeni.svg.png" end
     }
+end
+
+function CheckBallOutOfBounds()
+    if ball and ball:IsValid() then
+        if ball:GetLocation().Z < -500 then
+            print("Ball out of bounds! Resetting position.")
+            ResetBall()
+        end
+    end
 end

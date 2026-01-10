@@ -66,6 +66,7 @@ Timer.SetInterval(function()
     elseif Game.State == State.Running then
         Game.Timer = Game.Timer - 1
         Events.BroadcastRemote("UpdateTime", Game.Timer)
+        CheckBallOutOfBounds()
         if (Game.Timer <= 0) then
             Game.State = State.Ended
             Game.EndedTimer = Config.EndedDuration
