@@ -2,7 +2,7 @@ Package.Require("Sky.lua")
 Package.Require("Inputs.lua")
 Package.Require("Sounds.lua")
 
-main_hud = WebUI("Main HUD", "file://UI/index.html")
+local main_hud = WebUI("Main HUD", "file://UI/index.html")
 
 InitSky()
 StartSoundtrack()
@@ -12,6 +12,9 @@ Events.SubscribeRemote("UpdateCountDownTime", function(time)
 end)
 
 Events.SubscribeRemote("UpdateTime", function(time)
+  if (time == 0) then
+    PlayEndSound()
+  end
   main_hud:CallEvent("UpdateTime", time)
 end)
 

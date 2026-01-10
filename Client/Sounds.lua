@@ -33,3 +33,7 @@ function PlayRandomScoreSound()
         soundtrack:SetVolume(soundTrackVolume)
     end, 20000)
 end
+
+function PlayEndSound()
+    Sound(Vector(), "package://nanos-1v1-master-league/Client/Sounds/EndBuzzer.wav", true)
+end
