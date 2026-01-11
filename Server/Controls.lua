@@ -5,7 +5,10 @@ Events.SubscribeRemote("Jump", function(player)
     return
   end
   local vehicle = player:GetControlledCharacter():GetVehicle()
-  vehicle:AddImpulse(Vector(0, 0, 1000000))
+  local jumpForce = 1000000
+
+  print(vehicle:GetVelocity():Size())
+  vehicle:AddImpulse(Vector(0, 0, jumpForce + vehicle:GetVelocity():Size() * 300))
 end)
 
 Events.SubscribeRemote("StartNitro", function(player)
@@ -14,7 +17,7 @@ Events.SubscribeRemote("StartNitro", function(player)
   end
 --   print('Start Nitro')
   local vehicle = player:GetControlledCharacter():GetVehicle()
-  -- vehicle:SetEngineSetup(4500, 10000, 1000, 0.02, 5, 600)
+
   vehicle:SetForce(Vector(5000000, 0, 0))
 
   local thrusters = GetVehicleThrusters(vehicle)
@@ -33,7 +36,6 @@ Events.SubscribeRemote("StopNitro", function(player)
   end
 --   print('Stop Nitro')
   local vehicle = player:GetControlledCharacter():GetVehicle()
-  -- vehicle:SetEngineSetup(1000, 8000, 1000, 0.02, 5, 600)
 
   local thrusters = GetVehicleThrusters(vehicle)
   for _, thruster in pairs(thrusters) do
@@ -67,5 +69,5 @@ function GetAttachedParticles(thruster)
 end
 
 function CheckInAirRotation()
-  
+
 end
