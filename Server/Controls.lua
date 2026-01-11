@@ -5,10 +5,10 @@ Events.SubscribeRemote("Jump", function(player)
     return
   end
   local vehicle = player:GetControlledCharacter():GetVehicle()
-  local jumpForce = 1000000
+  local baseJumpForce = 1000000
+  local velocityMultiplier = vehicle:GetVelocity():Size() * 300
 
-  print(vehicle:GetVelocity():Size())
-  vehicle:AddImpulse(Vector(0, 0, jumpForce + vehicle:GetVelocity():Size() * 300))
+  vehicle:AddImpulse(Vector(0, 0, baseJumpForce + velocityMultiplier))
 end)
 
 Events.SubscribeRemote("StartNitro", function(player)
