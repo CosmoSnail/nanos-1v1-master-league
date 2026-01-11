@@ -236,10 +236,11 @@ body {
    GOAL TEXT
 ===================================================== */
 .goal-text {
-  font-size: 120px;
+  font-size: 184px;
   font-weight: 800;
+  margin-bottom: 48px;
 
-  letter-spacing: 64px;
+  letter-spacing: 144px;
   white-space: nowrap;
 
   color: rgb(var(--goal-text));
