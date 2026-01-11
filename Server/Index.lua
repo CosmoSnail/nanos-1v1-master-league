@@ -1,4 +1,5 @@
 Server.LoadPackage("default-vehicles")
+Server.LoadPackage("ts-fireworks")
 
 Package.Require("Log.lua")
 
@@ -13,6 +14,7 @@ Package.Require("Controls.lua")
 Package.Require("Goal.lua")
 Package.Require("Tables.lua")
 Package.Require("Chat.lua")
+Package.Require("Fireworks.lua")
 
 function InitGame()
     Game.State = State.CountDown
@@ -67,6 +69,7 @@ Timer.SetInterval(function()
         Game.Timer = Game.Timer - 1
         Events.BroadcastRemote("UpdateTime", Game.Timer)
         CheckBallOutOfBounds()
+        CheckVehiclesOutOfBounds()
         if (Game.Timer <= 0) then
             Game.State = State.Ended
             Game.EndedTimer = Config.EndedDuration
@@ -74,6 +77,7 @@ Timer.SetInterval(function()
             Chat.BroadcastMessage("Game Over! Final Score - Team Blue: " .. tostring(Game.ScoreA) .. " | Team Red: " .. tostring(Game.ScoreB))
             Chat.BroadcastMessage("New game starting in " .. tostring(Config.EndedDuration) .. " seconds...")
             TogglePlayersInput(false)
+            SpawnFireworksEndGame()
             return
         end
         print("State: Running. Timer: " .. tostring(Game.Timer))

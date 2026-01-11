@@ -21,7 +21,8 @@ body {
   justify-content: center;
 
   background: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(4px);
+  /* enable expensive backdrop blur only when the overlay is visible */
+  will-change: opacity;
 
   opacity: 0;
   visibility: hidden;
@@ -225,7 +226,6 @@ body {
   inset: -16px;
 
   background: rgba(var(--goal-main), 0.7);
-  filter: blur(30px);
 
   opacity: 0.85;
   z-index: -1;

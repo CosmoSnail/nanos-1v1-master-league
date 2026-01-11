@@ -42,7 +42,7 @@ function SpawnVehicle(character)
     AttachVehicleHat(vehicle, character:GetTeam())
 
     character:EnterVehicle(vehicle)
-    character:SetVisibility(false)
+    character:SetVisibility(Config.ShowCharactersOnVehicles)
 
 end
 
@@ -178,4 +178,19 @@ function AttachVehiclePlayerName(vehicle, name)
     text:AttachTo(vehicle, AttachmentRule.SnapToTarget, "", 1)
     -- -10 * (#name / 2)
     text:SetRelativeLocation(Vector(0, 0, 280))
+end
+
+function CheckVehiclesOutOfBounds()
+    for _, player in pairs(Player.GetAll()) do
+        local character = player:GetControlledCharacter()
+        if character then
+            local vehicle = character:GetVehicle()
+            if vehicle then
+                local location = vehicle:GetLocation()
+                if location.Z < -500 or location.Z > 6000 then
+                    vehicle:SetLocation(Ternary(character:GetTeam() == Team.TeamA, Config.SpawnPointA, Config.SpawnPointB))
+                end
+            end
+        end
+    end
 end

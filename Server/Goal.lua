@@ -20,6 +20,8 @@ function HandleGoal(ball, teamScored)
         return
     end
 
+    SpawnFireworksGoal(teamScored)
+
     if teamScored == Team.TeamA then
         print("Team A scored! " .. "(" .. GetLastPlayerHitBall():GetName() .. ")")
         Game.ScoreA = Game.ScoreA + 1

@@ -153,7 +153,6 @@ Events.Subscribe('UpdateCountDownTime', function (second) {
       gsap.set('#countdown-number', {
         autoAlpha: 1,
         scale: 1,
-        filter: 'blur(0px)',
       })
 
       window.countdownOutTl.pause(0)
