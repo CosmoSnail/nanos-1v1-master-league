@@ -1,5 +1,5 @@
 function SpawnFireworksGoal(team)
-    SpawnRandomFireworks(20000, 20000, 7000, 12000, 50, team, 2000)
+    SpawnRandomFireworks(20000, 20000, 7000, 12000, 50, team, 8000)
 end
 
 function SpawnFireworksEndGame()
