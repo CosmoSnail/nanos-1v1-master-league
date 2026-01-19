@@ -12,15 +12,26 @@ function InitBall()
     ball:SetMassScale(massScale)
     ball:SetPhysicalMaterial('nanos-world::PM_Rubber')
 
-    local trigger = Trigger(Config.BallSpawnPoint, Rotator(), 665, TriggerType.Sphere, Config.ShowTriggers, Color(0, 1, 0), {"Vehicle"})
-    trigger:AttachTo(ball, AttachmentRule.SnapToTarget, nil, 0, false)
-    trigger:SetRelativeLocation(Vector(0, 0, 0))
+    -- local trigger = Trigger(Config.BallSpawnPoint, Rotator(), 665, TriggerType.Sphere, Config.ShowTriggers, Color(0, 1, 0), {"Vehicle"})
+    -- trigger:AttachTo(ball, AttachmentRule.SnapToTarget, nil, 0, false)
+    -- trigger:SetRelativeLocation(Vector(0, 0, 0))
 
-    trigger:Subscribe("BeginOverlap", function(trigger, vehicle)
-        local player = vehicle:GetPassenger(0):GetPlayer()
-        print(player:GetName() .. " hit the ball!")
-        Game.LastPlayerHitBall = player
-        ToggleRibbon(player:GetControlledCharacter():GetTeam())
+    -- trigger:Subscribe("BeginOverlap", function(trigger, vehicle)
+    --     local player = vehicle:GetPassenger(0):GetPlayer()
+    --     print(player:GetName() .. " hit the ball!")
+    --     Game.LastPlayerHitBall = player
+    --     ToggleRibbon(player:GetControlledCharacter():GetTeam())
+    -- end)
+
+    ball:Subscribe("Hit", function(self, impact_force, normal_impulse, impact_location, velocity, other)
+        if other and other:IsA(Offroad) then
+            local player = other:GetPassenger(0):GetPlayer()
+            print(player:GetName() .. " hit the ball!")
+            Game.LastPlayerHitBall = player
+            ToggleRibbon(player:GetControlledCharacter():GetTeam())
+        else 
+            print("Ball hit the ground: " .. tostring(other))
+        end
     end)
 end
 
