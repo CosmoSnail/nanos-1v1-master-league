@@ -30,8 +30,6 @@ function SpawnVehicle(character)
     vehicle:SetWheel(2, "PhysWheel_BL", 50, 42, 0, Vector(), false, true, true, false, false, 15000, 15000, 20000, 1000, 100, 100, 100, 70, 10, 6, 6, 0, 0.5, 0.63)
     vehicle:SetWheel(3, "PhysWheel_BR", 50, 42, 0, Vector(), false, true, true, false, false, 15000, 15000, 20000, 1000, 100, 100, 100, 70, 10, 6, 6, 0, 0.5, 0.63)
 
-    vehicle:RecreatePhysics()
-
     vehicle:Subscribe("CharacterAttemptLeave", function(self, _)
         return false
     end)
