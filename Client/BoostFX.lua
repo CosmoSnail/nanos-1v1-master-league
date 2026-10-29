@@ -10,10 +10,10 @@ local NOZZLES = {
     Vector(-190, -40, 45),
 }
 
-local FLAME_LENGTH = 2.1        -- outer cone length (x100 cm)
-local FLAME_WIDTH = 0.54        -- outer cone base diameter (x100 cm)
-local CORE_LENGTH = 1.12
-local CORE_WIDTH = 0.31
+local FLAME_LENGTH = 1.9        -- outer cone length (x100 cm)
+local FLAME_WIDTH = 0.49        -- outer cone base diameter (x100 cm)
+local CORE_LENGTH = 1.0
+local CORE_WIDTH = 0.28
 local IGNITE_SPEED = 12         -- how fast the flames grow when boosting starts (1/s)
 local FADE_SPEED = 8            -- and shrink when it stops
 local LIGHT_INTENSITY = 50
