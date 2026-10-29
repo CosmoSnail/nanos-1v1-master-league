@@ -52,17 +52,17 @@ CarTuning = {
     DodgeDeadzone = 0.5,
 }
 
-Input.Register("CarForward", "W", "Throttle / pitch down")
-Input.Register("CarBackward", "S", "Reverse / pitch up")
-Input.Register("CarLeft", "A", "Steer / yaw left")
-Input.Register("CarRight", "D", "Steer / yaw right")
-Input.Register("CarJump", "SpaceBar", "Jump, double jump, flip")
-Input.Register("CarJump2", "RightMouseButton", "Jump, double jump, flip")
-Input.Register("CarBoost", "LeftMouseButton", "Boost")
-Input.Register("CarBoost2", "LeftShift", "Boost")
-Input.Register("CarSlide", "LeftControl", "Powerslide / air roll with A and D")
-Input.Register("CarRollLeft", "Q", "Air roll left")
-Input.Register("CarRollRight", "E", "Air roll right")
+RegisterKey("CarForward", "W", "Throttle / pitch down")
+RegisterKey("CarBackward", "S", "Reverse / pitch up")
+RegisterKey("CarLeft", "A", "Steer / yaw left")
+RegisterKey("CarRight", "D", "Steer / yaw right")
+RegisterKey("CarJump", "SpaceBar", "Jump, double jump, flip")
+RegisterKey("CarJump2", "RightMouseButton", "Jump, double jump, flip")
+RegisterKey("CarBoost", "LeftMouseButton", "Boost")
+RegisterKey("CarBoost2", "LeftShift", "Boost")
+RegisterKey("CarSlide", "LeftControl", "Powerslide / air roll with left and right")
+RegisterKey("CarRollLeft", "Q", "Air roll left")
+RegisterKey("CarRollRight", "E", "Air roll right")
 
 local car = {
     vehicle = nil,
@@ -86,27 +86,27 @@ local PITCH_BINDINGS = { "CarForward", "CarBackward" }
 
 local function LatchPitchInputs()
     for _, binding in ipairs(PITCH_BINDINGS) do
-        car.latched[binding] = Input.IsBindingDown(binding)
+        car.latched[binding] = IsKeyDown(binding)
     end
 end
 
 local function Axis(positive, negative)
     local value = 0
-    if Input.IsBindingDown(positive) then value = value + 1 end
-    if negative and Input.IsBindingDown(negative) then value = value - 1 end
+    if IsKeyDown(positive) then value = value + 1 end
+    if negative and IsKeyDown(negative) then value = value - 1 end
     return value
 end
 
 -- Like Axis, but ignores keys still held since takeoff
 local function AirAxis(positive, negative)
     for _, binding in ipairs(PITCH_BINDINGS) do
-        if car.latched[binding] and not Input.IsBindingDown(binding) then
+        if car.latched[binding] and not IsKeyDown(binding) then
             car.latched[binding] = false
         end
     end
     local value = 0
-    if Input.IsBindingDown(positive) and not car.latched[positive] then value = value + 1 end
-    if Input.IsBindingDown(negative) and not car.latched[negative] then value = value - 1 end
+    if IsKeyDown(positive) and not car.latched[positive] then value = value + 1 end
+    if IsKeyDown(negative) and not car.latched[negative] then value = value - 1 end
     return value
 end
 
@@ -230,7 +230,7 @@ end
 local function DriveOnGround(vehicle, dt, f, r, u, velocity, w)
     local throttle = Axis("CarForward", "CarBackward")
     local steer = Axis("CarRight", "CarLeft")
-    local sliding = Input.IsBindingDown("CarSlide")
+    local sliding = IsKeyDown("CarSlide")
 
     local forwardSpeed = velocity:Dot(f)
     local sideSpeed = velocity:Dot(r)
@@ -290,7 +290,7 @@ local function ControlInAir(vehicle, dt, f, r, u, w, now)
     local pitchInput = AirAxis("CarForward", "CarBackward")
     local yawInput = Axis("CarRight", "CarLeft")
     local rollInput = Axis("CarRollRight", "CarRollLeft")
-    if Input.IsBindingDown("CarSlide") then
+    if IsKeyDown("CarSlide") then
         rollInput = Clamp(rollInput + yawInput, -1, 1)
         yawInput = 0
     end
@@ -319,8 +319,8 @@ local function OnJumpPressed()
         Jump(vehicle)
     end
 end
-Input.Bind("CarJump", InputEvent.Pressed, OnJumpPressed)
-Input.Bind("CarJump2", InputEvent.Pressed, OnJumpPressed)
+BindKey("CarJump", InputEvent.Pressed, OnJumpPressed)
+BindKey("CarJump2", InputEvent.Pressed, OnJumpPressed)
 
 Client.Subscribe("Tick", function(dt)
     local vehicle = GetLocalVehicle()
@@ -353,7 +353,7 @@ Client.Subscribe("Tick", function(dt)
     end
 
     -- Boost meter
-    local wantsBoost = Input.IsBindingDown("CarBoost") or Input.IsBindingDown("CarBoost2")
+    local wantsBoost = IsKeyDown("CarBoost") or IsKeyDown("CarBoost2")
     SetBoosting(wantsBoost and car.boost > 0)
     if car.boosting then
         car.boost = math.max(0, car.boost - CarTuning.BoostDrain * dt)
@@ -375,7 +375,7 @@ Client.Subscribe("Tick", function(dt)
 
     -- Holding jump right after the first jump makes it higher
     if car.jumpHolding then
-        local holding = Input.IsBindingDown("CarJump") or Input.IsBindingDown("CarJump2")
+        local holding = IsKeyDown("CarJump") or IsKeyDown("CarJump2")
         if holding and now - car.jumpTime < CarTuning.JumpHoldTime then
             deltaV = deltaV + u * (CarTuning.JumpHoldAccel * dt)
         else

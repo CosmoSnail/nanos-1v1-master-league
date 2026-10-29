@@ -1,6 +1,8 @@
 Package.Require("Sky.lua")
+Package.Require("Keys.lua")
 Package.Require("Car.lua")
 Package.Require("BoostFX.lua")
+Package.Require("BallCam.lua")
 Package.Require("Sounds.lua")
 
 local main_hud = WebUI("Main HUD", "file://UI/index.html")
@@ -63,4 +65,8 @@ end)
 
 Events.Subscribe("UpdateBoost", function(boost)
   main_hud:CallEvent("UpdateBoost", boost)
+end)
+
+Events.Subscribe("UpdateBallCam", function(enabled)
+  main_hud:CallEvent("UpdateBallCam", enabled)
 end)

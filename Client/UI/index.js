@@ -193,3 +193,13 @@ Events.Subscribe('UpdateBoost', (boost) => {
   boostValueEl.textContent = boost.toString()
   boostFillEl.style.width = `${boost}%`
 })
+
+/* =====================================================
+   BALL CAM INDICATOR
+   Fired by Client/BallCam.lua when ball cam is toggled
+===================================================== */
+const ballCamEl = document.querySelector('#ball-cam')
+
+Events.Subscribe('UpdateBallCam', (enabled) => {
+  ballCamEl.classList.toggle('hidden', !enabled)
+})

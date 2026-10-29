@@ -12,6 +12,8 @@ function InitBall()
     ball:SetMassScale(massScale)
     ball:SetPhysicalMaterial('nanos-world::PM_Rubber')
     KeepVisible(ball)
+    -- lets the clients find the ball (Client/BallCam.lua)
+    ball:SetValue("IsBall", true, true)
     -- always sync the ball at full rate, even from the other end of the arena
     ball:SetDistanceOptimizationMultiplier(0)
 
