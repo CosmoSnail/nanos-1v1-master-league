@@ -15,11 +15,11 @@ local NIGHT = {
     night_brightness = 1.6,
     clouds = 3.5,                       -- 0 (clear) to 10 (overcast)
     cloud_color = Color(0.55, 0.42, 0.8),
-    fog = 2,                            -- 0 to 100: the arena is 280 m long, a little goes a long way
+    fog = 5,                            -- 0 to 100: the arena is 280 m long, a little goes a long way (/fog to try)
 }
 local WITCHING = {
     cloud_color = Color(0.75, 0.25, 0.22),
-    fog = 5,
+    fog = 7,
     saturation = Color(1.15, 0.75, 0.75, 1),
     gain = Color(1.12, 0.85, 0.82, 1),
     contrast = Color(1.08, 1.08, 1.08, 1),
@@ -121,6 +121,14 @@ Events.SubscribeRemote("Lightning", function(location, seed)
     local player = Client.GetLocalPlayer()
     local distance = player and (player:GetCameraLocation() - location):Size() or 40000
     PlayThunder(seed, distance)
+end)
+
+-- /fog (dev): try another density of mist live; the Witching Hour keeps its own a little thicker
+Events.SubscribeRemote("DevFog", function(value)
+    if type(value) ~= "number" then return end
+    WITCHING.fog = value + (WITCHING.fog - NIGHT.fog)
+    NIGHT.fog = value
+    Try("Sky.SetFog", function() Sky.SetFog(witching and WITCHING.fog or NIGHT.fog) end)
 end)
 
 Events.SubscribeRemote("NewGame", function()

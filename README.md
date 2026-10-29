@@ -50,7 +50,8 @@ season). Same game and controls: cars driven by `Client/Car.lua`, a ball, two go
 
 With the `dev_commands` setting (`--custom_settings "dev_commands = true"`), in the chat: `/help`,
 `/goal [witches|pumpkins]`, `/hat [number|name]`, `/swap`, `/fireworks [end]`, `/end`, `/reload`, and for
-Halloween `/witching` (skip to the last minute) and `/lightning` (a strike now).
+Halloween `/witching` (skip to the last minute), `/lightning` (a strike now) and `/fog <0-100>` (try a density of
+mist live, until a reload).
 
 ## Assets and credits
 

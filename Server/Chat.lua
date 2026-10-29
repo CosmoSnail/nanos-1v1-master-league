@@ -9,6 +9,7 @@ Commands["/help"] = function(player, args)
     Chat.SendMessage(player, "/end - end the game now (during the end screen: start the next one)")
     Chat.SendMessage(player, "/witching - skip to the Witching Hour (the last minute)")
     Chat.SendMessage(player, "/lightning - a lightning strike now")
+    Chat.SendMessage(player, "/fog <0-100> - try a density of mist (until a reload)")
 end
 
 Commands["/witching"] = function(player, args)
@@ -18,6 +19,18 @@ end
 
 Commands["/lightning"] = function(player, args)
     StrikeLightning()
+end
+
+-- Tries a density of mist on everyone's sky until the package reloads (NIGHT.fog in Client/Atmosphere.lua keeps it)
+Commands["/fog"] = function(player, args)
+    local value = tonumber(args[1] or "")
+    if not value then
+        Chat.SendMessage(player, "/fog <0-100> - the mist's density for everyone (5 by default)")
+        return
+    end
+    value = math.max(0, math.min(100, value))
+    Events.BroadcastRemote("DevFog", Reliability.Reliable, value)
+    Chat.BroadcastMessage("Fog: " .. value)
 end
 
 Commands["/hat"] = function(player, args)
