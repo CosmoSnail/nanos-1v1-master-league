@@ -86,7 +86,7 @@ function AttachGoalLights(team)
     local light = Light(
         Ternary(team == Team.TeamA, Config.GoalPointA, Config.GoalPointB),
         Ternary(team == Team.TeamA, Rotator(90, 180, 0), Rotator(90, 0, 0)), -- Relevant only for Rect and Spot light types
-        Ternary(team == Team.TeamA, Config.ColorA, Config.ColorB), -- Color
+        Theme.Teams[team].goal_light or TeamColor(team), -- Color: it lights the goal's frame
         LightType.Point, -- Light type
         250, -- Per-light intensity
         10000, -- Attenuation Radius

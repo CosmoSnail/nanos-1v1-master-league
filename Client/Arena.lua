@@ -36,11 +36,11 @@ local SOUL_GLOW = Color(0.45, 0.8, 1.0)     -- the Skeletons' soul fire (Client/
 local PUMPKIN_SCALE = { 6.4, 9 }            -- the pumpkins outside: 5 to 7 m wide, no bigger than the ball
 
 -- The arena mesh's material slots (from its cooked mesh) and what they are lit with; "EmissiveColor" is a
--- parameter of the arena's materials
+-- parameter of the arena's materials. The goal frames (slot 5, both goals) keep their own: they take the color
+-- of the light in their goal (AttachGoalLights in Server/Goal.lua)
 local ARENA_GLOW = {
     { slot = 0, color = Color(0.03, 0.0, 0.06) },   -- the glass dome: a faint purple haze
     { slot = 1, color = Color(0.55, 0.08, 1.3) },   -- the rims along the top of the ramps: purple
-    { slot = 5, color = Color(0.35, 1.3, 0.06) },   -- the goal frames: slime green
     { slot = 9, color = Color(1.4, 0.38, 0.02) },   -- the ring: pumpkin orange
 }
 
@@ -244,15 +244,15 @@ local SKULL = "nanos-world::SM_HumanSkeleton_Head_Full"
 local SKULL_SCALE = 600     -- the mesh is 15 cm wide (X), 20 deep (Y, the face on +Y) and 24 high (Z), centred
 
 local function PumpkinPatch()
-    local spot = Vector(GOAL_BACK + 13300 * BIG, 0, GROUND_Z)
+    local origin = Vector(GOAL_BACK + 13300 * BIG, 0, GROUND_Z)
     local function At(x, y)
-        return spot + Vector(x * BIG, y * BIG, 0)
+        return origin + Vector(x * BIG, y * BIG, 0)
     end
 
     -- turned to face the arena (-X), its jaw a little in the ground
-    Mesh(SKULL, spot + Vector(0, 0, 11.2 * SKULL_SCALE), Rotator(0, 90, 0), SKULL_SCALE)
+    Mesh(SKULL, origin + Vector(0, 0, 11.2 * SKULL_SCALE), Rotator(0, 90, 0), SKULL_SCALE)
     BigGlow(At(-1800 * SIZE, 0) + Up(900), SOUL_GLOW, 3500, 14000)
-    Sigil(spot + Vector(0, 0, 6), 36 * BIG * SIZE, SOUL_GLOW, 1.6, 7)
+    Sigil(origin + Vector(0, 0, 6), 36 * BIG * SIZE, SOUL_GLOW, 1.6, 7)
 
     -- what stands in the patch, { x, y, radius } in life cm, so the pumpkins keep clear of it and of each other
     local taken = { { 0, 0, 7500 / BIG } }     -- the skull: 61 m from its centre to its face
