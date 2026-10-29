@@ -35,7 +35,7 @@ function HandleGoal(ball, teamScored)
         Events.BroadcastRemote("UpdateScoreA", Reliability.Reliable, Game.ScoreA)
 
     else
-        print("The Pumpkins scored! " .. "(" .. shown:GetName() .. ")")
+        print("The Skeletons scored! " .. "(" .. shown:GetName() .. ")")
         Game.ScoreB = Game.ScoreB + 1
         Events.BroadcastRemote("UpdateScoreB", Reliability.Reliable, Game.ScoreB)
     end

@@ -1,5 +1,5 @@
--- What the cars wear on their roof. Each game the Witches get the witch hat and the Pumpkins a glowing
--- jack-o'-lantern head (`team`); /hat (dev) goes through all of them.
+-- What the cars wear on their roof. Each game the Witches get the witch hat and the Skeletons a giant skull
+-- (`team`); /hat (dev) goes through all of them.
 -- burn-the-witch-vfx meshes are centred on their origin and look along +X, like the car
 Hats = {
     {
@@ -11,17 +11,25 @@ Hats = {
         team = 1,
     },
     {
+        -- the default pack's skeleton's skull (24 cm high, centred): it faces +Y, like the witch hat
+        label = "Skull",
+        name = "nanos-world::SM_HumanSkeleton_Head_Full",
+        rotation = Rotator(0, -90, 0),
+        location = Vector(-15, 0, 198),
+        scale = 4.5,
+        team = 2,
+    },
+    {
         label = "Jack-o'-Lantern",
         name = "burn-the-witch-vfx::SM_FX_Pumpkin",
         rotation = Rotator(0, 0, 0),
         location = Vector(-15, 0, 200),
         scale = 1.35,
-        team = 2,
-        -- only the carved face glows, like the ball (Client/PumpkinBall.lua)
+        -- only the carved face glows
         parameters = { Seep = 0, Ambient = 0.12 },
     },
     {
-        label = "Skull",
+        label = "Cursed Skull",
         name = "burn-the-witch-vfx::SM_FX_Skull",
         rotation = Rotator(0, 0, 0),
         location = Vector(-15, 0, 210),

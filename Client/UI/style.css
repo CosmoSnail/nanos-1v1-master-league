@@ -16,18 +16,23 @@
 
 /* =====================================================
    COLOR TOKENS
-   Witches (purple), Pumpkins (orange), slime green and bone
+   Witches (purple), Skeletons (old bone), the pumpkin ball (orange), slime green and bone
 ===================================================== */
 :root {
   --witch: 176, 92, 255;
   --witch-soft: 222, 190, 255;
   --witch-dark: 84, 20, 140;
 
+  --skeleton: 228, 214, 178;
+  --skeleton-soft: 248, 240, 220;
+  --skeleton-dark: 92, 76, 54;
+
   --pumpkin: 255, 128, 20;
   --pumpkin-soft: 255, 206, 140;
   --pumpkin-dark: 170, 52, 0;
 
   --slime: 140, 255, 70;
+  --slime-soft: 196, 255, 160;
   --slime-dark: 40, 140, 20;
   --bone: 246, 238, 218;
   --night: 12, 6, 20;
@@ -220,7 +225,7 @@ svg.ball-cam-icon {
     90deg,
     rgba(var(--witch), 1),
     rgba(var(--slime), 0.9),
-    rgba(var(--pumpkin), 1),
+    rgba(var(--skeleton), 1),
     rgba(var(--slime), 0.9),
     rgba(var(--witch), 1)
   );
@@ -243,7 +248,7 @@ svg.ball-cam-icon {
   border-radius: inherit;
 
   box-shadow: -14px 0 22px -10px rgba(var(--witch), 0.7),
-    14px 0 22px -10px rgba(var(--pumpkin), 0.7),
+    14px 0 22px -10px rgba(var(--skeleton), 0.7),
     0 0 18px rgba(var(--slime), 0.2);
 
   pointer-events: none;
@@ -304,7 +309,7 @@ svg.ball-cam-icon {
 }
 
 .score-block.team-b .team-label {
-  color: rgb(var(--pumpkin-soft));
+  color: rgb(var(--skeleton-soft));
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
 }
 
@@ -319,7 +324,8 @@ svg.ball-cam-icon {
   min-width: 5ch;
   text-align: center;
   letter-spacing: 6px;
-  color: rgb(var(--bone));
+  /* slime green: apart from both teams' colors */
+  color: rgb(var(--slime-soft));
 
   text-shadow: 0 3px 0 rgba(0, 0, 0, 0.5), 0 0 10px rgba(var(--slime), 0.3);
 }
@@ -350,10 +356,10 @@ svg.ball-cam-icon {
   text-shadow: 0 3px 0 rgba(0, 0, 0, 0.5), 0 0 10px rgba(var(--witch), 0.4);
 }
 
-/* PUMPKINS */
+/* SKELETONS */
 .score-right {
-  color: rgb(var(--pumpkin-soft));
-  text-shadow: 0 3px 0 rgba(0, 0, 0, 0.5), 0 0 10px rgba(var(--pumpkin), 0.4);
+  color: rgb(var(--skeleton-soft));
+  text-shadow: 0 3px 0 rgba(0, 0, 0, 0.5), 0 0 10px rgba(var(--skeleton), 0.4);
 }
 
 
@@ -362,9 +368,9 @@ svg.ball-cam-icon {
    GOAL BANNER — COLOR TOKENS
 ===================================================== */
 .score-container {
-  --goal-main: var(--pumpkin);
-  --goal-soft: var(--pumpkin-soft);
-  --goal-dark: var(--pumpkin-dark);
+  --goal-main: var(--skeleton);
+  --goal-soft: var(--skeleton-soft);
+  --goal-dark: var(--skeleton-dark);
   --goal-text: var(--bone);
 
   width: 100%;
@@ -441,7 +447,7 @@ svg.ball-cam-icon {
    GOAL PLAYER CARD
 ===================================================== */
 .goal-player-card {
-  --goal-main: var(--pumpkin);
+  --goal-main: var(--skeleton);
 
   position: absolute;
   top: 50%;
@@ -775,9 +781,9 @@ svg.ball-cam-icon {
 }
 
 .leaderboard-team.team-b {
-  --team-main: var(--pumpkin);
-  --team-soft: var(--pumpkin-soft);
-  --team-dark: var(--pumpkin-dark);
+  --team-main: var(--skeleton);
+  --team-soft: var(--skeleton-soft);
+  --team-dark: var(--skeleton-dark);
 }
 
 /* Panel border */
@@ -987,9 +993,9 @@ svg.ball-cam-icon {
 }
 
 .game-over-title.team-b {
-  --title-main: var(--pumpkin);
-  --title-soft: var(--pumpkin-soft);
-  --title-dark: var(--pumpkin-dark);
+  --title-main: var(--skeleton);
+  --title-soft: var(--skeleton-soft);
+  --title-dark: var(--skeleton-dark);
 }
 
 .game-over-score {
@@ -1027,7 +1033,7 @@ svg.ball-cam-icon {
 }
 
 .game-over-mvp.team-b {
-  --team-main: var(--pumpkin);
+  --team-main: var(--skeleton);
 }
 
 .game-over-mvp.hidden {

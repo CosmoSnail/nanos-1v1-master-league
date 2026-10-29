@@ -1,6 +1,7 @@
 -- What moves in the Halloween night, on each client (nothing on the network): bats circling over the dome,
 -- a witch on her broom crossing the sky now and then, ghosts drifting under the arena's ceiling, and a goal's
--- celebration: the pumpkin bursts into a shower of little pumpkins and ghosts fly up out of the goal, wailing
+-- celebration: the pumpkin bursts into a shower of little pumpkins (and bones, for the Skeletons) and ghosts
+-- fly up out of the goal, wailing
 
 local IMAGES = "package://" .. Package.GetName() .. "/Client/Images/"
 local VFX = "burn-the-witch-vfx::"
@@ -15,6 +16,13 @@ local WITCH_FLIGHT = 15                     -- seconds to cross the sky
 local WITCH_CACKLES = { "nanos-world::A_Female_01_Laugh", "nanos-world::A_Female_02_Laugh" }
 local GHOST_COLOR = Color(0.6, 1.0, 0.8)
 local BURST_PUMPKINS = 14
+local BURST_BONES = 10
+-- the default pack's skeleton, in pieces
+local BONES = {
+    "nanos-world::SM_HumanSkeleton_Head_Full", "nanos-world::SM_HumanSkeleton_Femur",
+    "nanos-world::SM_HumanSkeleton_RibCage", "nanos-world::SM_HumanSkeleton_Pelvis",
+    "nanos-world::SM_HumanSkeleton_Humerus", "nanos-world::SM_HumanSkeleton_Tibia",
+}
 local RISING_GHOSTS = 5
 local RISE_TIME = 4                         -- seconds
 
@@ -185,19 +193,31 @@ Client.Subscribe("Tick", function(dt)
     UpdateGhosts(dt, now)
 end)
 
--- A goal: little pumpkins burst out of the big one, bouncing round the goal (local physics, light enough not
--- to shove the cars), and ghosts spiral up out of it
-local function Celebrate(location)
+-- Something flung out of the goal, bouncing round it (local physics, light enough not to shove the cars)
+local function Fling(location, asset, scale)
     local towards_pitch = location.X > 0 and -1 or 1
+    local prop = Prop(location + Vector(Rand(-250, 250), Rand(-250, 250), Rand(0, 300)), Rotator(Rand(0, 360), Rand(0, 360), 0),
+        asset, CollisionType.Normal, true, GrabMode.Disabled, CCDMode.Auto)
+    prop:SetScale(Vector(scale))
+    prop:SetMassScale(0.1)
+    prop:SetLifeSpan(6.5)
+    prop:SetRenderCullDistance(RENDER_CULL_DISTANCE)
+    local direction = Vector(towards_pitch * Rand(0.2, 1), Rand(-1, 1), Rand(0.6, 1.4)):GetSafeNormal()
+    prop:AddImpulse(direction * Rand(1800, 3400), true)
+end
+
+-- A goal: little pumpkins burst out of the big one, bones too when the Skeletons (team 2) scored, rattling,
+-- and ghosts spiral up out of it
+local function Celebrate(location, team)
     for _ = 1, BURST_PUMPKINS do
-        local pumpkin = Prop(location + Vector(Rand(-250, 250), Rand(-250, 250), Rand(0, 300)), Rotator(Rand(0, 360), Rand(0, 360), 0),
-            "nanos-world::SM_Fruit_Pumpkin_01", CollisionType.Normal, true, GrabMode.Disabled, CCDMode.Auto)
-        pumpkin:SetScale(Vector(Rand(2.5, 4.5)))
-        pumpkin:SetMassScale(0.1)
-        pumpkin:SetLifeSpan(6.5)
-        pumpkin:SetRenderCullDistance(RENDER_CULL_DISTANCE)
-        local direction = Vector(towards_pitch * Rand(0.2, 1), Rand(-1, 1), Rand(0.6, 1.4)):GetSafeNormal()
-        pumpkin:AddImpulse(direction * Rand(1800, 3400), true)
+        Fling(location, "nanos-world::SM_Fruit_Pumpkin_01", Rand(2.5, 4.5))
+    end
+    if team == 2 then
+        for _ = 1, BURST_BONES do
+            Fling(location, BONES[math.random(#BONES)], Rand(3, 4.5))
+        end
+        Sound(location, "nanos-world::A_Skeleton_Falling", false, true, SoundType.SFX, 1, Rand(0.8, 0.95), 2000, 40000,
+            AttenuationFunction.NaturalSound)
     end
 
     for k = 1, RISING_GHOSTS do
@@ -215,6 +235,6 @@ end
 Events.SubscribeRemote("GoalScored", function(info)
     local location = (type(info) == "table" and info.x) and Vector(info.x, info.y, info.z) or GetPumpkinLocation()
     if location then
-        Celebrate(location)
+        Celebrate(location, type(info) == "table" and info.team or nil)
     end
 end)

@@ -19,7 +19,7 @@ Config = {
     BallSpawnPoint = Vector(0, 0, 500),
     GoalPointA = Vector(-13700, 0, 900),
     GoalPointB = Vector(13700, 0, 900),
-    -- Witches and Pumpkins (Shared/Theme.lua)
+    -- Witches and Skeletons (Shared/Theme.lua)
     ColorA = Theme.Teams[1].color,
     ColorB = Theme.Teams[2].color,
     PaintCars = true,           -- tint the car bodies in their team's color

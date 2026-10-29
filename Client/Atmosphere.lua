@@ -3,8 +3,8 @@
 -- (Server/Weather.lua, more and more often as a game goes on).
 -- The night deepens through each game, little by little and without a word: from a third of the way in, the
 -- moon turns from orange to blood red (Client/Images/moon_0 to moon_4), the clouds redden, the mist thickens
--- and the colors warm towards red; in the last minute the music swells into a faster version. It is only the
--- mood rising to the end of the game, nothing changes in the rules
+-- and the colors warm towards red. It is only the mood rising to the end of the game, nothing changes in the
+-- rules
 local IMAGES = "package://" .. Package.GetName() .. "/Client/Images/"
 local RENDER_CULL_DISTANCE = 1000000
 
@@ -30,7 +30,6 @@ local LATE = {
 }
 local DEEPEN_FROM = 0.3         -- of the game played when the night starts to deepen
 local MOONS = 5                 -- moon_0.png (harvest) to moon_4.png (blood)
-local FINALE_MUSIC = 60         -- seconds left when the faster music swells in
 local LIGHTNING_BOLTS = {
     "nanos-world::P_FXVariety_Lightning_01",
     "nanos-world::P_FXVariety_Lightning_02",
@@ -106,7 +105,6 @@ function UpdateNight(time)
     local played = 1 - time / math.max(Theme.GameLength, time, 1)
     local k = math.max(0, math.min(1, (played - DEEPEN_FROM) / (1 - DEEPEN_FROM)))
     SetDepth(k * k * (3 - 2 * k))
-    SetFinaleMusic(time <= FINALE_MUSIC)
 end
 
 -- A lightning strike: the bolt far out over the graveyard, the pitch and the sky flashing twice, and the
@@ -149,7 +147,6 @@ end)
 -- A new game: the night starts over
 Events.SubscribeRemote("NewGame", function()
     SetDepth(0)
-    SetFinaleMusic(false)
 end)
 
 Package.Subscribe("Unload", function()

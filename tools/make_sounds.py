@@ -1,8 +1,5 @@
 """Music and sounds of the Halloween edition (Client/Sounds), all synthesized here with numpy: no samples.
 
-- music_main.ogg: "In the Hall of the Mountain King" (Grieg, 1875, public domain) as a spooky march: pizzicato
-  bass, a bone xylophone, a church organ, a ghostly choir and a theremin. A seamless loop.
-- music_finale.ogg: the same theme, much faster and louder, for the last minute of a game.
 - goal_*.ogg: four goal stingers (Bach's Toccata in D minor on the organ, bells and choir, a theremin wail,
   a skeleton xylophone run). end_organ.ogg: the whole Toccata opening, when the time runs out.
 - countdown_tick.ogg / countdown_go.ogg, thunder_*.ogg, owl.ogg, wolf_howl.ogg, bonk_*.ogg.
@@ -80,20 +77,6 @@ def xylophone(f, dur=None, hardness=1.0):
     return (out + click) * 0.5
 
 
-def pluck(f, dur, bright=1.0, decay=0.9):
-    """Plucked string (harpsichord when bright, pizzicato when dark): harmonics dying faster as they rise."""
-    n = int((dur + decay) * SR)
-    t = np.arange(n) / SR
-    out = np.zeros(n)
-    for k in range(1, 14):
-        if f * k > 12000:
-            break
-        amp = (1 / k ** (1.6 - 0.6 * bright)) * (1 if k == 1 else bright)
-        out += amp * np.sin(2 * np.pi * f * k * t + RNG.uniform(0, 1)) * np.exp(-t * (1 + 0.7 * k) / decay)
-    stop = np.clip((dur + 0.05 - t) / 0.06, 0, 1) * 0.85 + 0.15
-    return out * stop * fade(n, 0.002, 0.03) * 0.35
-
-
 def choir(f, dur, vowel="oo", voices=3):
     """A ghostly choir: harmonics shaped by the vowel's formants, a few voices slightly apart, slow swell."""
     formants = {"oo": ((300, 1.0, 90), (870, 0.4, 110), (2240, 0.1, 160)),
@@ -139,27 +122,6 @@ def timpani(f, strength=1.0):
         out += amp * np.sin(2 * np.pi * f * ratio * np.cumsum(bend) / SR) * np.exp(-t / tau)
     out += lowpass(RNG.standard_normal(n), 900) * np.exp(-t / 0.03) * 0.6
     return out * 0.5 * strength
-
-
-def kick():
-    n = int(0.45 * SR)
-    t = np.arange(n) / SR
-    freq = 48 + 110 * np.exp(-t * 28)
-    return np.sin(2 * np.pi * np.cumsum(freq) / SR) * np.exp(-t / 0.18) * 0.9
-
-
-def snare():
-    n = int(0.3 * SR)
-    t = np.arange(n) / SR
-    body = np.sin(2 * np.pi * 185 * t) * np.exp(-t / 0.05)
-    rattle = bandpass(RNG.standard_normal(n), 1500, 8000) * np.exp(-t / 0.11)
-    return (body * 0.5 + rattle * 0.6) * 0.6
-
-
-def hat(open_=False):
-    n = int((0.35 if open_ else 0.08) * SR)
-    t = np.arange(n) / SR
-    return highpass(RNG.standard_normal(n), 7000, 4) * np.exp(-t / (0.12 if open_ else 0.022)) * 0.22
 
 
 def crash():
@@ -233,19 +195,6 @@ def master(x, peak=0.89, drive=1.4):
     return x * peak
 
 
-def loop(track, rev_length=2.4, wet=0.22):
-    """Seamless loop: everything ringing past the end (notes, reverb) wraps round onto the start."""
-    x = reverb(track.buf, rev_length, wet)
-    n = int(track.length * SR)
-    out = x[:n].copy()
-    rest = x[n:]
-    while len(rest):
-        k = min(n, len(rest))
-        out[:k] += rest[:k]
-        rest = rest[k:]
-    return out
-
-
 def save(name, x):
     os.makedirs(OUT_DIR, exist_ok=True)
     path = os.path.join(OUT_DIR, name)
@@ -255,131 +204,6 @@ def save(name, x):
     subprocess.run([FFMPEG, "-y", "-loglevel", "error", "-f", "s16le", "-ar", str(SR), "-ac", "2", "-i", "-",
                     "-c:a", "libvorbis", "-q:a", "5", path], input=pcm.tobytes(), check=True)
     print("%-22s %5.1f s" % (name, len(pcm) / SR))
-
-
-# --- In the Hall of the Mountain King (Grieg) -----------------------------------------------------------------
-# The theme in B minor as (note, eighths); None is a rest. A twice, B a fifth up, then A ending on the tonic
-
-A = [(59, 1), (61, 1), (62, 1), (64, 1), (66, 1), (62, 1), (66, 2),
-     (65, 1), (61, 1), (65, 2), (64, 1), (60, 1), (64, 2),
-     (59, 1), (61, 1), (62, 1), (64, 1), (66, 1), (62, 1), (66, 1), (71, 1),
-     (69, 1), (66, 1), (62, 1), (66, 1), (69, 4)]
-B = [(66, 1), (68, 1), (70, 1), (71, 1), (73, 1), (70, 1), (73, 2),
-     (74, 1), (70, 1), (74, 2), (73, 1), (70, 1), (73, 2),
-     (66, 1), (68, 1), (70, 1), (71, 1), (73, 1), (70, 1), (73, 1), (78, 1),
-     (76, 1), (73, 1), (70, 1), (73, 1), (76, 4)]
-A_END = A[:-1] + [(71, 2), (None, 2)]
-THEME = A + A + B + A_END
-
-# Chords by half bar (root of the bass, chord notes): a creepy chromatic harmony under the tune
-Bm, Cs, C, D, Fs, Daug, Fs7 = (35, (59, 62, 66)), (37, (61, 65, 68)), (36, (60, 64, 67)), (38, (62, 66, 69)), \
-    (42, (61, 66, 70)), (38, (62, 66, 70)), (42, (64, 66, 70))
-CHORDS_A = [Bm, Bm, Cs, C, Bm, Bm, D, Fs]
-CHORDS_B = [Fs, Fs, Daug, Fs, Fs, Fs, Fs7, Fs7]
-CHORDS_END = [Bm, Bm, Cs, C, Bm, Bm, D, Bm]
-CHORDS = CHORDS_A + CHORDS_A + CHORDS_B + CHORDS_END   # 32 half bars = 16 bars
-
-
-def melody_events(theme, start_beat):
-    beat = start_beat
-    for note, eighths in theme:
-        if note is not None:
-            yield beat, note, eighths * 0.5
-        beat += eighths * 0.5
-
-
-def music_main():
-    bpm = 132
-    tr = Track(beats=128, bpm=bpm)
-    eighth = 60 / bpm / 2
-    for cycle in range(2):
-        base = cycle * 64
-        full = cycle == 1
-        # Melody: bone xylophone the first time, organ (and xylophone an octave up) the second
-        for beat, note, length in melody_events(THEME, base):
-            if not full:
-                tr.add(xylophone(hz(note + 12)), beat, gain=0.55, pan=-0.2)
-                tr.add(pluck(hz(note), length * eighth * 2, bright=1.0, decay=0.6), beat, gain=0.35, pan=0.25)
-            else:
-                tr.add(organ(hz(note), length * eighth * 2 * 0.92), beat, gain=0.55, pan=0.1)
-                tr.add(xylophone(hz(note + 12), hardness=0.8), beat, gain=0.32, pan=-0.35)
-        for half, (root, notes) in enumerate(CHORDS):
-            beat = base + half * 2
-            # Oom-pah: pizzicato root on the beat, a short harpsichord chord on the off beat
-            tr.add(pluck(hz(root), 0.25, bright=0.25, decay=0.5), beat, gain=0.9)
-            tr.add(pluck(hz(root + 7), 0.25, bright=0.25, decay=0.5), beat + 1, gain=0.6)
-            for k, note in enumerate(notes):
-                tr.add(pluck(hz(note - 12), 0.12, bright=0.8, decay=0.25), beat + 0.5, gain=0.18, pan=-0.5 + k * 0.4)
-                tr.add(pluck(hz(note - 12), 0.12, bright=0.8, decay=0.25), beat + 1.5, gain=0.14, pan=-0.5 + k * 0.4)
-            # The choir holds the chords, softly the first time
-            if half % 2 == 0:
-                for k, note in enumerate(notes):
-                    tr.add(choir(hz(note - 12), 4 * 60 / bpm, "ah" if full else "oo"), beat, gain=0.55 if full else 0.35,
-                           pan=-0.6 + k * 0.6)
-        for bar in range(16):
-            beat = base + bar * 4
-            if not full:
-                if bar % 4 == 0:
-                    tr.add(timpani(hz(35)), beat, gain=0.7)
-                for k in range(4):
-                    tr.add(hat(), beat + k + 0.5, gain=0.5, pan=0.4)
-            else:
-                tr.add(kick(), beat, gain=0.8)
-                tr.add(kick(), beat + 2, gain=0.7)
-                tr.add(snare(), beat + 1, gain=0.55, pan=0.1)
-                tr.add(snare(), beat + 3, gain=0.6, pan=0.1)
-                for k in range(8):
-                    tr.add(hat(open_=k == 7), beat + k * 0.5, gain=0.45 if k % 2 else 0.3, pan=0.45)
-                if bar % 8 == 0:
-                    tr.add(crash(), beat, gain=0.55, pan=-0.3)
-        # The theremin floats over the B section the second time
-        if full:
-            start = tr.at(base + 32)
-            bar_s = 4 * 60 / bpm
-            tr.add(theremin([(0, 78), (bar_s * 0.9, 78), (bar_s, 82), (bar_s * 1.9, 82), (bar_s * 2, 85), (bar_s * 2.9, 85),
-                             (bar_s * 3.2, 88), (bar_s * 3.95, 76)]), time=start, gain=0.5, pan=0.3)
-    # Timpani roll into the loop
-    for k in range(8):
-        tr.add(timpani(hz(42), 0.35 + k * 0.06), 128 - 2 + k * 0.25, gain=0.6)
-    save("music_main.ogg", master(loop(tr)))
-
-
-def music_finale():
-    bpm = 168
-    tr = Track(beats=128, bpm=bpm)
-    eighth = 60 / bpm / 2
-    for cycle in range(2):
-        base = cycle * 64
-        for beat, note, length in melody_events(THEME, base):
-            tr.add(organ(hz(note), length * eighth * 2 * 0.9, full=1.3), beat, gain=0.5, pan=0.15)
-            tr.add(organ(hz(note + 12), length * eighth * 2 * 0.9), beat, gain=0.28, pan=-0.15)
-            tr.add(xylophone(hz(note + 12)), beat, gain=0.35, pan=-0.4)
-        for half, (root, notes) in enumerate(CHORDS):
-            beat = base + half * 2
-            for k in range(4):   # pumping eighth-note bass
-                tr.add(pluck(hz(root), 0.18, bright=0.35, decay=0.35), beat + k * 0.5, gain=0.85 if k % 2 == 0 else 0.6)
-            for k, note in enumerate(notes):
-                tr.add(choir(hz(note - 12), 2 * 60 / bpm, "ah"), beat, gain=0.6, pan=-0.6 + k * 0.6)
-            tr.add(organ(hz(root + 12), 2 * 60 / bpm * 0.95, full=1.4), beat, gain=0.25)
-        for bar in range(16):
-            beat = base + bar * 4
-            for k in range(4):
-                tr.add(kick(), beat + k, gain=0.85)
-            tr.add(snare(), beat + 1, gain=0.65, pan=0.1)
-            tr.add(snare(), beat + 3, gain=0.7, pan=0.1)
-            for k in range(16):
-                tr.add(hat(), beat + k * 0.25, gain=0.3 if k % 2 else 0.42, pan=0.45)
-            if bar % 4 == 0:
-                tr.add(crash(), beat, gain=0.6, pan=-0.3)
-                tr.add(timpani(hz(35), 1.2), beat, gain=0.8)
-            if bar % 8 == 7:
-                for k in range(8):
-                    tr.add(timpani(hz(42), 0.4 + k * 0.08), beat + 2 + k * 0.25, gain=0.7)
-        start = tr.at(base + 32)
-        bar_s = 4 * 60 / bpm
-        tr.add(theremin([(0, 83), (bar_s * 0.5, 90), (bar_s * 1.8, 88), (bar_s * 2.5, 94), (bar_s * 3.6, 78)], vibrato=0.02),
-               time=start, gain=0.45, pan=0.35)
-    save("music_finale.ogg", master(loop(tr, 2.0, 0.18), peak=0.92, drive=1.8))
 
 
 # --- Stingers --------------------------------------------------------------------------------------------------
@@ -553,8 +377,6 @@ def bonk(pitch=1.0):
 
 
 if __name__ == "__main__":
-    music_main()
-    music_finale()
     stinger("goal_toccata.ogg", goal_toccata, 4.6)
     stinger("goal_bells.ogg", goal_bells, 4.5)
     stinger("goal_theremin.ogg", goal_theremin, 4.4)

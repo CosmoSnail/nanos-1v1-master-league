@@ -16,7 +16,7 @@
   <body>
     <!-- =====================================================
          SVG SYMBOLS
-         Bat, witch hat, pumpkin and cobweb, used all over the HUD
+         Bat, witch hat, skull, pumpkin and cobweb, used all over the HUD
     ====================================================== -->
     <svg width="0" height="0" style="position: absolute">
       <defs>
@@ -28,6 +28,12 @@
           <path d="M4 52c10-6 46-8 56-2-4 6-52 8-56 2z" />
           <path d="M18 50c4-14 8-26 12-34 3-6 8-12 16-14-5 5-7 9-8 14 2 10 6 22 9 33-8 3-21 4-29 1z" />
           <path fill="#8cff46" d="M19 46c9 2 19 2 28-1l1 4c-9 3-20 3-30 1z" />
+        </symbol>
+        <symbol id="icon-skull" viewBox="0 0 64 64">
+          <path
+            d="M32 4C17 4 7 14 7 28c0 8 4 14 9 17v8c0 3 2 5 5 5h22c3 0 5-2 5-5v-8c5-3 9-9 9-17C57 14 47 4 32 4z" />
+          <path fill="#140a1c"
+            d="M15 30c0-6 5-9 10-8s7 6 5 11-6 6-10 5-5-4-5-8zM49 30c0-6-5-9-10-8s-7 6-5 11 6 6 10 5 5-4 5-8zM32 37l-4 8h8zM24 51h2v7h-2zM29 51h2v7h-2zM34 51h2v7h-2zM39 51h2v7h-2z" />
         </symbol>
         <symbol id="icon-pumpkin" viewBox="0 0 64 64">
           <path fill="#3c6e1e" d="M30 14c0-5 2-9 6-11l3 3c-3 2-4 5-4 8z" />
@@ -81,10 +87,10 @@
         <span class="timer-caption">MONSTER LEAGUE</span>
       </div>
 
-      <!-- Team B Score (Pumpkins) -->
+      <!-- Team B Score (Skeletons) -->
       <div class="score-block team-b">
         <span id="team-b-score" class="score score-right">0</span>
-        <span class="team-label">PUMPKINS<svg class="team-icon"><use href="#icon-pumpkin" /></svg></span>
+        <span class="team-label">SKELETONS<svg class="team-icon"><use href="#icon-skull" /></svg></span>
       </div>
 
       <svg class="timer-bat timer-bat-left"><use href="#icon-bat" /></svg>
@@ -192,7 +198,7 @@
 
           <div class="leaderboard-team team-b">
             <div class="leaderboard-header">
-              <span class="leaderboard-team-name"><svg class="team-icon"><use href="#icon-pumpkin" /></svg>PUMPKINS</span>
+              <span class="leaderboard-team-name"><svg class="team-icon"><use href="#icon-skull" /></svg>SKELETONS</span>
               <span id="leaderboard-score-b" class="leaderboard-team-score">0</span>
             </div>
             <table>

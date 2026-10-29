@@ -39,7 +39,7 @@ end
 function EndGame()
     Game.State = State.Ended
     Game.EndedTimer = Config.EndedDuration
-    local result = "The night is over! Witches " .. tostring(Game.ScoreA) .. " x " .. tostring(Game.ScoreB) .. " Pumpkins"
+    local result = "The night is over! Witches " .. tostring(Game.ScoreA) .. " x " .. tostring(Game.ScoreB) .. " Skeletons"
     if Game.ScoreA ~= Game.ScoreB then
         result = result .. " - the " .. TeamName(Ternary(Game.ScoreA > Game.ScoreB, Team.TeamA, Team.TeamB)) .. " rule the graveyard!"
     end

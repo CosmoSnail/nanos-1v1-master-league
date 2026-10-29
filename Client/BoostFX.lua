@@ -16,22 +16,23 @@ local CORE_WIDTH = 0.28
 local IGNITE_SPEED = 12         -- how fast the flames grow when boosting starts (1/s)
 local FADE_SPEED = 8            -- and shrink when it stops
 local LIGHT_INTENSITY = 9
--- Exhaust by the "Team" value of the vehicle (1 = Witches, 2 = Pumpkins, see Shared/Theme.lua); any of the
+-- Exhaust by the "Team" value of the vehicle (1 = Witches, 2 = Skeletons, see Shared/Theme.lua); any of the
 -- default pack's P_RocketExhaust_* works (Afterburn, Afterburn_Jet, Realistic, Crackling, Plume_01...)
 local EXHAUST_PARTICLES = {
     [1] = "nanos-world::P_RocketExhaust_Violet",
-    [2] = "nanos-world::P_RocketExhaust_Afterburn",
+    [2] = "nanos-world::P_RocketExhaust_Blue",
 }
 local EXHAUST_DEFAULT = "nanos-world::P_RocketExhaust_Afterburn"
 local EXHAUST_SCALE = 0.4
 local RENDER_CULL_DISTANCE = 1000000  -- whole arena, like Config.RenderCullDistance on the server
 
--- Flames by team: the Witches' burn purple round a slime green core (witch fire), the Pumpkins' like a candle
+-- Flames by team: the Witches' burn purple round a slime green core (witch fire), the Skeletons' pale blue round
+-- a white core (soul fire)
 local FLAMES = {
     [1] = { outer = Color(1.3, 0.2, 2.6), core = Color(1.4, 3.4, 0.6), light = Color(0.6, 0.2, 1.0) },
-    [2] = { outer = Color(2, 0.4, 0.05), core = Color(3.5, 2.5, 1.1), light = Color(1, 0.45, 0.1) },
+    [2] = { outer = Color(0.35, 1.3, 2.6), core = Color(2.4, 3.2, 3.6), light = Color(0.45, 0.8, 1.0) },
 }
-local FLAMES_DEFAULT = FLAMES[2]
+local FLAMES_DEFAULT = { outer = Color(2, 0.4, 0.05), core = Color(3.5, 2.5, 1.1), light = Color(1, 0.45, 0.1) }
 
 -- vehicle -> { cones = { { mesh, nozzle, length, width } }, exhausts = {}, light, power, burning }
 local effects = {}

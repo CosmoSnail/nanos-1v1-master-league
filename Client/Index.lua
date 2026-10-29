@@ -72,7 +72,7 @@ end)
 Events.SubscribeRemote("GoalScored", function(info)
   main_hud:CallEvent("GoalScored", info)
 
-  PlayGoalSound()
+  PlayGoalSound(type(info) == "table" and info.team or nil)
 end)
 
 Events.Subscribe("UpdateBoost", function(boost)

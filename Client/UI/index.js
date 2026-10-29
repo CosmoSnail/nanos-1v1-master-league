@@ -28,7 +28,7 @@ const countdownNumberEl = document.querySelector('#countdown-number')
 const leaderboardScoreAEl = document.querySelector('#leaderboard-score-a')
 const leaderboardScoreBEl = document.querySelector('#leaderboard-score-b')
 
-const TEAM_NAMES = { 1: 'WITCHES', 2: 'PUMPKINS' }
+const TEAM_NAMES = { 1: 'WITCHES', 2: 'SKELETONS' }
 
 /* =====================================================
    HUD STATE MACHINE

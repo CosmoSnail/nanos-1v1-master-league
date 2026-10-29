@@ -1,7 +1,7 @@
 -- The arena dressed for Halloween, spawned on each client: no collision, nothing sent over the network.
 -- Outside the glass dome: dark ground all round, a graveyard along both sides (tombstones and crosses, a crypt,
 -- dead trees, scarecrows, jack-o'-lanterns lined up at the foot of the walls), the witches' coven behind their
--- goal (hut, cauldron, standing stones round a glowing pentagram), the pumpkin patch behind the Pumpkins' goal
+-- goal (hut, cauldron, standing stones round a glowing pentagram), the pumpkin patch behind the Skeletons' goal
 -- with the Pumpkin King (a jack-o'-lantern 60 m wide), dead trees on the horizon, mist and will-o'-wisps.
 -- Inside: a turning magic circle on the centre spot and one in each goal in its team's color, fallen leaves
 -- on the pitch, and the arena's own rings and glass lit in Halloween colors.
@@ -229,7 +229,7 @@ local function Coven()
     end
 end
 
--- Behind the Pumpkins' goal (+X): the Pumpkin King, a giant jack-o'-lantern staring at the arena, in a patch
+-- Behind the Skeletons' goal (+X): the Pumpkin King, a giant jack-o'-lantern staring at the arena, in a patch
 -- of pumpkins with scarecrows and haystacks
 local function PumpkinPatch()
     local king = Vector(GOAL_BACK + 13300 * BIG, 0, GROUND_Z)

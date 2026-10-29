@@ -1,7 +1,7 @@
 local Commands = {}
 
 Commands["/help"] = function(player, args)
-    Chat.SendMessage(player, "/goal [witches|pumpkins] - score a goal for that team")
+    Chat.SendMessage(player, "/goal [witches|skeletons] - score a goal for that team")
     Chat.SendMessage(player, "/fireworks [end] - goal fireworks (end: the end of game ones)")
     Chat.SendMessage(player, "/reload - reload the game-mode")
     Chat.SendMessage(player, "/swap - switch to the other team")
@@ -142,8 +142,8 @@ Commands["/goal"] = function(player, args)
         AddBallTouch(player)
     end
 
-    -- the Pumpkins score in the Witches' goal (A) and the other way round
-    local team = ParseTeam(args[1] or "pumpkins")
+    -- the Skeletons score in the Witches' goal (A) and the other way round
+    local team = ParseTeam(args[1] or "skeletons")
 
     if team == Team.TeamB then
         TeleportBall(Config.GoalPointA)

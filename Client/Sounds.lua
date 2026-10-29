@@ -1,22 +1,21 @@
--- Music and sounds of the Halloween edition: Client/Sounds, made by tools/make_sounds.py (bell, ghost_boo and
--- ghost_wail come from burn-the-witch). The music is "In the Hall of the Mountain King", building up into a
--- much faster version for the last minute; outside, an owl or a wolf now and then
+-- Sounds of the Halloween edition: Client/Sounds, made by tools/make_sounds.py (bell, ghost_boo and ghost_wail
+-- come from burn-the-witch); outside, an owl or a wolf now and then. The music is the regular season's soundtrack
 local SoundsDir = "package://" .. Package.GetName() .. "/Client/Sounds/"
 
-local MUSIC_VOLUME = 0.3
-local MUSIC_DUCKED = 0.04
+local MUSIC_VOLUME = 0.25
+local MUSIC_DUCKED = 0.03
 local GOAL_SOUNDS = { "goal_toccata.ogg", "goal_bells.ogg", "goal_theremin.ogg", "goal_danse.ogg" }
 local GOAL_VOLUME = 0.6
 local GOAL_DUCK_TIME = 7000     -- ms the music stays low after a goal
--- the mannequin's laughs, pitched down into an evil one
+-- After a goal, now and then: the mannequin's laughs pitched down into an evil one for the Skeletons, a cackle
+-- for the Witches
 local LAUGHS = {
     "nanos-world::A_Male_01_Laugh", "nanos-world::A_Male_02_Laugh", "nanos-world::A_Male_03_Laugh",
     "nanos-world::A_Male_04_Laugh", "nanos-world::A_Male_05_Laugh", "nanos-world::A_Male_06_Laugh",
 }
+local CACKLES = { "nanos-world::A_Female_01_Laugh", "nanos-world::A_Female_02_Laugh" }
 
 local music = nil
-local music_file = nil
-local ducked = false
 local duck_timer = nil
 
 function PlaySound2D(file, volume, pitch)
@@ -29,49 +28,31 @@ function PlaySound3D(file, location, volume, pitch, falloff)
         AttenuationFunction.NaturalSound)
 end
 
-local function MusicVolume()
-    return ducked and MUSIC_DUCKED or MUSIC_VOLUME
-end
-
--- Swaps the looping track, fading the old one out and the new one in over `fade` seconds
-local function StartMusic(file, fade)
-    if music_file == file then return end
-    fade = fade or 1.5
-    if music and music:IsValid() then
-        music:FadeOut(fade, 0, true)
-    end
-    music_file = file
-    music = Sound(Vector(), SoundsDir .. file, true, false, SoundType.Music, MusicVolume(), 1, 400, 3600,
-        AttenuationFunction.Linear, false, SoundLoopMode.Forever, false)
-    music:FadeIn(fade, MusicVolume())
-end
-
 function StartSoundtrack()
-    StartMusic("music_main.ogg")
+    music = Sound(Vector(), SoundsDir .. "Soundtrack_1.ogg", true, false, SoundType.Music, MUSIC_VOLUME, 1, 400, 3600,
+        AttenuationFunction.Linear, false, SoundLoopMode.Forever, true)
 end
 
--- The last minute of a game (Client/Atmosphere.lua): the faster version swells in slowly, no announcement
-function SetFinaleMusic(on)
-    StartMusic(on and "music_finale.ogg" or "music_main.ogg", on and 8 or 1.5)
-end
-
-function PlayGoalSound()
+-- team: who scored (1 Witches, 2 Skeletons)
+function PlayGoalSound(team)
     if duck_timer then
         Timer.ClearTimeout(duck_timer)
     end
-    ducked = true
     if music and music:IsValid() then music:SetVolume(MUSIC_DUCKED) end
 
     PlaySound2D(GOAL_SOUNDS[math.random(#GOAL_SOUNDS)], GOAL_VOLUME)
     if math.random() < 0.6 then
         Timer.SetTimeout(function()
-            Sound(Vector(), LAUGHS[math.random(#LAUGHS)], true, true, SoundType.SFX, 0.8, 0.55 + math.random() * 0.12)
+            if team == 1 then
+                Sound(Vector(), CACKLES[math.random(#CACKLES)], true, true, SoundType.SFX, 0.7, 1.05 + math.random() * 0.1)
+            else
+                Sound(Vector(), LAUGHS[math.random(#LAUGHS)], true, true, SoundType.SFX, 0.8, 0.55 + math.random() * 0.12)
+            end
         end, 1300)
     end
 
     duck_timer = Timer.SetTimeout(function()
         duck_timer = nil
-        ducked = false
         if music and music:IsValid() then music:SetVolume(MUSIC_VOLUME) end
     end, GOAL_DUCK_TIME)
 end
