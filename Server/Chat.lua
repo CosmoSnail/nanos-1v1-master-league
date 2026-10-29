@@ -95,6 +95,10 @@ end
 
 Commands["/goal"] = function(player, args)
     Game.LastPlayerHitBall = player
+    -- the goal (and a hit) goes to the player if they are on that team, like a real touch
+    if Game.State == State.Running then
+        AddBallTouch(player)
+    end
 
     local team = (args[1] or "red"):lower()
 

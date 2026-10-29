@@ -445,3 +445,428 @@ body {
   background: linear-gradient(90deg, #ff5a00, #ffc400);
   transition: width 0.1s linear;
 }
+
+/* =====================================================
+   GOAL PLAYER CARD — ASSIST / OWN GOAL
+===================================================== */
+.goal-player-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.goal-player-card .goal-player-detail {
+  font-size: 12px;
+  letter-spacing: 3px;
+  opacity: 0.75;
+}
+
+.goal-player-card .goal-player-detail:empty {
+  display: none;
+}
+
+/* =====================================================
+   LEADERBOARD OVERLAY (Tab and game over)
+===================================================== */
+.leaderboard-overlay {
+  position: fixed;
+  inset: 0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 26px;
+
+  background: rgba(0, 0, 0, 0.45);
+
+  opacity: 0;
+  visibility: hidden;
+
+  pointer-events: none;
+  z-index: 100;
+}
+
+.leaderboard-overlay.ended {
+  background: rgba(0, 0, 0, 0.65);
+}
+
+/* =====================================================
+   LEADERBOARD — TEAM PANELS
+===================================================== */
+.leaderboard {
+  width: 900px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.leaderboard-team {
+  --team-main: 0, 180, 255;
+  --team-soft: 160, 200, 255;
+  --team-dark: 0, 60, 160;
+
+  position: relative;
+  padding: 14px 24px 10px;
+  border-radius: 16px;
+
+  background: linear-gradient(
+    90deg,
+    rgba(var(--team-dark), 0.45),
+    rgba(0, 0, 0, 0.35)
+  );
+  isolation: isolate;
+}
+
+.leaderboard-team.team-b {
+  --team-main: 255, 60, 60;
+  --team-soft: 255, 160, 160;
+  --team-dark: 160, 0, 0;
+}
+
+/* Panel neon border */
+.leaderboard-team::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(var(--team-main), 1),
+    transparent
+  );
+
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+
+  animation: borderRun 3s linear infinite;
+  pointer-events: none;
+}
+
+/* Panel glow */
+.leaderboard-team::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+
+  box-shadow: 0 0 8px rgba(var(--team-main), 0.45),
+    0 0 18px rgba(var(--team-main), 0.3);
+
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.leaderboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.leaderboard-team-name {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 8px;
+  color: #ffffff;
+
+  text-shadow: 0 0 6px rgba(var(--team-main), 1),
+    0 0 14px rgba(var(--team-main), 0.8), 0 0 30px rgba(var(--team-dark), 0.8);
+}
+
+.leaderboard-team-score {
+  font-size: 34px;
+  font-weight: 800;
+  color: rgb(var(--team-soft));
+
+  text-shadow: 0 0 6px rgba(var(--team-main), 1),
+    0 0 14px rgba(var(--team-main), 0.9), 0 0 30px rgba(var(--team-dark), 0.8);
+}
+
+/* =====================================================
+   LEADERBOARD — TABLE
+===================================================== */
+.leaderboard table {
+  width: 100%;
+  border-collapse: collapse;
+
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.leaderboard th {
+  padding: 4px 8px;
+
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.leaderboard td {
+  padding: 6px 8px;
+  text-align: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.leaderboard th.col-name,
+.leaderboard td.col-name {
+  width: 42%;
+  text-align: left;
+}
+
+/* the local player */
+.leaderboard tr.me td {
+  background: rgba(var(--team-main), 0.2);
+}
+
+.leaderboard tr.me td:first-child {
+  border-radius: 8px 0 0 8px;
+}
+
+.leaderboard tr.me td:last-child {
+  border-radius: 0 8px 8px 0;
+}
+
+.player-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.player-name {
+  max-width: 300px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.player-avatar {
+  width: 28px;
+  height: 28px;
+
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 6px rgba(var(--team-main), 0.6);
+}
+
+/* no image: an empty neon circle */
+.player-avatar.no-avatar {
+  content: url('data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7');
+}
+
+.leaderboard td.col-score {
+  font-weight: 800;
+  color: #ffffff;
+  text-shadow: 0 0 6px rgba(var(--team-main), 0.9);
+}
+
+.leaderboard td.col-ping {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.leaderboard-empty td {
+  padding: 10px 8px;
+
+  font-size: 12px;
+  letter-spacing: 3px;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.mvp-star {
+  color: #ffd84a;
+  text-shadow: 0 0 6px rgba(255, 200, 0, 0.9), 0 0 14px rgba(255, 160, 0, 0.6);
+}
+
+/* =====================================================
+   GAME OVER — RESULT
+===================================================== */
+.game-over {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.game-over.hidden {
+  display: none;
+}
+
+.game-over-title {
+  --title-main: 0, 255, 255;
+  --title-soft: 160, 255, 255;
+  --title-dark: 0, 120, 255;
+
+  font-size: 96px;
+  font-weight: 800;
+  letter-spacing: 12px;
+  white-space: nowrap;
+
+  color: #ffffff;
+
+  text-shadow: 0 0 8px rgba(255, 255, 255, 1),
+    0 0 16px rgba(var(--title-soft), 1), 0 0 32px rgba(var(--title-main), 0.9),
+    0 0 64px rgba(var(--title-dark), 0.8);
+
+  will-change: transform;
+}
+
+.game-over-title.team-a {
+  --title-main: 40, 140, 255;
+  --title-soft: 160, 200, 255;
+  --title-dark: 0, 60, 160;
+}
+
+.game-over-title.team-b {
+  --title-main: 255, 40, 40;
+  --title-soft: 255, 160, 160;
+  --title-dark: 160, 0, 0;
+}
+
+.game-over-score {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.game-over-score .score {
+  font-size: 64px;
+}
+
+.game-over-dash {
+  font-size: 40px;
+  font-weight: 800;
+  color: rgba(234, 255, 255, 0.6);
+}
+
+/* =====================================================
+   GAME OVER — MVP CARD
+===================================================== */
+.game-over-mvp {
+  --team-main: 0, 180, 255;
+
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  padding: 10px 22px 10px 12px;
+  border-radius: 14px;
+
+  isolation: isolate;
+}
+
+.game-over-mvp.team-b {
+  --team-main: 255, 60, 60;
+}
+
+.game-over-mvp.hidden {
+  display: none;
+}
+
+/* Card neon border */
+.game-over-mvp::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 216, 74, 1),
+    transparent
+  );
+
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+
+  animation: cardBorderRun 2.2s linear infinite;
+  pointer-events: none;
+}
+
+/* Card glow */
+.game-over-mvp::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: inherit;
+
+  box-shadow: 0 0 10px rgba(255, 200, 0, 0.4), 0 0 26px rgba(255, 160, 0, 0.2);
+
+  pointer-events: none;
+}
+
+.mvp-avatar {
+  width: 52px;
+  height: 52px;
+}
+
+.mvp-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mvp-label {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 4px;
+  color: #ffd84a;
+  text-shadow: 0 0 6px rgba(255, 200, 0, 0.9);
+}
+
+.mvp-name {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: #ffffff;
+
+  text-shadow: 0 0 6px rgba(var(--team-main), 0.9),
+    0 0 14px rgba(var(--team-main), 0.5);
+}
+
+/* =====================================================
+   GAME OVER — NEXT MATCH COUNTDOWN
+===================================================== */
+.next-game {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 4px;
+  color: rgba(234, 255, 255, 0.85);
+
+  text-shadow: 0 0 6px rgba(0, 255, 255, 0.6);
+}
+
+.next-game.hidden {
+  display: none;
+}
+
+.next-game span {
+  display: inline-block;
+  min-width: 2ch;
+  margin-left: 8px;
+
+  font-size: 30px;
+  font-weight: 800;
+  color: #eaffff;
+
+  text-shadow: 0 0 6px rgba(0, 255, 255, 0.9), 0 0 12px rgba(0, 200, 255, 0.8),
+    0 0 24px rgba(0, 150, 255, 0.7);
+}

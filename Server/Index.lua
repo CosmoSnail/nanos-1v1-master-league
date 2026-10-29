@@ -14,6 +14,7 @@ Package.Require("Ball.lua")
 Package.Require("Controls.lua")
 Package.Require("Goal.lua")
 Package.Require("Tables.lua")
+Package.Require("Stats.lua")
 Package.Require("Chat.lua")
 Package.Require("Fireworks.lua")
 
@@ -30,7 +31,10 @@ function InitGame()
     repeat
         Game.HatB = GetRandomHat()
     until Game.HatB.name ~= Game.HatA.name or #Hats <= 1
+    Game.GameOverInfo = nil
     ShuffleTeams()
+    ResetStats()
+    Events.BroadcastRemote("NewGame", Reliability.Reliable)
     Events.BroadcastRemote("UpdateTime", Reliability.Reliable, Game.Timer)
     Events.BroadcastRemote("UpdateScoreA", Reliability.Reliable, Game.ScoreA)
     Events.BroadcastRemote("UpdateScoreB", Reliability.Reliable, Game.ScoreB)
@@ -41,9 +45,12 @@ function EndGame()
     Game.EndedTimer = Config.EndedDuration
     print("Game Over! Final Score - Team Blue: " .. tostring(Game.ScoreA) .. " | Team Red: " .. tostring(Game.ScoreB))
     Chat.BroadcastMessage("Game Over! Final Score - Team Blue: " .. tostring(Game.ScoreA) .. " | Team Red: " .. tostring(Game.ScoreB))
-    Chat.BroadcastMessage("New game starting in " .. tostring(Config.EndedDuration) .. " seconds...")
     TogglePlayersInput(false)
     SpawnFireworksEndGame()
+    -- end of game screen with the leaderboard and the time to the next game (Client/UI)
+    Game.GameOverInfo = BuildGameOverInfo()
+    SendLeaderboard()
+    Events.BroadcastRemote("GameOver", Reliability.Reliable, Game.GameOverInfo)
 end
 
 function StartNewGame()
@@ -97,6 +104,7 @@ Timer.SetInterval(function()
         return
     elseif Game.State == State.Ended then
         Game.EndedTimer = Game.EndedTimer - 1
+        Events.BroadcastRemote("UpdateNextGameTime", Reliability.Reliable, math.max(Game.EndedTimer, 0))
         if (Game.EndedTimer <= 0) then
             StartNewGame()
             return

@@ -33,27 +33,32 @@ function InitBall()
             local driver = other:GetPassenger(0)
             local player = driver and driver:GetPlayer()
             if not player then return end
-            LogBallTouch(player)
+            if IsNewTouch(player) then
+                LogBallTouch(player)
+                if Game.State == State.Running then
+                    AddBallTouch(player)
+                end
+            end
             Game.LastPlayerHitBall = player
             ToggleRibbon(player:GetControlledCharacter():GetTeam())
         end
     end)
 end
 
--- One touch keeps firing Hit for a few frames: only log a new player, or the same one again after a pause
+-- One touch keeps firing Hit for a few frames: a new touch is a new player, or the same one again after a pause
 local lastTouchPlayer
 local lastTouchTime = 0
 
-function LogBallTouch(player)
-    if not Config.LogBallTouches then return end
-
+function IsNewTouch(player)
     local now = Server.GetTime()
-    if player == lastTouchPlayer and now - lastTouchTime < 500 then
-        lastTouchTime = now
-        return
-    end
+    local new = player ~= lastTouchPlayer or now - lastTouchTime >= 500
     lastTouchPlayer = player
     lastTouchTime = now
+    return new
+end
+
+function LogBallTouch(player)
+    if not Config.LogBallTouches then return end
 
     local team = Ternary(player:GetControlledCharacter():GetTeam() == Team.TeamA, "blue", "red")
     local message = player:GetName() .. " (" .. team .. ") touched the ball"
@@ -92,6 +97,7 @@ end
 
 function ResetBall()
     DestroyBall()
+    ClearBallTouches()
     InitBall()
 end
 
@@ -117,7 +123,7 @@ function TeleportBall(location)
 end
 
 function GetLastPlayerHitBall()
-    if Game.LastPlayerHitBall then
+    if Game.LastPlayerHitBall and Game.LastPlayerHitBall:IsValid() then
         return Game.LastPlayerHitBall
     end
     return {

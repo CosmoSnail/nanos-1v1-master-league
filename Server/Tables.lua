@@ -9,6 +9,7 @@ Game = {
     CountDownTimer = 0,
     ScoredTimer = 0,
     EndedTimer = 0,
+    GameOverInfo = nil,  -- the end of game screen (Stats.lua), kept for whoever joins before the next game
     HatA = {},
     HatB = {},
 }

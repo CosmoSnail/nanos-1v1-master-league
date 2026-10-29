@@ -3,6 +3,7 @@ Package.Require("Keys.lua")
 Package.Require("Car.lua")
 Package.Require("BoostFX.lua")
 Package.Require("BallCam.lua")
+Package.Require("Leaderboard.lua")
 Package.Require("Sounds.lua")
 
 local main_hud = WebUI("Main HUD", "file://UI/index.html")
@@ -69,4 +70,43 @@ end)
 
 Events.Subscribe("UpdateBallCam", function(enabled)
   main_hud:CallEvent("UpdateBallCam", enabled)
+end)
+
+-- Leaderboard and end of game screen. The last ones are kept to send again once the HUD has loaded:
+-- a player joining during the end screen gets them before that
+local last_leaderboard = nil
+local last_game_over = nil
+
+Events.SubscribeRemote("UpdateLeaderboard", function(rows)
+  local local_player = Client.GetLocalPlayer()
+  local my_id = local_player and local_player:GetID()
+  for _, row in ipairs(rows) do
+    row.me = row.id == my_id
+  end
+  last_leaderboard = rows
+  main_hud:CallEvent("UpdateLeaderboard", rows)
+end)
+
+Events.SubscribeRemote("GameOver", function(info)
+  last_game_over = info
+  main_hud:CallEvent("GameOver", info)
+end)
+
+Events.SubscribeRemote("UpdateNextGameTime", function(seconds)
+  if last_game_over then last_game_over.nextGameIn = seconds end
+  main_hud:CallEvent("UpdateNextGameTime", seconds)
+end)
+
+Events.SubscribeRemote("NewGame", function()
+  last_game_over = nil
+  main_hud:CallEvent("NewGame")
+end)
+
+Events.Subscribe("ToggleLeaderboard", function(open)
+  main_hud:CallEvent("ToggleLeaderboard", open)
+end)
+
+main_hud:Subscribe("Ready", function()
+  if last_leaderboard then main_hud:CallEvent("UpdateLeaderboard", last_leaderboard) end
+  if last_game_over then main_hud:CallEvent("GameOver", last_game_over) end
 end)

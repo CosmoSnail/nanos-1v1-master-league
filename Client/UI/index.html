@@ -73,7 +73,79 @@
         class="goal-player-avatar"
         alt="Player Avatar"
       />
-      <span id="goal-player-name"></span>
+      <div class="goal-player-info">
+        <span id="goal-player-name"></span>
+        <span id="goal-player-detail" class="goal-player-detail"></span>
+      </div>
+    </div>
+
+    <!-- =====================================================
+         LEADERBOARD + GAME OVER
+         Held with Tab (Client/Leaderboard.lua); at the end of
+         the game it shows on its own, under the result
+    ====================================================== -->
+    <div id="leaderboard-overlay" class="leaderboard-overlay">
+      <div id="game-over" class="game-over hidden">
+        <span id="game-over-title" class="game-over-title">DRAW</span>
+        <div class="game-over-score">
+          <span id="game-over-score-a" class="score score-left">0</span>
+          <span class="game-over-dash">-</span>
+          <span id="game-over-score-b" class="score score-right">0</span>
+        </div>
+        <div id="game-over-mvp" class="game-over-mvp hidden">
+          <img id="game-over-mvp-avatar" class="player-avatar mvp-avatar" alt="" />
+          <div class="mvp-info">
+            <span class="mvp-label">&#9733; MVP</span>
+            <span id="game-over-mvp-name" class="mvp-name"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="leaderboard">
+        <div class="leaderboard-team team-a">
+          <div class="leaderboard-header">
+            <span class="leaderboard-team-name">BLUE</span>
+            <span id="leaderboard-score-a" class="leaderboard-team-score">0</span>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th class="col-name">PLAYER</th>
+                <th>SCORE</th>
+                <th>GOALS</th>
+                <th>ASSISTS</th>
+                <th>HITS</th>
+                <th>PING</th>
+              </tr>
+            </thead>
+            <tbody id="leaderboard-rows-a"></tbody>
+          </table>
+        </div>
+
+        <div class="leaderboard-team team-b">
+          <div class="leaderboard-header">
+            <span class="leaderboard-team-name">RED</span>
+            <span id="leaderboard-score-b" class="leaderboard-team-score">0</span>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th class="col-name">PLAYER</th>
+                <th>SCORE</th>
+                <th>GOALS</th>
+                <th>ASSISTS</th>
+                <th>HITS</th>
+                <th>PING</th>
+              </tr>
+            </thead>
+            <tbody id="leaderboard-rows-b"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="next-game" class="next-game hidden">
+        NEXT MATCH IN <span id="next-game-time">0</span>
+      </div>
     </div>
 
     <!-- =====================================================

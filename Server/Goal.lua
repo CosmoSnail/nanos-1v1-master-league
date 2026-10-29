@@ -22,21 +22,30 @@ function HandleGoal(ball, teamScored)
 
     SpawnFireworksGoal(teamScored)
 
+    -- the card shows the scorer (Stats.lua), or whoever put it in their own goal
+    local scorer, assister = CreditGoal(teamScored)
+    local lastHitter = GetLastPlayerHitBall()
+    local shown = scorer or lastHitter
+    local lastCharacter = Game.LastPlayerHitBall and Game.LastPlayerHitBall:IsValid() and Game.LastPlayerHitBall:GetControlledCharacter()
+    local ownGoal = not scorer and lastCharacter and lastCharacter:GetTeam() ~= teamScored
+
     if teamScored == Team.TeamA then
-        print("Team A scored! " .. "(" .. GetLastPlayerHitBall():GetName() .. ")")
+        print("Team A scored! " .. "(" .. shown:GetName() .. ")")
         Game.ScoreA = Game.ScoreA + 1
         Events.BroadcastRemote("UpdateScoreA", Reliability.Reliable, Game.ScoreA)
 
     else
-        print("Team B scored! " .. "(" .. GetLastPlayerHitBall():GetName() .. ")")
+        print("Team B scored! " .. "(" .. shown:GetName() .. ")")
         Game.ScoreB = Game.ScoreB + 1
         Events.BroadcastRemote("UpdateScoreB", Reliability.Reliable, Game.ScoreB)
     end
 
     Events.BroadcastRemote("GoalScored", Reliability.Reliable, {
-        playerName = GetLastPlayerHitBall():GetName(),
-        playerImageUrl = GetLastPlayerHitBall():GetAccountIconURL(),
+        playerName = shown:GetName(),
+        playerImageUrl = shown:GetAccountIconURL(),
         team = teamScored,
+        assistName = assister and assister:GetName() or nil,
+        ownGoal = ownGoal and true or false,
     })
 
     local particle = Particle(

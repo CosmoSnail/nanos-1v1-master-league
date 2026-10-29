@@ -10,6 +10,9 @@ const timerContainerEl = document.querySelector('#timer-container')
 const countdownOverlayEl = document.querySelector('#countdown-overlay')
 const countdownNumberEl = document.querySelector('#countdown-number')
 
+const leaderboardScoreAEl = document.querySelector('#leaderboard-score-a')
+const leaderboardScoreBEl = document.querySelector('#leaderboard-score-b')
+
 /* =====================================================
    HUD STATE MACHINE
    Controls which UI elements should be visible / active
@@ -18,6 +21,7 @@ const HUD_STATE = {
   NORMAL: 'normal',
   GOAL: 'goal',
   COUNTDOWN: 'countdown',
+  ENDED: 'ended',
 }
 
 let currentHudState = HUD_STATE.NORMAL
@@ -49,6 +53,7 @@ function setHudState(state) {
       break
 
     case HUD_STATE.COUNTDOWN:
+    case HUD_STATE.ENDED:
       gsap.to(timerContainerEl, {
         opacity: 0,
         scale: 0.95,
@@ -80,10 +85,12 @@ Events.Subscribe('UpdateTime', function (time) {
 ===================================================== */
 Events.Subscribe('UpdateScoreA', (score) => {
   teamAScoreEl.textContent = score.toString()
+  leaderboardScoreAEl.textContent = score.toString()
 })
 
 Events.Subscribe('UpdateScoreB', (score) => {
   teamBScoreEl.textContent = score.toString()
+  leaderboardScoreBEl.textContent = score.toString()
 })
 
 /* =====================================================
@@ -91,12 +98,13 @@ Events.Subscribe('UpdateScoreB', (score) => {
    Triggered once per goal
 ===================================================== */
 Events.Subscribe('GoalScored', function (goalInfo) {
-  const { playerName, playerImageUrl, team } = goalInfo
+  const { playerName, playerImageUrl, team, assistName, ownGoal } = goalInfo
 
   const scoreContainerEl = document.querySelector('#score-container')
   const goalPlayerCardEl = document.querySelector('#goal-player-card')
   const nameEl = document.querySelector('#goal-player-name')
   const avatarEl = document.querySelector('#goal-player-avatar')
+  const detailEl = document.querySelector('#goal-player-detail')
 
   const teamClass = team === 1 ? 'team-a' : 'team-b'
 
@@ -118,6 +126,11 @@ Events.Subscribe('GoalScored', function (goalInfo) {
      CONTENT BINDING
   ===================== */
   nameEl.textContent = playerName
+  detailEl.textContent = ownGoal
+    ? 'OWN GOAL'
+    : assistName
+    ? `ASSIST · ${assistName}`
+    : ''
   avatarEl.src = playerImageUrl
 
   /* =====================
@@ -202,4 +215,208 @@ const ballCamEl = document.querySelector('#ball-cam')
 
 Events.Subscribe('UpdateBallCam', (enabled) => {
   ballCamEl.classList.toggle('hidden', !enabled)
+})
+
+/* =====================================================
+   LEADERBOARD
+   Rows sent by the server (Server/Stats.lua) every few
+   seconds; held open with Tab, always open at game over
+===================================================== */
+const leaderboardOverlayEl = document.querySelector('#leaderboard-overlay')
+const leaderboardRowsEls = {
+  1: document.querySelector('#leaderboard-rows-a'),
+  2: document.querySelector('#leaderboard-rows-b'),
+}
+const STAT_COLUMNS = ['score', 'goals', 'assists', 'hits']
+
+let leaderboardRows = []
+let leaderboardHeld = false
+let gameOverInfo = null
+
+function createAvatar(url) {
+  const avatarEl = document.createElement('img')
+  avatarEl.className = 'player-avatar'
+  avatarEl.alt = ''
+  if (url) {
+    avatarEl.src = url
+  } else {
+    avatarEl.classList.add('no-avatar')
+  }
+  avatarEl.onerror = () => avatarEl.classList.add('no-avatar')
+  return avatarEl
+}
+
+function renderLeaderboard() {
+  const mvpId = gameOverInfo && gameOverInfo.mvp ? gameOverInfo.mvp.id : null
+
+  for (const team of [1, 2]) {
+    const bodyEl = leaderboardRowsEls[team]
+    const rows = leaderboardRows
+      .filter((row) => row.team === team)
+      .sort(
+        (a, b) =>
+          b.score - a.score || b.goals - a.goals || a.name.localeCompare(b.name)
+      )
+
+    bodyEl.replaceChildren()
+
+    if (rows.length === 0) {
+      const tr = document.createElement('tr')
+      tr.className = 'leaderboard-empty'
+      const td = document.createElement('td')
+      td.colSpan = 6
+      td.textContent = 'NO PLAYERS'
+      tr.appendChild(td)
+      bodyEl.appendChild(tr)
+      continue
+    }
+
+    for (const row of rows) {
+      const tr = document.createElement('tr')
+      if (row.me) tr.classList.add('me')
+
+      const nameTd = document.createElement('td')
+      nameTd.className = 'col-name'
+      const playerEl = document.createElement('div')
+      playerEl.className = 'player-cell'
+      const nameEl = document.createElement('span')
+      nameEl.className = 'player-name'
+      nameEl.textContent = row.name
+      playerEl.append(createAvatar(row.avatar), nameEl)
+      if (row.id === mvpId) {
+        const starEl = document.createElement('span')
+        starEl.className = 'mvp-star'
+        starEl.textContent = '★'
+        playerEl.appendChild(starEl)
+      }
+      nameTd.appendChild(playerEl)
+      tr.appendChild(nameTd)
+
+      for (const column of STAT_COLUMNS) {
+        const td = document.createElement('td')
+        td.className = `col-${column}`
+        td.textContent = row[column].toString()
+        tr.appendChild(td)
+      }
+
+      const pingTd = document.createElement('td')
+      pingTd.className = 'col-ping'
+      pingTd.textContent = `${row.ping}ms`
+      tr.appendChild(pingTd)
+
+      bodyEl.appendChild(tr)
+    }
+  }
+}
+
+function updateLeaderboardVisibility() {
+  const visible = leaderboardHeld || gameOverInfo !== null
+  gsap.to(leaderboardOverlayEl, {
+    autoAlpha: visible ? 1 : 0,
+    duration: visible ? 0.2 : 0.25,
+    ease: visible ? 'power2.out' : 'power2.in',
+  })
+}
+
+Events.Subscribe('UpdateLeaderboard', (rows) => {
+  // an empty Lua table may arrive as an object
+  leaderboardRows = Array.isArray(rows) ? rows : Object.values(rows || {})
+  renderLeaderboard()
+})
+
+Events.Subscribe('ToggleLeaderboard', (open) => {
+  leaderboardHeld = open
+  updateLeaderboardVisibility()
+})
+
+/* =====================================================
+   GAME OVER
+   Result, MVP and the time to the next match, on top of
+   the leaderboard until the server starts a new game
+===================================================== */
+const gameOverEl = document.querySelector('#game-over')
+const gameOverTitleEl = document.querySelector('#game-over-title')
+const gameOverScoreAEl = document.querySelector('#game-over-score-a')
+const gameOverScoreBEl = document.querySelector('#game-over-score-b')
+const gameOverMvpEl = document.querySelector('#game-over-mvp')
+const gameOverMvpAvatarEl = document.querySelector('#game-over-mvp-avatar')
+const gameOverMvpNameEl = document.querySelector('#game-over-mvp-name')
+const nextGameEl = document.querySelector('#next-game')
+const nextGameTimeEl = document.querySelector('#next-game-time')
+
+Events.Subscribe('GameOver', (info) => {
+  gameOverInfo = info
+
+  const winnerClass =
+    info.winner === 1 ? 'team-a' : info.winner === 2 ? 'team-b' : 'draw'
+  gameOverTitleEl.className = `game-over-title ${winnerClass}`
+  gameOverTitleEl.textContent =
+    info.winner === 1 ? 'BLUE WINS' : info.winner === 2 ? 'RED WINS' : 'DRAW'
+
+  gameOverScoreAEl.textContent = info.scoreA.toString()
+  gameOverScoreBEl.textContent = info.scoreB.toString()
+
+  if (info.mvp) {
+    gameOverMvpEl.className = `game-over-mvp ${
+      info.mvp.team === 2 ? 'team-b' : 'team-a'
+    }`
+    gameOverMvpNameEl.textContent = info.mvp.name
+    gameOverMvpAvatarEl.classList.toggle('no-avatar', !info.mvp.avatar)
+    if (info.mvp.avatar) gameOverMvpAvatarEl.src = info.mvp.avatar
+  } else {
+    gameOverMvpEl.className = 'game-over-mvp hidden'
+  }
+
+  nextGameTimeEl.textContent = info.nextGameIn.toString()
+
+  gameOverEl.classList.remove('hidden')
+  nextGameEl.classList.remove('hidden')
+  leaderboardOverlayEl.classList.add('ended')
+
+  setHudState(HUD_STATE.ENDED)
+  renderLeaderboard()
+  updateLeaderboardVisibility()
+
+  /* =====================
+     ENTER ANIMATION
+  ===================== */
+  gsap.fromTo(
+    gameOverTitleEl,
+    { letterSpacing: '56px', scaleX: 1.3, opacity: 0 },
+    {
+      letterSpacing: '12px',
+      scaleX: 1,
+      opacity: 1,
+      duration: 0.9,
+      ease: 'elastic.out(1, 0.45)',
+    }
+  )
+  gsap.fromTo(
+    ['.game-over-score', '#game-over-mvp', '.leaderboard-team', '#next-game'],
+    { y: 18, opacity: 0 },
+    {
+      y: 0,
+      opacity: 1,
+      duration: 0.4,
+      stagger: 0.1,
+      ease: 'power3.out',
+      delay: 0.25,
+    }
+  )
+})
+
+Events.Subscribe('UpdateNextGameTime', (seconds) => {
+  nextGameTimeEl.textContent = seconds.toString()
+})
+
+Events.Subscribe('NewGame', () => {
+  if (gameOverInfo === null) return
+  gameOverInfo = null
+
+  gameOverEl.classList.add('hidden')
+  nextGameEl.classList.add('hidden')
+  leaderboardOverlayEl.classList.remove('ended')
+
+  renderLeaderboard()
+  updateLeaderboardVisibility()
 })
