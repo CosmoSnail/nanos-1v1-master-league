@@ -19,16 +19,18 @@ function SpawnVehicle(character)
     end
 
     local vehicle = Offroad(vehicleSpawnPoint, rotation)
-    vehicle:SetEngineSetup(1000, 8000, 1000, 0.02, 5, 600)
-    vehicle:SetAerodynamicsSetup(3200, 0.4, 180, 160, 10, Vector(0, 0, 5))
-    vehicle:SetTransmissionSetup(4.4, 6700, 3200, 0.03, 1.0)
+    -- The car is driven by Client/Car.lua through velocity changes. The engine only makes sound
+    -- and the wheels are just suspension: not powered, no brakes and little grip, so they don't
+    -- fight the controller.
+    vehicle:SetEngineSetup(600, 7000, 1000, 0, 2, 1000)
+    vehicle:SetAerodynamicsSetup(3200, 0, 180, 160, 0, Vector(0, 0, 5))
     vehicle:SetSteeringWheelSetup(Vector(60, -42, 83), 19, Rotator())
     vehicle:SetExplosionSettings(Vector(), {}, { 1 })
 
-    vehicle:SetWheel(0, "PhysWheel_FL", 50, 35, 50, Vector(), true, true, false, false, false, 15000, 0, 20000, 1000, 100, 100, 100, 70, 10, 6, 6, 0, 0.5, 0.7)
-    vehicle:SetWheel(1, "PhysWheel_FR", 50, 35, 50, Vector(), true, true, false, false, false, 15000, 0, 20000, 1000, 100, 100, 100, 70, 10, 6, 6, 0, 0.5, 0.7)
-    vehicle:SetWheel(2, "PhysWheel_BL", 50, 42, 0, Vector(), false, true, true, false, false, 15000, 15000, 20000, 1000, 100, 100, 100, 70, 10, 6, 6, 0, 0.5, 0.63)
-    vehicle:SetWheel(3, "PhysWheel_BR", 50, 42, 0, Vector(), false, true, true, false, false, 15000, 15000, 20000, 1000, 100, 100, 100, 70, 10, 6, 6, 0, 0.5, 0.63)
+    vehicle:SetWheel(0, "PhysWheel_FL", 50, 35, 30, Vector(), false, false, false, false, false, 0, 0, 500, 1, 0.5, 20, 20, 300, 100, 8, 8, 0, 0.6, 0, Vector(0, 0, -1), Vector(), SuspensionSweepShape.Shapecast)
+    vehicle:SetWheel(1, "PhysWheel_FR", 50, 35, 30, Vector(), false, false, false, false, false, 0, 0, 500, 1, 0.5, 20, 20, 300, 100, 8, 8, 0, 0.6, 0, Vector(0, 0, -1), Vector(), SuspensionSweepShape.Shapecast)
+    vehicle:SetWheel(2, "PhysWheel_BL", 50, 42, 0, Vector(), false, false, false, false, false, 0, 0, 500, 1, 0.5, 20, 20, 300, 100, 8, 8, 0, 0.6, 0, Vector(0, 0, -1), Vector(), SuspensionSweepShape.Shapecast)
+    vehicle:SetWheel(3, "PhysWheel_BR", 50, 42, 0, Vector(), false, false, false, false, false, 0, 0, 500, 1, 0.5, 20, 20, 300, 100, 8, 8, 0, 0.6, 0, Vector(0, 0, -1), Vector(), SuspensionSweepShape.Shapecast)
 
     vehicle:Subscribe("CharacterAttemptLeave", function(self, _)
         return false

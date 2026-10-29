@@ -179,3 +179,15 @@ Events.Subscribe('UpdateCountDownTime', function (second) {
     window.countdownOutTl.restart()
   }
 })
+
+/* =====================================================
+   BOOST METER
+   Fired by Client/Car.lua when the rounded boost changes
+===================================================== */
+const boostValueEl = document.querySelector('#boost-value')
+const boostFillEl = document.querySelector('#boost-fill')
+
+Events.Subscribe('UpdateBoost', (boost) => {
+  boostValueEl.textContent = boost.toString()
+  boostFillEl.style.width = `${boost}%`
+})

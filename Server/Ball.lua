@@ -11,6 +11,8 @@ function InitBall()
     ball:SetScale(scale)
     ball:SetMassScale(massScale)
     ball:SetPhysicalMaterial('nanos-world::PM_Rubber')
+    -- keep the ball visible from anywhere in the arena
+    ball:SetRenderCullDistance(1000000)
 
     -- local trigger = Trigger(Config.BallSpawnPoint, Rotator(), 665, TriggerType.Sphere, Config.ShowTriggers, Color(0, 1, 0), {"Vehicle"})
     -- trigger:AttachTo(ball, AttachmentRule.SnapToTarget, nil, 0, false)

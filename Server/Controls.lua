@@ -1,73 +1,42 @@
 Package.Require("Utils.lua")
 
-Events.SubscribeRemote("Jump", function(player)
-  if Game.State ~= State.Running and Game.State ~= State.Scored then
-    return
-  end
-  local vehicle = player:GetControlledCharacter():GetVehicle()
-  local baseJumpForce = 1000000
-  local velocityMultiplier = vehicle:GetVelocity():Size() * 300
-
-  vehicle:AddImpulse(Vector(0, 0, baseJumpForce + velocityMultiplier))
-end)
-
-Events.SubscribeRemote("StartNitro", function(player)
-  if Game.State ~= State.Running and Game.State ~= State.Scored then
-    return
-  end
---   print('Start Nitro')
-  local vehicle = player:GetControlledCharacter():GetVehicle()
-
-  vehicle:SetForce(Vector(5000000, 0, 0))
-
-  local thrusters = GetVehicleThrusters(vehicle)
-  for _, thruster in pairs(thrusters) do
-    local particles = GetAttachedParticles(thruster)
-    for _, particle in pairs(particles) do
-      particle:Activate()
+-- Driving, jumping and boosting run on the driver's client (Client/Car.lua);
+-- the server only shows the thruster flames to everyone while a player boosts.
+Events.SubscribeRemote("CarBoost", function(player, boosting)
+    if type(boosting) ~= "boolean" then
+        return
     end
-  end
-
-end)
-
-Events.SubscribeRemote("StopNitro", function(player)
-  if Game.State ~= State.Running and Game.State ~= State.Scored then
-    return
-  end
---   print('Stop Nitro')
-  local vehicle = player:GetControlledCharacter():GetVehicle()
-
-  local thrusters = GetVehicleThrusters(vehicle)
-  for _, thruster in pairs(thrusters) do
-    local particles = GetAttachedParticles(thruster)
-    for _, particle in pairs(particles) do
-      particle:Deactivate()
+    local character = player:GetControlledCharacter()
+    local vehicle = character and character:GetVehicle()
+    if not vehicle or not vehicle:IsValid() then
+        return
     end
-  end
 
-  vehicle:SetForce(Vector(0, 0, 0))
+    for _, thruster in pairs(GetVehicleThrusters(vehicle)) do
+        for _, particle in pairs(GetAttachedParticles(thruster)) do
+            if boosting then
+                particle:Activate()
+            else
+                particle:Deactivate()
+            end
+        end
+    end
 end)
 
 function GetVehicleThrusters(vehicle)
-  local thrusters = Filter(
-    vehicle:GetAttachedEntities(),
-    function(entity)
-      return entity:IsA(Prop)
-    end
-  )
-  return thrusters
+    return Filter(
+        vehicle:GetAttachedEntities(),
+        function(entity)
+            return entity:IsA(Prop)
+        end
+    )
 end
 
 function GetAttachedParticles(thruster)
-  local particles = Filter(
-    thruster:GetAttachedEntities(),
-    function(entity)
-      return entity:IsA(Particle)
-    end
-  )
-  return particles
-end
-
-function CheckInAirRotation()
-
+    return Filter(
+        thruster:GetAttachedEntities(),
+        function(entity)
+            return entity:IsA(Particle)
+        end
+    )
 end

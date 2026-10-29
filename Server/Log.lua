@@ -18,3 +18,9 @@ function print(...)
         original_print(msg)
     end
 end
+-- Script errors from clients, so they show up in the server log (once each per client)
+Events.SubscribeRemote("ClientError", function(player, text)
+    if type(text) == "string" then
+        Console.Error("[client %s] %s", player:GetName(), text:sub(1, 400))
+    end
+end)
