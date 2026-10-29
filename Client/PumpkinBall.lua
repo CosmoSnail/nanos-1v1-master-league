@@ -6,9 +6,9 @@
 local PUMPKIN = "burn-the-witch-vfx::SM_FX_Pumpkin"
 local PUMPKIN_SIZE = Vector(100, 100, 79)   -- the mesh at scale 1, centred on its origin (cm)
 local PUMPKIN_FIT = Vector(1.1, 1.1, 1.0)   -- of the ball's diameter: a little wider than it, the sphere all inside
--- M_FX_Pumpkin lights its whole skin and its grooves by itself, regardless of the scene (Ambient, Seep): at night
--- that read as a paper lantern you could see into. Only the carved face glows; the skin takes the scene's light
-local PUMPKIN_LOOK = { Seep = 0, Ambient = 0.12 }
+-- M_FX_Pumpkin lights its skin (Ambient) and its grooves (Seep) by itself, regardless of the scene: the skin
+-- glowing so the ball stands out at night (/glow to try), the grooves only a little, or it reads as a paper lantern
+local PUMPKIN_LOOK = { Seep = 0.2, Ambient = 0.7 }
 local BALL_RADIUS = 352                     -- if the bounds can't be read: the rest height 497 - the floor 145
 local CANDLE_COLOR = Color(1.0, 0.45, 0.08)
 local CANDLE_INTENSITY = 90
@@ -101,6 +101,14 @@ Client.Subscribe("Tick", function(dt)
         end
     end
     dressed.velocity = velocity
+end)
+
+-- /glow (dev): try another glow of the skin live
+Events.SubscribeRemote("DevPumpkinGlow", function(value)
+    PUMPKIN_LOOK.Ambient = value
+    if dressed and dressed.pumpkin:IsValid() then
+        dressed.pumpkin:SetMaterialScalarParameter("Ambient", value)
+    end
 end)
 
 -- Where the pumpkin is now, for the goal celebration (Client/Spooks.lua); nil if there is none

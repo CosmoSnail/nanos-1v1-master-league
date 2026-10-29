@@ -51,8 +51,8 @@ season). Same game and controls: cars driven by `Client/Car.lua`, a ball, two go
 
 With the `dev_commands` setting (`--custom_settings "dev_commands = true"`), in the chat: `/help`,
 `/goal [witches|pumpkins]`, `/hat [number|name]`, `/swap`, `/fireworks [end]`, `/end`, `/reload`, and for
-Halloween `/time <seconds>` (set the time left, to see the night deepen), `/lightning` (a strike now) and `/fog <0-100>` (try a density of
-mist live, until a reload).
+Halloween `/time <seconds>` (set the time left, to see the night deepen), `/lightning` (a strike now) , `/fog <0-100>` (try a density of
+mist live, until a reload) and `/glow <0-5>` (try how much the pumpkin ball glows, until a reload).
 
 ## Assets and credits
 

@@ -10,6 +10,7 @@ Commands["/help"] = function(player, args)
     Chat.SendMessage(player, "/time <seconds> - set the time left in the game")
     Chat.SendMessage(player, "/lightning - a lightning strike now")
     Chat.SendMessage(player, "/fog <0-100> - try a density of mist (until a reload)")
+    Chat.SendMessage(player, "/glow <0-5> - try a glow of the pumpkin ball (until a reload)")
 end
 
 Commands["/time"] = function(player, args)
@@ -36,6 +37,18 @@ Commands["/fog"] = function(player, args)
     value = math.max(0, math.min(100, value))
     Events.BroadcastRemote("DevFog", Reliability.Reliable, value)
     Chat.BroadcastMessage("Fog: " .. value)
+end
+
+-- Tries a glow of the pumpkin ball's skin until the package reloads (PUMPKIN_LOOK in Client/PumpkinBall.lua keeps it)
+Commands["/glow"] = function(player, args)
+    local value = tonumber(args[1] or "")
+    if not value then
+        Chat.SendMessage(player, "/glow <0-5> - how much the pumpkin ball's skin glows (0.7 by default)")
+        return
+    end
+    value = math.max(0, math.min(5, value))
+    Events.BroadcastRemote("DevPumpkinGlow", Reliability.Reliable, value)
+    Chat.BroadcastMessage("Pumpkin glow: " .. value)
 end
 
 Commands["/hat"] = function(player, args)
