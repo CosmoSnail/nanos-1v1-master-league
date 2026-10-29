@@ -24,8 +24,9 @@ season). Same game and controls: cars driven by `Client/Car.lua`, a ball, two go
   the centre spot and in each goal, fallen leaves on the pitch, and the arena's own rims and glass lit in
   Halloween colors (the arena is a level mesh: `load_level_entities = true`).
 - **What moves** (`Client/Spooks.lua`): bats circling over the dome, the witch crossing the sky on her broom
-  (cackling), ghosts drifting under the ceiling. A goal bursts the pumpkin into a shower of little pumpkins (and
-  bones, rattling, when the Skeletons scored) and ghosts spiral up out of the goal, wailing.
+  (cackling), ghosts drifting under the ceiling. A goal flashes in the scorers' color and bursts the pumpkin into a
+  shower of little pumpkins (and bones, rattling, when the Skeletons scored, a swarm of bats when the Witches
+  did), and ghosts spiral up out of the goal, wailing.
 - **The night deepens** through every game, little by little and unannounced (only the mood, the rules don't
   change): from a third of the way in, the moon turns from orange to blood red, the clouds redden, the mist
   thickens, the colors warm towards red and lightning strikes more and more often.

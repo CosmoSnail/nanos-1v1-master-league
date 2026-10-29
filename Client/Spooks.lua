@@ -1,7 +1,7 @@
 -- What moves in the Halloween night, on each client (nothing on the network): bats circling over the dome,
 -- a witch on her broom crossing the sky now and then, ghosts drifting under the arena's ceiling, and a goal's
--- celebration: the pumpkin bursts into a shower of little pumpkins (and bones, for the Skeletons) and ghosts
--- fly up out of the goal, wailing
+-- celebration: a flash in the scorers' color, the pumpkin bursts into a shower of little pumpkins (and bones
+-- for the Skeletons, a swarm of bats for the Witches) and ghosts fly up out of the goal, wailing
 
 local IMAGES = "package://" .. Package.GetName() .. "/Client/Images/"
 local VFX = "burn-the-witch-vfx::"
@@ -15,18 +15,25 @@ local WITCH_EVERY = { 45000, 100000 }       -- ms between two flights of the wit
 local WITCH_FLIGHT = 15                     -- seconds to cross the sky
 local WITCH_CACKLES = { "nanos-world::A_Female_01_Laugh", "nanos-world::A_Female_02_Laugh" }
 local GHOST_COLOR = Color(0.6, 1.0, 0.8)
-local BURST_PUMPKINS = 14
-local BURST_BONES = 10
+local BURST_PUMPKINS = 24
+local BURST_BONES = 22
+local BURST_BATS = 28
+local BAT_FLEE_TIME = 3.5                   -- seconds the bats of a goal fly before they are gone
+-- the flash in the goal, by the team that scored: witch purple, the Skeletons' soul fire (Client/BoostFX.lua)
+local GOAL_FLASH = { [1] = Color(0.6, 0.2, 1.0), [2] = Color(0.45, 0.8, 1.0) }
+local GOAL_FLASH_INTENSITY = 4000
+local GOAL_FLASH_TIME = 1.4                 -- seconds
 -- the default pack's skeleton, in pieces
 local BONES = {
     "nanos-world::SM_HumanSkeleton_Head_Full", "nanos-world::SM_HumanSkeleton_Femur",
     "nanos-world::SM_HumanSkeleton_RibCage", "nanos-world::SM_HumanSkeleton_Pelvis",
     "nanos-world::SM_HumanSkeleton_Humerus", "nanos-world::SM_HumanSkeleton_Tibia",
 }
-local RISING_GHOSTS = 5
+local RISING_GHOSTS = 9
 local RISE_TIME = 4                         -- seconds
 
 local bats = {}
+local fleeing = {}      -- the bats of a goal
 local drifting = {}     -- the ghosts in the arena
 local rising = {}       -- the ghosts of a goal
 local witch = nil
@@ -128,6 +135,29 @@ local function UpdateBats(dt, now)
     end
 end
 
+-- The bats of a goal fly out of it, climbing as they go, and fade away
+local function UpdateFleeingBats(dt)
+    for i = #fleeing, 1, -1 do
+        local bat = fleeing[i]
+        bat.time = bat.time + dt
+        if bat.time >= BAT_FLEE_TIME or not bat.sprite:IsValid() then
+            if bat.sprite:IsValid() then bat.sprite:Destroy() end
+            table.remove(fleeing, i)
+        else
+            bat.velocity = bat.velocity + Vector(0, 0, 1200 * dt)
+            bat.location = bat.location + bat.velocity * dt
+            bat.sprite:SetLocation(bat.location + Vector(0, 0, math.sin(bat.time * 9 + bat.wobble) * 120))
+            bat.sprite:SetMaterialScalarParameter("Opacity", math.min(1, (BAT_FLEE_TIME - bat.time) * 2))
+            bat.flap = bat.flap - dt
+            if bat.flap <= 0 then
+                bat.flap = BAT_FLAP * 0.6
+                bat.frame = 3 - bat.frame
+                bat.sprite:SetMaterialTextureParameter("Texture", BAT_FRAMES[bat.frame])
+            end
+        end
+    end
+end
+
 local function UpdateWitch(dt)
     if not witch then return end
     witch.time = witch.time + dt
@@ -189,44 +219,84 @@ Client.Subscribe("Tick", function(dt)
     if dt <= 0 then return end
     local now = Client.GetTime() / 1000
     UpdateBats(dt, now)
+    UpdateFleeingBats(dt)
     UpdateWitch(dt)
     UpdateGhosts(dt, now)
 end)
 
--- Something flung out of the goal, bouncing round it (local physics, light enough not to shove the cars)
+-- Something flung out of the goal, bouncing round it (local physics). It only collides with the arena: the
+-- ball is so light that a pumpkin still rolling on the pitch would shove the next one off the centre spot, and
+-- it is gone before the next kickoff anyway (Config.ScoredDuration is 7 s, the ball comes back after 6 to 7)
 local function Fling(location, asset, scale)
     local towards_pitch = location.X > 0 and -1 or 1
     local prop = Prop(location + Vector(Rand(-250, 250), Rand(-250, 250), Rand(0, 300)), Rotator(Rand(0, 360), Rand(0, 360), 0),
-        asset, CollisionType.Normal, true, GrabMode.Disabled, CCDMode.Auto)
+        asset, CollisionType.StaticOnly, true, GrabMode.Disabled, CCDMode.Auto)
     prop:SetScale(Vector(scale))
     prop:SetMassScale(0.1)
-    prop:SetLifeSpan(6.5)
+    prop:SetLifeSpan(5.5)
     prop:SetRenderCullDistance(RENDER_CULL_DISTANCE)
     local direction = Vector(towards_pitch * Rand(0.2, 1), Rand(-1, 1), Rand(0.6, 1.4)):GetSafeNormal()
-    prop:AddImpulse(direction * Rand(1800, 3400), true)
+    prop:AddImpulse(direction * Rand(2200, 4200), true)
 end
 
--- A goal: little pumpkins burst out of the big one, bones too when the Skeletons (team 2) scored, rattling,
--- and ghosts spiral up out of it
+-- A swarm of bats bursting out of the goal towards the pitch
+local function BatBurst(location)
+    local towards_pitch = location.X > 0 and -1 or 1
+    for _ = 1, BURST_BATS do
+        local size = Rand(300, 520)
+        local direction = Vector(towards_pitch * Rand(0.3, 1.2), Rand(-1, 1), Rand(0.4, 1.2)):GetSafeNormal()
+        local from = location + Vector(Rand(-200, 200), Rand(-200, 200), Rand(0, 300))
+        table.insert(fleeing, {
+            sprite = Sprite(from, BAT_FRAMES[1], size, size * 0.5),
+            location = from,
+            velocity = direction * Rand(2500, 4500),
+            time = 0,
+            frame = 1,
+            flap = Rand(0, BAT_FLAP),
+            wobble = Rand(0, 10),
+        })
+    end
+end
+
+-- A flash in the goal in the scorers' color, fading out
+local function GoalFlash(location, team)
+    local light = Light(location + Vector(0, 0, 600), Rotator(), GOAL_FLASH[team] or GHOST_COLOR, LightType.Point,
+        GOAL_FLASH_INTENSITY, 9000, 44, 0, 200000, true, false, true)
+    local steps = 14
+    for k = 1, steps do
+        Timer.SetTimeout(function()
+            if light:IsValid() then light:SetIntensity(GOAL_FLASH_INTENSITY * (1 - k / steps) ^ 2) end
+        end, math.floor(k / steps * GOAL_FLASH_TIME * 1000))
+    end
+    Timer.SetTimeout(function()
+        if light:IsValid() then light:Destroy() end
+    end, math.floor(GOAL_FLASH_TIME * 1000) + 100)
+end
+
+-- A goal: a flash, little pumpkins burst out of the big one, bones too when the Skeletons (team 2) scored,
+-- rattling, bats when the Witches (team 1) did, and ghosts spiral up out of it
 local function Celebrate(location, team)
+    GoalFlash(location, team)
     for _ = 1, BURST_PUMPKINS do
-        Fling(location, "nanos-world::SM_Fruit_Pumpkin_01", Rand(2.5, 4.5))
+        Fling(location, "nanos-world::SM_Fruit_Pumpkin_01", Rand(2.5, 5))
     end
     if team == 2 then
         for _ = 1, BURST_BONES do
-            Fling(location, BONES[math.random(#BONES)], Rand(3, 4.5))
+            Fling(location, BONES[math.random(#BONES)], Rand(3.5, 5.5))
         end
         Sound(location, "nanos-world::A_Skeleton_Falling", false, true, SoundType.SFX, 1, Rand(0.8, 0.95), 2000, 40000,
             AttenuationFunction.NaturalSound)
+    elseif team == 1 then
+        BatBurst(location)
     end
 
     for k = 1, RISING_GHOSTS do
         table.insert(rising, {
-            mesh = Ghost(location, Rand(1.8, 2.6)),
+            mesh = Ghost(location, Rand(2.2, 3.2)),
             from = location,
             angle = k / RISING_GHOSTS * math.pi * 2,
-            radius = Rand(900, 1600),
-            time = -k * 0.12,
+            radius = Rand(900, 2000),
+            time = -k * 0.1,
         })
     end
     PlaySound3D("ghost_wail.ogg", location, 1, Rand(0.9, 1.1), 40000)
