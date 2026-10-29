@@ -44,6 +44,12 @@ local ARENA_GLOW = {
     { slot = 9, color = Color(1.4, 0.38, 0.02) },   -- the ring: pumpkin orange
 }
 
+-- The floor's material (MI_Floor_01) is glossy: every light in the arena shone off it. Its roughness range
+-- ("Rough Min", "Rough Max") pushed up makes it matte; set on the ramps' and the goals' floor slots too (a
+-- material without them ignores it)
+local MATTE_SLOTS = { 3, 4, 7 }
+local MATTE_ROUGHNESS = { 0.85, 1 }
+
 -- A fixed sequence of random numbers, so every player gets the same graveyard (and the game's own
 -- math.random isn't reseeded)
 local seed = 1031
@@ -333,6 +339,10 @@ local function LightArena(attempt)
         if mesh:IsValid() and mesh:IsFromLevel() then
             for _, glow in ipairs(ARENA_GLOW) do
                 mesh:SetMaterialColorParameter("EmissiveColor", glow.color, glow.slot)
+            end
+            for _, slot in ipairs(MATTE_SLOTS) do
+                mesh:SetMaterialScalarParameter("Rough Min", MATTE_ROUGHNESS[1], slot)
+                mesh:SetMaterialScalarParameter("Rough Max", MATTE_ROUGHNESS[2], slot)
             end
             return
         end
