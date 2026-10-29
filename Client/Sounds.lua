@@ -13,7 +13,7 @@ local soundTrackVolume = 0.25
 local buzzerVolume = 0.3
 
 function StartSoundtrack()
-    soundtrack = Sound(Vector(), SoundsDir .. "Soundtrack_1.mp3", true, false, SoundType.Music, 1, 1, 400, 3600, AttenuationFunction.Linear, false, SoundLoopMode.Forever, true)
+    soundtrack = Sound(Vector(), SoundsDir .. "Soundtrack_1.ogg", true, false, SoundType.Music, 1, 1, 400, 3600, AttenuationFunction.Linear, false, SoundLoopMode.Forever, true)
     soundtrack:SetVolume(soundTrackVolume)
 end
 
