@@ -663,6 +663,41 @@ svg.ball-cam-icon {
 }
 
 /* =====================================================
+   YOUR NAME
+===================================================== */
+.my-name {
+  position: absolute;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 16px;
+  border-radius: 14px;
+  background: rgba(var(--night), 0.45);
+
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 3px rgba(0, 0, 0, 0.85);
+  white-space: nowrap;
+}
+
+.my-name.team-a {
+  color: rgb(var(--witch-soft));
+}
+
+.my-name.team-b {
+  color: rgb(var(--skeleton-soft));
+}
+
+.my-name.hidden {
+  display: none;
+}
+
+/* =====================================================
    BALL CAM INDICATOR
 ===================================================== */
 .ball-cam {

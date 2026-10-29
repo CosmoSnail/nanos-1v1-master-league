@@ -40,7 +40,7 @@ function SpawnVehicle(character)
 
     SpawnThruster(vehicle)
     AttachVehicleLights(vehicle, character:GetTeam())
-    AttachVehiclePlayerName(vehicle, character:GetPlayer():GetName(), character:GetTeam())
+    AttachVehiclePlayerName(vehicle, character:GetPlayer(), character:GetTeam())
     AttachVehicleHat(vehicle, character:GetTeam())
     DecorateVehicle(vehicle, character:GetTeam())
     KeepVisible(vehicle)
@@ -195,7 +195,7 @@ function AttachVehicleLights(vehicle, team)
     end
 end
 
-function AttachVehiclePlayerName(vehicle, name, team)
+function AttachVehiclePlayerName(vehicle, player, team)
     if not Config.ShowNamesOnVehicles then
         return
     end
@@ -205,7 +205,7 @@ function AttachVehiclePlayerName(vehicle, name, team)
     local text = Text3D(
         Vector(),
         Rotator(),
-        name,
+        player:GetName(),
         Vector(0.6),
         Color(0.45 + color.R * 0.55, 0.45 + color.G * 0.55, 0.45 + color.B * 0.55),
         FontType.OpenSans,
@@ -215,6 +215,8 @@ function AttachVehiclePlayerName(vehicle, name, team)
     text:AttachTo(vehicle, AttachmentRule.SnapToTarget, "", 1)
     -- -10 * (#name / 2)
     text:SetRelativeLocation(Vector(0, 0, 280))
+    -- the driver doesn't see their own name over their car, but in the HUD (Client/NameTag.lua)
+    text:SetValue("Driver", player:GetID(), true)
 end
 
 function CheckVehiclesOutOfBounds()

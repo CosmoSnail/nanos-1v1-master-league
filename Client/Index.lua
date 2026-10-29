@@ -3,6 +3,7 @@ Package.Require("Atmosphere.lua")
 Package.Require("Keys.lua")
 Package.Require("Car.lua")
 Package.Require("BallTouch.lua")
+Package.Require("NameTag.lua")
 Package.Require("BoostFX.lua")
 Package.Require("BallCam.lua")
 Package.Require("Help.lua")
@@ -126,7 +127,15 @@ Events.Subscribe("ToggleLeaderboard", function(open)
   main_hud:CallEvent("ToggleLeaderboard", open)
 end)
 
+-- Your name in the HUD (Client/NameTag.lua)
+local my_name = nil
+Events.Subscribe("UpdateMyName", function(name, team)
+  my_name = { name = name, team = team }
+  main_hud:CallEvent("UpdateMyName", name, team)
+end)
+
 main_hud:Subscribe("Ready", function()
   if last_leaderboard then main_hud:CallEvent("UpdateLeaderboard", last_leaderboard) end
   if last_game_over then main_hud:CallEvent("GameOver", last_game_over) end
+  if my_name then main_hud:CallEvent("UpdateMyName", my_name.name, my_name.team) end
 end)

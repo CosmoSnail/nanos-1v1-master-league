@@ -314,6 +314,22 @@ Events.Subscribe('UpdateBallCam', (enabled) => {
 })
 
 /* =====================================================
+   YOUR NAME
+   Fired by Client/NameTag.lua with your name and team (1 Witches, 2 Skeletons, 0 none yet)
+===================================================== */
+const myNameEl = document.querySelector('#my-name')
+const myNameTextEl = document.querySelector('#my-name-text')
+const myNameIconEl = document.querySelector('#my-name-icon')
+
+Events.Subscribe('UpdateMyName', (name, team) => {
+  myNameTextEl.textContent = name
+  myNameEl.classList.toggle('team-a', team === 1)
+  myNameEl.classList.toggle('team-b', team === 2)
+  myNameIconEl.setAttribute('href', team === 2 ? '#icon-skull' : '#icon-hat')
+  myNameEl.classList.toggle('hidden', !name)
+})
+
+/* =====================================================
    CONTROLS
    Fired by Client/Help.lua: the list (with the keys bound) and H to open it
 ===================================================== */
