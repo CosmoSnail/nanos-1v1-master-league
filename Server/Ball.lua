@@ -6,6 +6,31 @@ local massScale = 0.0001
 local ball
 local ribbon
 
+-- How far the server may see a car from the ball when its driver says they touched it: the two positions reach
+-- it late, each by its own client's ping (a car at full speed covers 5 m in a tenth of a second)
+local TOUCH_CHECK_DISTANCE = 1500
+
+-- A touch of the ball by this player, from a Hit event or told by their own client (Client/BallTouch.lua)
+local function RegisterBallTouch(player)
+    if IsNewTouch(player) then
+        LogBallTouch(player)
+        if Game.State == State.Running then
+            AddBallTouch(player)
+        end
+        ToggleRibbon(player:GetControlledCharacter():GetTeam())
+    end
+    Game.LastPlayerHitBall = player
+end
+
+Events.SubscribeRemote("BallTouch", function(player)
+    if not ball or not ball:IsValid() then return end
+    local character = player:GetControlledCharacter()
+    local vehicle = character and character:GetVehicle()
+    if not vehicle or not vehicle:IsValid() then return end
+    if (vehicle:GetLocation() - ball:GetLocation()):Size() > TOUCH_CHECK_DISTANCE then return end
+    RegisterBallTouch(player)
+end)
+
 function InitBall()
     ball = Ball(Config.BallSpawnPoint, Rotator(), "nanos-world::SM_Ball_VR")
     ball:SetScale(scale)
@@ -33,14 +58,7 @@ function InitBall()
             local driver = other:GetPassenger(0)
             local player = driver and driver:GetPlayer()
             if not player then return end
-            if IsNewTouch(player) then
-                LogBallTouch(player)
-                if Game.State == State.Running then
-                    AddBallTouch(player)
-                end
-            end
-            Game.LastPlayerHitBall = player
-            ToggleRibbon(player:GetControlledCharacter():GetTeam())
+            RegisterBallTouch(player)
         end
     end)
 end
