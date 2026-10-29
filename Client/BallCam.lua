@@ -1,7 +1,7 @@
 -- Ball cam, as in Rocket League: while on, the camera stays behind the car on the line from the ball,
 -- so the ball is always in front. Toggled with F (rebindable); the HUD shows "BALL CAM" while on.
 
-RegisterKey("BallCam", "F", "Toggle ball cam")
+RegisterKey("CarBallCam", "F", "Toggle ball cam")
 
 local PITCH_OFFSET = -10        -- degrees: looks a bit down on the car so it doesn't hide the ball
 local MIN_PITCH = -40
@@ -38,7 +38,7 @@ local function AngleDelta(from, to)
     return (to - from + 180) % 360 - 180
 end
 
-BindKey("BallCam", InputEvent.Pressed, function()
+BindKey("CarBallCam", InputEvent.Pressed, function()
     enabled = not enabled
     Events.Call("UpdateBallCam", enabled)
 end)
