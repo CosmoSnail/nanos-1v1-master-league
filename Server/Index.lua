@@ -4,6 +4,7 @@ Server.LoadPackage("ts-fireworks")
 Package.Require("Log.lua")
 
 print("Server Started")
+if Config.EnableCommands then print("Dev mode on: chat commands (/help) and client errors in this log") end
 
 Package.Require("Config.lua")
 Package.Require("Hats.lua")

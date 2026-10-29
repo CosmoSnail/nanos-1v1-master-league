@@ -18,9 +18,14 @@ function print(...)
         original_print(msg)
     end
 end
--- Script errors from clients, so they show up in the server log (once each per client)
+-- Each client asks once it loads (so it also works after a package reload)
+Events.SubscribeRemote("AskDevMode", function(player)
+    Events.CallRemote("DevMode", player, Reliability.Reliable, Config.EnableCommands)
+end)
+
+-- Script errors from clients, so they show up in the server log (once each per client; dev mode only)
 Events.SubscribeRemote("ClientError", function(player, text)
-    if type(text) == "string" then
+    if Config.EnableCommands and type(text) == "string" then
         Console.Error("[client %s] %s", player:GetName(), text:sub(1, 400))
     end
 end)

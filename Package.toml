@@ -35,4 +35,4 @@
 # those settings can be configured through new game menu, Config.toml and server command line
 # and can be accessed through Server.GetCustomSettings() method from any package
 [custom_settings]
-    # my_toggle_example = { label = "awesome toggle", type = "boolean", description = "press this!", default = true }
+    dev_commands = { label = "Dev chat commands", type = "boolean", description = "enables /goal, /fireworks, /reload... in the chat and sends client script errors to the server log", default = false }

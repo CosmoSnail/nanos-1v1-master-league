@@ -1,5 +1,19 @@
 local Commands = {}
 
+Commands["/help"] = function(player, args)
+    Chat.SendMessage(player, "/goal [red|blue] - score a goal for that team")
+    Chat.SendMessage(player, "/fireworks [end] - goal fireworks (end: the end of game ones)")
+    Chat.SendMessage(player, "/reload - reload the game-mode")
+end
+
+Commands["/fireworks"] = function(player, args)
+    if args[1] == "end" then
+        SpawnFireworksEndGame()
+    else
+        SpawnFireworksGoal()
+    end
+end
+
 Commands["/reload"] = function(player, args)
     Server.ReloadPackage(Package.GetName())
 end

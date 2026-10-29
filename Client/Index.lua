@@ -4,14 +4,33 @@ Package.Require("Sounds.lua")
 
 local main_hud = WebUI("Main HUD", "file://UI/index.html")
 
--- Script errors also go to the server log (once each, so a broken Tick doesn't flood it)
+-- With the dev_commands setting on, script errors also go to the server log (once each, so a broken Tick
+-- doesn't flood it); the ones before the server answers wait in pending_errors
+local dev_mode = nil
+local pending_errors = {}
 local reported_errors = {}
 Console.Subscribe("LogEntry", function(text, log_type)
+  if dev_mode == false then return end
   if log_type ~= LogType.Error and log_type ~= LogType.ScriptingError then return end
   if type(text) ~= "string" or reported_errors[text] then return end
   reported_errors[text] = true
-  Events.CallRemote("ClientError", Reliability.Reliable, text)
+  if dev_mode then
+    Events.CallRemote("ClientError", Reliability.Reliable, text)
+  else
+    table.insert(pending_errors, text)
+  end
 end)
+
+Events.SubscribeRemote("DevMode", function(on)
+  dev_mode = on == true
+  if dev_mode then
+    for _, text in ipairs(pending_errors) do
+      Events.CallRemote("ClientError", Reliability.Reliable, text)
+    end
+  end
+  pending_errors = {}
+end)
+Events.CallRemote("AskDevMode", Reliability.Reliable)
 
 InitSky()
 StartSoundtrack()

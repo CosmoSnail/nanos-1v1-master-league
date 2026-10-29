@@ -21,3 +21,6 @@ Config = {
     -- render distance of the ball, cars and everything attached to them (whole arena)
     RenderCullDistance = 1000000,
 }
+
+local settings = Server.GetCustomSettings() or {}
+if settings.dev_commands ~= nil then Config.EnableCommands = settings.dev_commands == true or settings.dev_commands == "true" end
