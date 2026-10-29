@@ -123,13 +123,15 @@ local function Ground()
     ground:SetMaterialScalarParameter("Opacity", 1)
 end
 
--- Outside, a mesh at `scale` life size times BIG and SIZE, and a light whose reach grows with it
+-- Outside, a mesh at `scale` life size times BIG and SIZE, and a light. The light's reach only grows with BIG:
+-- with SIZE too, the torches, lanterns and the rest reached over the walls and lit the whole pitch up, its floor
+-- full of their reflections. It is a little brighter, for the bigger meshes round it
 local function Big(asset, location, rotation, scale)
     return Mesh(asset, location, rotation, scale * BIG * SIZE)
 end
 
 local function BigGlow(location, color, intensity, radius)
-    return Glow(location, color, intensity * (BIG * SIZE) ^ 2, radius * BIG * SIZE)
+    return Glow(location, color, intensity * BIG * BIG * SIZE, radius * BIG)
 end
 
 -- A height on the meshes outside (a flame on its post, steam over the cauldron)
@@ -172,14 +174,14 @@ local function Graveyard(side)
     end
 
     -- jack-o'-lanterns lined up at the foot of the wall (small: Mesh takes the scale as it is), every other one
-    -- casting its light
+    -- casting its light, which stops at the wall (the pitch's floor shows every light that reaches it)
     local k = 0
     for x = -12000, 12000, 1400 * BIG do
         local lantern = Pick({ "JackOLantern", "JackOLantern2", "JackOLantern3" })
         Mesh(BTW .. lantern, At(x + Random(-150, 150) * BIG, 700 + Random(-50, 100)), Rotator(0, Random(0, 360), 0),
             Random(PUMPKIN_SCALE[1], PUMPKIN_SCALE[2]))
         if k % 2 == 0 then
-            BigGlow(At(x, 900) + Vector(0, 0, 800), PUMPKIN_GLOW, 140, 2400)
+            Glow(At(x, 900) + Vector(0, 0, 800), PUMPKIN_GLOW, 140 * BIG * BIG, 850 * BIG)
         end
         k = k + 1
     end
@@ -222,8 +224,8 @@ local function Coven()
     Big(BTW .. "WitchHut", At(-10500, 5500), Rotator(0, 200, 0), 2.2)
     for _, y in ipairs({ -4600, 4600 }) do
         Big(BTW .. "WitchTotem", At(4200, y), Rotator(0, 90, 0), 2.6)
-        Big(BTW .. "WitchLantern", At(5200, y * 0.65), Rotator(0, Random(0, 360), 0), 2.2)
-        BigGlow(At(5200, y * 0.65) + Up(560), WITCH_GLOW, 220, 3000)
+        Big(BTW .. "WitchLantern", At(2600, y * 1.05), Rotator(0, Random(0, 360), 0), 2.2)
+        BigGlow(At(2600, y * 1.05) + Up(560), WITCH_GLOW, 220, 3000)
     end
     Big(BTW .. "WitchEffigy", At(-4500, -7500), Rotator(0, 60, 0), 2.6)
     Big(BTW .. "Gibbet", At(-2500, 9500), Rotator(0, -30, 0), 2.4)
@@ -251,7 +253,7 @@ local function PumpkinPatch()
 
     -- turned to face the arena (-X), its jaw a little in the ground
     Mesh(SKULL, spot + Vector(0, 0, 11.2 * SKULL_SCALE), Rotator(0, 90, 0), SKULL_SCALE)
-    BigGlow(At(-1800 * SIZE, 0) + Up(900), SOUL_GLOW, 3500, 14000)
+    BigGlow(At(-2700, 0) + Up(900), SOUL_GLOW, 3500, 9000)
     Sigil(spot + Vector(0, 0, 6), 36 * BIG * SIZE, SOUL_GLOW, 1.6, 7)
 
     -- what stands in the patch, { x, y, radius } in life cm, so the pumpkins keep clear of it and of each other
