@@ -1,4 +1,4 @@
-# Intergalactic Champions Monster League (Halloween edition)
+# Intergalactic Champions Master League - Halloween Edition
 
 Rocket League in nanos world, dressed up for Halloween (branch `halloween-2026`; `main` keeps the regular
 season). Same game and controls: cars driven by `Client/Car.lua`, a ball, two goals, five-minute games.
