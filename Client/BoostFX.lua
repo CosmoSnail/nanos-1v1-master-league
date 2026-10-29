@@ -16,11 +16,11 @@ local CORE_LENGTH = 1.0
 local CORE_WIDTH = 0.28
 local IGNITE_SPEED = 12         -- how fast the flames grow when boosting starts (1/s)
 local FADE_SPEED = 8            -- and shrink when it stops
-local LIGHT_INTENSITY = 50
+local LIGHT_INTENSITY = 9
 local RENDER_CULL_DISTANCE = 1000000  -- whole arena, like Config.RenderCullDistance on the server
 
-local OUTER_EMISSIVE = Color(12, 2.4, 0.3)
-local CORE_EMISSIVE = Color(20, 14, 6)
+local OUTER_EMISSIVE = Color(2, 0.4, 0.05)
+local CORE_EMISSIVE = Color(3.5, 2.5, 1.1)
 
 -- vehicle -> { cones = { { mesh, nozzle, length, width } }, light, power }
 local effects = {}
