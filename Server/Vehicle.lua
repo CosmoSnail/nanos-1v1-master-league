@@ -42,7 +42,6 @@ function SpawnVehicle(character)
     AttachVehicleLights(vehicle, character:GetTeam())
     AttachVehiclePlayerName(vehicle, character:GetPlayer(), character:GetTeam())
     AttachVehicleHat(vehicle, character:GetTeam())
-    DecorateVehicle(vehicle, character:GetTeam())
     KeepVisible(vehicle)
     -- always sync cars at full rate, even from the other end of the arena
     vehicle:SetDistanceOptimizationMultiplier(0)
@@ -66,13 +65,6 @@ function AttachVehicleHat(vehicle, team)
         hat:SetMaterialScalarParameter(parameter, value)
     end
     vehicle:SetValue("Hat", hat)
-end
-
--- Halloween paint: the body tinted in the team's color
-function DecorateVehicle(vehicle, team)
-    if Config.PaintCars then
-        vehicle:SetMaterialColorParameter("Tint", Theme.Teams[team].paint, -1, "body")
-    end
 end
 
 -- changes a team's hat and swaps it on that team's cars already on the field

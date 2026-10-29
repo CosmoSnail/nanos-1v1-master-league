@@ -7,12 +7,10 @@ Theme = {
         [1] = {
             name = "Witches",
             color = Color(0.5, 0.1, 1.0),        -- lights, ribbon, fireworks
-            paint = Color(0.28, 0.12, 0.42),     -- tint of the car body
         },
         [2] = {
             name = "Skeletons",
             color = Color(0.95, 0.88, 0.7),      -- old bone
-            paint = Color(0.86, 0.8, 0.64),
         },
     },
     Slime = Color(0.35, 1.0, 0.12),

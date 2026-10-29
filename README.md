@@ -10,8 +10,8 @@ season). Same game and controls: cars driven by `Client/Car.lua`, a ball, two go
   the fireworks; the HUD uses the same ones (`Client/UI/style.css`).
 - **The ball** is a giant jack-o'-lantern with a carved face glowing from inside and a candle flickering in
   it, and it bonks when hit (`Client/PumpkinBall.lua`). Only its look changes: same size and physics.
-- **Cars**: body tinted in the team's color, the Witches wear witch hats, the Skeletons a giant skull (the
-  default pack's `SM_HumanSkeleton_Head_Full`; `Server/Hats.lua`, `DecorateVehicle` in `Server/Vehicle.lua`). Boost flames burn purple with a slime green core for the Witches,
+- **Cars**: the Witches wear witch hats, the Skeletons a giant skull (the default pack's
+  `SM_HumanSkeleton_Head_Full`; `Server/Hats.lua`). Boost flames burn purple with a slime green core for the Witches,
   pale blue round a white core for the Skeletons, soul fire (`Client/BoostFX.lua`).
 - **The night**: a night sky instead of space, a huge harvest moon with a witch flying across it, purple clouds
   and mist (`Client/Atmosphere.lua`). Silent lightning strikes the graveyard round the arena, the same bolt for
@@ -46,7 +46,7 @@ season). Same game and controls: cars driven by `Client/Car.lua`, a ball, two go
   `Client/Atmosphere.lua` (where the night ends up in `LATE`, when it starts to deepen in `DEEPEN_FROM`).
 - The colors the arena's own materials glow in: `ARENA_GLOW` in `Client/Arena.lua` (slots of the arena mesh:
   0 glass dome, 1 ramp rims, 5 goal frames, 9 ring).
-- Lightning frequency, car paint on or off: `Server/Config.lua`. Team names and colors: `Shared/Theme.lua`.
+- Lightning frequency: `Server/Config.lua`. Team names and colors: `Shared/Theme.lua`.
 
 ## Dev commands
 
