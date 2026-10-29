@@ -5,7 +5,7 @@
     # contributors
     author =                "CosmoSnail"
     # version
-    version =               "0.0.1"
+    version =               "2.0.0"
 
 # game-mode configurations
 [game_mode]
@@ -20,6 +20,7 @@
     # packages requirements
     packages_requirements = [
                             "default-vehicles",
+                            "ts-fireworks",
     ]
     # asset packs requirements
     assets_requirements = [
@@ -28,7 +29,7 @@
     ]
     # compatible maps - maps to be highlighted when starting a new game through main menu
     compatible_maps = [
-                            "intergalactic-champions-map",
+                            "intergalactic-champions-master-league-map",
     ]
 
 # game-mode custom settings configurations

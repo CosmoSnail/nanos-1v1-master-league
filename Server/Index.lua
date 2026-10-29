@@ -1,6 +1,3 @@
-Server.LoadPackage("default-vehicles")
-Server.LoadPackage("ts-fireworks")
-
 Package.Require("Log.lua")
 
 print("Server Started")
