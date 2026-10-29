@@ -11,9 +11,11 @@ Config = {
     CountDownDuration = 4,
     ScoredDuration = 7,
     EndedDuration = 20,
-    SpawnPointA = Vector(-8000, 0, 100),
-    SpawnPointB = Vector(8000, 0, 100),
-    BallSpawnPoint = Vector(0, 0, 150),
+    -- spawn heights measured where they come to rest on the arena floor (car ~142, ball ~497):
+    -- spawning lower pushes them out of the floor with a bump
+    SpawnPointA = Vector(-8000, 0, 145),
+    SpawnPointB = Vector(8000, 0, 145),
+    BallSpawnPoint = Vector(0, 0, 500),
     GoalPointA = Vector(-13700, 0, 900),
     GoalPointB = Vector(13700, 0, 900),
     ColorA = Color(0, 0, 1),
