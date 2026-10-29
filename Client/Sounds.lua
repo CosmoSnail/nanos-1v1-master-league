@@ -74,15 +74,6 @@ function PlayCountdownSound(seconds)
     end
 end
 
--- Thunder after a lightning strike `distance` cm away: sound is slower than light
-function PlayThunder(seed, distance)
-    local delay = math.floor(distance / 34300 * 1000)
-    local volume = math.max(0.35, math.min(0.9, 1.3 - distance / 60000))
-    Timer.SetTimeout(function()
-        PlaySound2D("thunder_" .. (seed % 3 + 1) .. ".ogg", volume, 0.85 + (seed % 7) * 0.04)
-    end, delay)
-end
-
 -- The pumpkin hit (Client/PumpkinBall.lua): strength 0 to 1
 function PlayBonk(location, strength)
     PlaySound3D("bonk_" .. math.random(1, 3) .. ".ogg", location, 0.35 + 0.65 * strength, 0.9 + math.random() * 0.25, 9000)

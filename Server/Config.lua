@@ -27,8 +27,8 @@ Config = {
     RenderCullDistance = 1000000,
     -- seconds between two lightning strikes over the graveyard (Weather.lua) when a game starts, closing in
     -- on the second range as it ends
-    LightningInterval = { 14, 32 },
-    FinalLightningInterval = { 4, 10 },
+    LightningInterval = { 6, 14 },
+    FinalLightningInterval = { 2, 6 },
 }
 
 local settings = Server.GetCustomSettings() or {}

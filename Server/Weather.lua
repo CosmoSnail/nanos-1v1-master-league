@@ -1,8 +1,8 @@
 Package.Require("Tables.lua")
 
--- Lightning over the graveyard round the arena. The server picks when and where, so every player sees
--- the same bolt and hears the same thunder (Client/Atmosphere.lua draws it); more and more often as a game
--- goes on, like the night deepening on the clients
+-- Lightning over the graveyard round the arena, silent. The server picks when and where, so every player sees
+-- the same bolt (Client/Atmosphere.lua draws it); more and more often as a game goes on, like the night
+-- deepening on the clients
 
 -- How much of the game has been played: 0 when it starts, 1 when time is up (and on the end screen)
 local function Played()
@@ -10,11 +10,14 @@ local function Played()
     return math.max(0, math.min(1, 1 - Game.Timer / Config.GameDuration))
 end
 
--- A spot in the sky outside the dome, all round it; seed picks the bolt and the thunder on the clients
+-- Where it hits the ground outside the dome, all round it (the bolt rises from there up to the clouds); seed
+-- picks the bolt on the clients
+local GROUND_Z = 120    -- the ground round the dome (Client/Arena.lua)
+
 function StrikeLightning()
     local angle = math.random() * math.pi * 2
     local distance = math.random(45000, 110000)
-    local location = Vector(math.cos(angle) * distance, math.sin(angle) * distance, math.random(12000, 22000))
+    local location = Vector(math.cos(angle) * distance, math.sin(angle) * distance, GROUND_Z)
     Events.BroadcastRemote("Lightning", Reliability.Unreliable, location, math.random(1, 1000))
 end
 

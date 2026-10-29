@@ -14,8 +14,8 @@ season). Same game and controls: cars driven by `Client/Car.lua`, a ball, two go
   default pack's `SM_HumanSkeleton_Head_Full`; `Server/Hats.lua`, `DecorateVehicle` in `Server/Vehicle.lua`). Boost flames burn purple with a slime green core for the Witches,
   pale blue round a white core for the Skeletons, soul fire (`Client/BoostFX.lua`).
 - **The night**: a night sky instead of space, a huge harvest moon with a witch flying across it, purple clouds
-  and mist (`Client/Atmosphere.lua`). Lightning strikes round the arena, the same bolt for everyone
-  (`Server/Weather.lua`), with the thunder arriving later the farther it fell.
+  and mist (`Client/Atmosphere.lua`). Silent lightning strikes the graveyard round the arena, the same bolt for
+  everyone (`Server/Weather.lua`).
 - **The arena** (`Client/Arena.lua`, all spawned on the clients, no collision): dark ground round the glass
   dome, a graveyard along both sides (tombstones, a crypt, dead trees, scarecrows, jack-o'-lanterns lined up at
   the foot of the walls), the witches' coven behind their goal (hut, bubbling cauldron, standing stones round a

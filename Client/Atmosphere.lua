@@ -107,8 +107,8 @@ function UpdateNight(time)
     SetDepth(k * k * (3 - 2 * k))
 end
 
--- A lightning strike: the bolt far out over the graveyard, the pitch and the sky flashing twice, and the
--- thunder a moment later (the farther, the later)
+-- A lightning strike, silent: the bolt far out over the graveyard (P_FXVariety_Lightning_* strike where they
+-- stand: the bolt rises from their origin), the pitch and the sky flashing twice
 Events.SubscribeRemote("Lightning", function(location, seed)
     if type(seed) ~= "number" then return end
 
@@ -130,10 +130,6 @@ Events.SubscribeRemote("Lightning", function(location, seed)
     Timer.SetTimeout(function()
         if flash:IsValid() then flash:Destroy() end
     end, 400)
-
-    local player = Client.GetLocalPlayer()
-    local distance = player and (player:GetCameraLocation() - location):Size() or 40000
-    PlayThunder(seed, distance)
 end)
 
 -- /fog (dev): try another density of mist live; late in the game it stays as much thicker as before

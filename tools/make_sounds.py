@@ -2,7 +2,7 @@
 
 - goal_*.ogg: four goal stingers (Bach's Toccata in D minor on the organ, bells and choir, a theremin wail,
   a skeleton xylophone run). end_organ.ogg: the whole Toccata opening, when the time runs out.
-- countdown_tick.ogg / countdown_go.ogg, thunder_*.ogg, owl.ogg, wolf_howl.ogg, bonk_*.ogg.
+- countdown_tick.ogg / countdown_go.ogg, owl.ogg, wolf_howl.ogg, bonk_*.ogg.
 
 Usage: python tools/make_sounds.py [output folder, default Client/Sounds]
 Needs numpy, scipy and ffmpeg (on the PATH, or its path in the FFMPEG environment variable).
@@ -384,9 +384,6 @@ if __name__ == "__main__":
     stinger("end_organ.ogg", end_organ, 9.5, rev=4.0, wet=0.4)
     stinger("countdown_tick.ogg", countdown_tick, 1.2, rev=1.5, wet=0.3)
     stinger("countdown_go.ogg", countdown_go, 2.0, rev=2.5, wet=0.35)
-    for k in range(3):
-        x = thunder_sound((7.0, 8.5, 6.0)[k], crack=(1.0, 0.5, 0.8)[k], seed=200 + k)
-        save("thunder_%d.ogg" % (k + 1), master(x, peak=0.9, drive=1.6))
     save("owl.ogg", owl())
     save("wolf_howl.ogg", wolf_howl())
     for k, p in enumerate((1.0, 0.85, 1.18)):
