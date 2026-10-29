@@ -28,14 +28,36 @@ function InitBall()
 
     ball:Subscribe("Hit", function(self, impact_force, normal_impulse, impact_location, velocity, other)
         if other and other:IsA(Offroad) then
-            local player = other:GetPassenger(0):GetPlayer()
-            print(player:GetName() .. " hit the ball!")
+            local driver = other:GetPassenger(0)
+            local player = driver and driver:GetPlayer()
+            if not player then return end
+            LogBallTouch(player)
             Game.LastPlayerHitBall = player
             ToggleRibbon(player:GetControlledCharacter():GetTeam())
-        else 
-            print("Ball hit the ground: " .. tostring(other))
         end
     end)
+end
+
+-- One touch keeps firing Hit for a few frames: only log a new player, or the same one again after a pause
+local lastTouchPlayer
+local lastTouchTime = 0
+
+function LogBallTouch(player)
+    local now = Server.GetTime()
+    if player == lastTouchPlayer and now - lastTouchTime < 500 then
+        lastTouchTime = now
+        return
+    end
+    lastTouchPlayer = player
+    lastTouchTime = now
+
+    local team = Ternary(player:GetControlledCharacter():GetTeam() == Team.TeamA, "blue", "red")
+    local message = player:GetName() .. " (" .. team .. ") touched the ball"
+    print(message)
+    -- in dev mode it also goes to the chat
+    if Config.EnableCommands and Config.LogLevel ~= LogLevel.GameChat then
+        Chat.BroadcastMessage(message)
+    end
 end
 
 function ToggleRibbon(team)
