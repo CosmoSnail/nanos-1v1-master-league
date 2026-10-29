@@ -71,14 +71,16 @@ end
 
 function UpdateBallRibbon()
     if ribbon and ribbon:IsValid() and ball and ball:IsValid() then
-        local velocity = ball:GetVelocity():Size()
-        if velocity < 2300 then
-            ribbon:Deactivate()
-            return
-        elseif ribbon and ribbon:IsActive() then
-            ribbon:Activate()
+        -- the hit velocity may reach the server a few ticks after the Hit event, so the ribbon
+        -- has to come back on once the ball speeds up (only toggle on change: each call is replicated)
+        local fast = ball:GetVelocity():Size() >= 2300
+        if fast ~= ribbon:IsActive() then
+            if fast then
+                ribbon:Activate()
+            else
+                ribbon:Deactivate()
+            end
         end
-        return
     end
 end
 
