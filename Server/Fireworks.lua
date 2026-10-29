@@ -1,5 +1,5 @@
 function SpawnFireworksGoal(team)
-    SpawnRandomFireworks(20000, 20000, 6000, 10000, 50, team, 8000)
+    SpawnRandomFireworks(20000, 20000, 7500, 12000, 50, team, 8000)
 end
 
 function SpawnFireworksEndGame()
@@ -9,7 +9,7 @@ function SpawnFireworksEndGame()
     elseif Game.ScoreB > Game.ScoreA then
         team = Team.TeamB
     end
-    SpawnRandomFireworks(20000, 20000, 6000, 10000, 80, team, 12000)
+    SpawnRandomFireworks(20000, 20000, 7500, 12000, 80, team, 12000)
 end
 
 function SpawnRandomFireworks(range_x, range_y, range_z_0, range_z_1, count, team, max_delay)
