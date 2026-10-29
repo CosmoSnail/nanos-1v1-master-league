@@ -15,11 +15,11 @@ local NIGHT = {
     night_brightness = 1.6,
     clouds = 3.5,                       -- 0 (clear) to 10 (overcast)
     cloud_color = Color(0.55, 0.42, 0.8),
-    fog = 5,                            -- 0 to 100: the arena is 280 m long, a little goes a long way (/fog to try)
+    fog = 8,                            -- 0 to 100: the arena is 280 m long, a little goes a long way (/fog to try)
 }
 local WITCHING = {
     cloud_color = Color(0.75, 0.25, 0.22),
-    fog = 7,
+    fog = 10,
     saturation = Color(1.15, 0.75, 0.75, 1),
     gain = Color(1.12, 0.85, 0.82, 1),
     contrast = Color(1.08, 1.08, 1.08, 1),

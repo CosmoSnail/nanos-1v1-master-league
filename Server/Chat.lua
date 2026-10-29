@@ -25,7 +25,7 @@ end
 Commands["/fog"] = function(player, args)
     local value = tonumber(args[1] or "")
     if not value then
-        Chat.SendMessage(player, "/fog <0-100> - the mist's density for everyone (5 by default)")
+        Chat.SendMessage(player, "/fog <0-100> - the mist's density for everyone (8 by default)")
         return
     end
     value = math.max(0, math.min(100, value))
