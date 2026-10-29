@@ -19,7 +19,8 @@ season). Same game and controls: cars driven by `Client/Car.lua`, a ball, two go
 - **The arena** (`Client/Arena.lua`, all spawned on the clients, no collision): dark ground round the glass
   dome, a graveyard along both sides (tombstones, a crypt, dead trees, scarecrows, jack-o'-lanterns lined up at
   the foot of the walls), the witches' coven behind their goal (hut, bubbling cauldron, standing stones round a
-  glowing pentagram), behind the Skeletons' goal a **giant skull** (140 m high, lit in their soul fire blue)
+  glowing pentagram), behind the Skeletons' goal a **giant skull** (140 m high, lit in their soul fire blue) with skeletons
+  dancing the coffin dance in a ring before it, others reaching out or crawling out of the ground, bones about,
   in a patch of pumpkins (none of the pumpkins outside bigger than the ball), dead trees on the
   horizon, mist and will-o'-wisps; everything outside is built three times life size and more. Inside: magic circles on
   the centre spot and in each goal, fallen leaves on the pitch, and the arena's own rims and glass lit in

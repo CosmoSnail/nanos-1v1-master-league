@@ -251,16 +251,36 @@ end
 local SKULL = "nanos-world::SM_HumanSkeleton_Head_Full"
 local SKULL_SCALE = 600     -- the mesh is 15 cm wide (X), 20 deep (Y, the face on +Y) and 24 high (Z), centred
 
+-- Skeletons risen round it (the default pack's, on the mannequin's bones, animated here on the client): a ring
+-- of them dancing in front of it, others reaching out for the arena or crawling out of the ground, and their
+-- bones lying about
+local SKELETON = "nanos-world::SK_HumanSkeleton"
+local SKELETON_SCALE = 11                   -- 20 m high, like everything out there
+local SKELETON_HALF_HEIGHT = 90             -- cm from its feet up to the actor's location, at scale 1
+local BONES = {
+    "nanos-world::SM_HumanSkeleton_Femur", "nanos-world::SM_HumanSkeleton_Tibia", "nanos-world::SM_HumanSkeleton_Humerus",
+    "nanos-world::SM_HumanSkeleton_RibCage", "nanos-world::SM_HumanSkeleton_Pelvis", "nanos-world::SM_HumanSkeleton_Head_Full",
+}
+
+local function Skeleton(location, yaw, animation)
+    local skeleton = CharacterSimple(location + Vector(0, 0, SKELETON_HALF_HEIGHT * SKELETON_SCALE), Rotator(0, yaw, 0),
+        SKELETON, "", CollisionType.NoCollision, false)
+    skeleton:SetScale(Vector(SKELETON_SCALE))
+    skeleton:SetRenderCullDistance(RENDER_CULL_DISTANCE)
+    skeleton:PlayAnimation(animation, "", true, 0.25, 0.25, Random(0.85, 1.15))
+    return skeleton
+end
+
 local function PumpkinPatch()
-    local spot = Vector(GOAL_BACK + 13300 * BIG, 0, GROUND_Z)
+    local origin = Vector(GOAL_BACK + 13300 * BIG, 0, GROUND_Z)
     local function At(x, y)
-        return spot + Vector(x * BIG, y * BIG, 0)
+        return origin + Vector(x * BIG, y * BIG, 0)
     end
 
     -- turned to face the arena (-X), its jaw a little in the ground
-    Mesh(SKULL, spot + Vector(0, 0, 11.2 * SKULL_SCALE), Rotator(0, 90, 0), SKULL_SCALE)
+    Mesh(SKULL, origin + Vector(0, 0, 11.2 * SKULL_SCALE), Rotator(0, 90, 0), SKULL_SCALE)
     BigGlow(At(-2700, 0) + Up(900), SOUL_GLOW, 3500, 9000)
-    Sigil(spot + Vector(0, 0, 6), 36 * BIG * SIZE, SOUL_GLOW, 1.6, 7)
+    Sigil(origin + Vector(0, 0, 6), 36 * BIG * SIZE, SOUL_GLOW, 1.6, 7)
 
     -- what stands in the patch, { x, y, radius } in life cm, so the pumpkins keep clear of it and of each other
     local taken = { { 0, 0, 7500 / BIG } }     -- the skull: 61 m from its centre to its face
@@ -278,6 +298,30 @@ local function PumpkinPatch()
     for _, spot in ipairs({ { -5500, -10500 }, { 6000, 4000 }, { -3000, 10500 } }) do
         Big(BTW .. Pick({ "Haystack", "HayPile" }), At(spot[1], spot[2]), Rotator(0, Random(0, 360), 0), 2.2)
         Free(spot[1], spot[2], 240 * 2.2 * SIZE)
+    end
+
+    -- the danse macabre: a ring of them in front of the skull, each facing the middle
+    for k = 0, 6 do
+        local angle = k / 7 * math.pi * 2
+        local x, y = -5200 + math.cos(angle) * 1500, math.sin(angle) * 1500
+        Skeleton(At(x, y), math.deg(angle) + 180 + Random(-15, 15), "nanos-world::AM_Mannequin_CoffinDance")
+        Free(x, y, 450)
+    end
+    -- risen ones reaching out for the arena (-X), two crawling out of the ground
+    for _, risen in ipairs({ { -8800, -3000, "A_Zombie_Reach_Loop" }, { -8800, 3000, "A_Zombie_Reach_Loop" },
+        { -6500, -8200, "A_Zombie_Idle_01" }, { -6500, 8200, "A_Zombie_Idle_02" },
+        { -9800, 600, "A_Zombie_Crawl_Loop" }, { -2600, 6200, "A_Zombie_Crawl_Loop" } }) do
+        Skeleton(At(risen[1], risen[2]), 180 + Random(-25, 25), "nanos-world::" .. risen[3])
+        Free(risen[1], risen[2], 450)
+    end
+    -- and bones lying about
+    local strewn = 0
+    while strewn < 24 do
+        local x, y = Random(-10500, 3000), Random(-9000, 9000)
+        if Free(x, y, 120) then
+            Mesh(Pick(BONES), At(x, y) + Vector(0, 0, 40), Rotator(0, Random(0, 360), 0), SKELETON_SCALE)
+            strewn = strewn + 1
+        end
     end
 
     local placed, tries = 0, 0
@@ -321,10 +365,10 @@ local function Pitch()
     Sigil(Vector(12900, 0, FLOOR_Z + 8), 15, Theme.Teams[2].color, 1.2, 7)
 
     local placed = 0
-    while placed < 26 do
+    while placed < 90 do
         local spot = Vector(Random(-11000, 11000), Random(-7200, 7200), FLOOR_Z)
         if Vector(spot.X, spot.Y, 0):Size() > 2000 then
-            local half = Random(300, 480)
+            local half = Random(250, 480)
             local leaves = Decal(spot, Rotator(-90, Random(0, 360), 0), "nanos-world::M_NanosDecal", Vector(60, half, half), -1)
             leaves:SetMaterialTextureParameter("Texture", IMAGES .. (Random() < 0.5 and "leaves_1.png" or "leaves_2.png"))
             leaves:SetMaterialScalarParameter("Opacity", 1)
