@@ -6,6 +6,8 @@ Package.Require("BallCam.lua")
 Package.Require("Help.lua")
 Package.Require("Leaderboard.lua")
 Package.Require("Sounds.lua")
+Package.Require("NameTag.lua")
+Package.Require("Floor.lua")
 
 local main_hud = WebUI("Main HUD", "file://UI/index.html")
 main_hud:Subscribe("Ready", SendControls)

@@ -7,6 +7,41 @@ Commands["/help"] = function(player, args)
     Chat.SendMessage(player, "/swap - switch to the other team")
     Chat.SendMessage(player, "/hat [number|name] - change your team's hat (next one if empty)")
     Chat.SendMessage(player, "/end - end the game now (during the end screen: start the next one)")
+    Chat.SendMessage(player, "/ball [number] - try another ball (the list if empty)")
+    Chat.SendMessage(player, "/floor [number] [size cm] [aspect] - try another floor (the list if empty)")
+end
+
+-- Tries the default pack's ball materials (Shared/Materials.lua) on the ball, until a reload
+Commands["/ball"] = function(player, args)
+    local index = tonumber(args[1] or "")
+    if not index or not BallMaterials[index] then
+        for i, name in ipairs(BallMaterials) do
+            Chat.SendMessage(player, i .. " - " .. name)
+        end
+        return
+    end
+    SetBallMaterial(index)
+    Chat.BroadcastMessage("Ball: " .. BallMaterials[index])
+end
+
+-- Tries the default pack's surfaces (Shared/Materials.lua) on the pitch's floor for everyone, until a reload;
+-- size: how big their texture is (cm), aspect: how much wider than long (both kept from the last one if not given)
+Commands["/floor"] = function(player, args)
+    local index = tonumber(args[1] or "")
+    if not index or not FloorMaterials[index] then
+        for i, name in ipairs(FloorMaterials) do
+            Chat.SendMessage(player, i .. " - " .. name)
+        end
+        Chat.SendMessage(player, "/floor <number> [size cm, " .. DefaultFloorSize .. "] [aspect, " .. DefaultFloorAspect .. "]")
+        return
+    end
+    local size = tonumber(args[2] or "")
+    local aspect = tonumber(args[3] or "")
+    if size then size = math.max(10, math.min(100000, size)) end
+    if aspect then aspect = math.max(0.05, math.min(20, aspect)) end
+    Events.BroadcastRemote("DevFloor", Reliability.Reliable, index, size, aspect)
+    Chat.BroadcastMessage("Floor: " .. FloorMaterials[index] .. (size and (", size " .. size) or "")
+        .. (aspect and (", aspect " .. aspect) or ""))
 end
 
 Commands["/hat"] = function(player, args)

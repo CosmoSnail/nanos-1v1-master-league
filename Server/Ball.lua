@@ -1,14 +1,18 @@
 Ball = Prop.Inherit("Ball")
 
-local scale = 5
+-- An SM_Sphere (radius 50) as big as the SM_Ball_VR it replaces was at scale 5 (radius 69.6): the same size and
+-- weight, in one of the default pack's ball materials (Shared/Materials.lua; /ball tries the others)
+local scale = 6.96
 local massScale = 0.0001
 
 local ball
 local ribbon
+local ballMaterial = DefaultBallMaterial
 
 function InitBall()
-    ball = Ball(Config.BallSpawnPoint, Rotator(), "nanos-world::SM_Ball_VR")
+    ball = Ball(Config.BallSpawnPoint, Rotator(), "nanos-world::SM_Sphere")
     ball:SetScale(scale)
+    ball:SetMaterial("nanos-world::" .. BallMaterials[ballMaterial])
     ball:SetMassScale(massScale)
     ball:SetPhysicalMaterial('nanos-world::PM_Rubber')
     KeepVisible(ball)
@@ -92,6 +96,14 @@ end
 function DestroyBall()
     if ball and ball:IsValid() then
         ball:Destroy()
+    end
+end
+
+-- /ball (dev): the ball in another of BallMaterials, this one and the next ones, until a reload
+function SetBallMaterial(index)
+    ballMaterial = index
+    if ball and ball:IsValid() then
+        ball:SetMaterial("nanos-world::" .. BallMaterials[index])
     end
 end
 
