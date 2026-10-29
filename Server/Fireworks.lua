@@ -26,9 +26,11 @@ function SpawnRandomFireworks(range_x, range_y, range_z_0, range_z_1, count, tea
             location,
             Rotator(),
             "ts-fireworks::PS_TS_Fireworks_Burst_Palm",
-            false,
+            true,
             true
         )
+        -- Fallback in case the system never reports finished; otherwise late joiners replay every firework
+        firework:SetLifeSpan(10)
 
         local color
         if team == Team.TeamA then
