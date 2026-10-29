@@ -227,7 +227,10 @@ const leaderboardRowsEls = {
   1: document.querySelector('#leaderboard-rows-a'),
   2: document.querySelector('#leaderboard-rows-b'),
 }
+const leaderboardContentEl = document.querySelector('#leaderboard-content')
 const STAT_COLUMNS = ['score', 'goals', 'assists', 'hits']
+// with more players than this in a team, rows get compact
+const CROWDED_TEAM_SIZE = 6
 
 let leaderboardRows = []
 let leaderboardHeld = false
@@ -307,7 +310,34 @@ function renderLeaderboard() {
       bodyEl.appendChild(tr)
     }
   }
+
+  const teamSizes = [1, 2].map(
+    (team) => leaderboardRows.filter((row) => row.team === team).length
+  )
+  leaderboardOverlayEl.classList.toggle(
+    'crowded',
+    Math.max(...teamSizes) > CROWDED_TEAM_SIZE
+  )
+  fitLeaderboard()
 }
+
+/**
+ * Scales the leaderboard (and the game over result) down when it is
+ * taller or wider than the screen
+ */
+function fitLeaderboard() {
+  const margin = 48
+  const scale = Math.min(
+    1,
+    (window.innerHeight - margin) / leaderboardContentEl.offsetHeight,
+    (window.innerWidth - margin) / leaderboardContentEl.offsetWidth
+  )
+  leaderboardContentEl.style.transform = scale < 1 ? `scale(${scale})` : ''
+}
+
+window.addEventListener('resize', fitLeaderboard)
+// the font changes the size once it loads
+document.fonts.ready.then(fitLeaderboard)
 
 function updateLeaderboardVisibility() {
   const visible = leaderboardHeld || gameOverInfo !== null

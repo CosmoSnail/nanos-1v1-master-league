@@ -476,7 +476,6 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 26px;
 
   background: rgba(0, 0, 0, 0.45);
 
@@ -491,14 +490,26 @@ body {
   background: rgba(0, 0, 0, 0.65);
 }
 
+/* scaled down by index.js when it doesn't fit the screen */
+.leaderboard-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 26px;
+
+  flex-shrink: 0;
+  transform-origin: center;
+}
+
 /* =====================================================
    LEADERBOARD — TEAM PANELS
 ===================================================== */
+/* teams side by side */
 .leaderboard {
-  width: 900px;
+  width: 1760px;
 
   display: flex;
-  flex-direction: column;
+  align-items: flex-start;
   gap: 18px;
 }
 
@@ -506,6 +517,9 @@ body {
   --team-main: 0, 180, 255;
   --team-soft: 160, 200, 255;
   --team-dark: 0, 60, 160;
+
+  flex: 1;
+  min-width: 0;
 
   position: relative;
   padding: 14px 24px 10px;
@@ -869,4 +883,33 @@ body {
 
   text-shadow: 0 0 6px rgba(0, 255, 255, 0.9), 0 0 12px rgba(0, 200, 255, 0.8),
     0 0 24px rgba(0, 150, 255, 0.7);
+}
+
+/* =====================================================
+   LEADERBOARD — MANY PLAYERS
+   Compact rows (index.js)
+===================================================== */
+.leaderboard-overlay.crowded .leaderboard table {
+  font-size: 13px;
+}
+
+.leaderboard-overlay.crowded .leaderboard td {
+  padding: 3px 8px;
+}
+
+.leaderboard-overlay.crowded .leaderboard td.col-ping {
+  font-size: 11px;
+}
+
+.leaderboard-overlay.crowded .leaderboard .player-avatar {
+  width: 20px;
+  height: 20px;
+}
+
+.leaderboard-overlay.crowded .player-name {
+  max-width: 240px;
+}
+
+.leaderboard-overlay.crowded .game-over-title {
+  font-size: 72px;
 }
