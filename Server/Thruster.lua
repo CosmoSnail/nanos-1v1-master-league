@@ -20,10 +20,6 @@ function SpawnThruster(vehicle)
 
         thruster:AttachTo(vehicle, AttachmentRule.SnapToTarget, "", 1)
         thruster:SetRelativeLocation(cfg.offset)
-
-        local particle = Particle(Vector(), Rotator(), "nanos-world::P_Fire", false, true)
-        particle:AttachTo(thruster, AttachmentRule.SnapToTarget, "", 0)
-        particle:SetRelativeLocation(Vector(-40, 0, 0))
-        particle:Deactivate()
+        -- the boost flames are drawn on the clients (Client/BoostFX.lua)
     end
 end

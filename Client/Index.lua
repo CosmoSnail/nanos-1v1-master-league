@@ -1,5 +1,6 @@
 Package.Require("Sky.lua")
 Package.Require("Car.lua")
+Package.Require("BoostFX.lua")
 Package.Require("Sounds.lua")
 
 local main_hud = WebUI("Main HUD", "file://UI/index.html")

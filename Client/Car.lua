@@ -28,9 +28,9 @@ CarTuning = {
 
     -- Boost
     BoostAccel = 2200,
-    BoostDrain = 33.3,          -- per second, meter goes 0-100
+    BoostDrain = 0,             -- per second, meter goes 0-100 (0 = infinite boost; Rocket League: 33.3)
     BoostRegen = 10,            -- per second while not boosting
-    KickoffBoost = 33,
+    KickoffBoost = 100,
 
     -- Air (rad/s², rad/s)
     AirThrottleAccel = 150,
@@ -161,6 +161,11 @@ local function SetBoosting(boosting)
     if car.boosting == boosting then return end
     car.boosting = boosting
     Events.CallRemote("CarBoost", Reliability.Reliable, boosting)
+end
+
+-- Vehicle being driven here and whether it is boosting (Client/BoostFX.lua)
+function GetLocalBoost()
+    return car.vehicle, car.boosting
 end
 
 local function UpdateBoostMeter()
@@ -349,7 +354,8 @@ Client.Subscribe("Tick", function(dt)
     SetBoosting(wantsBoost and car.boost > 0)
     if car.boosting then
         car.boost = math.max(0, car.boost - CarTuning.BoostDrain * dt)
-    else
+    elseif not wantsBoost then
+        -- no regen while the button is held on an empty meter, or boost would flicker on and off every frame
         car.boost = math.min(100, car.boost + CarTuning.BoostRegen * dt)
     end
     UpdateBoostMeter()

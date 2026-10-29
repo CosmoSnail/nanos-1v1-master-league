@@ -1,7 +1,7 @@
 Package.Require("Utils.lua")
 
 -- Driving, jumping and boosting run on the driver's client (Client/Car.lua);
--- the server only shows the thruster flames to everyone while a player boosts.
+-- the server only tells the other clients who is boosting, to draw the flames (Client/BoostFX.lua).
 Events.SubscribeRemote("CarBoost", function(player, boosting)
     if type(boosting) ~= "boolean" then
         return
@@ -12,31 +12,5 @@ Events.SubscribeRemote("CarBoost", function(player, boosting)
         return
     end
 
-    for _, thruster in pairs(GetVehicleThrusters(vehicle)) do
-        for _, particle in pairs(GetAttachedParticles(thruster)) do
-            if boosting then
-                particle:Activate()
-            else
-                particle:Deactivate()
-            end
-        end
-    end
+    vehicle:SetValue("Boosting", boosting, true)
 end)
-
-function GetVehicleThrusters(vehicle)
-    return Filter(
-        vehicle:GetAttachedEntities(),
-        function(entity)
-            return entity:IsA(Prop)
-        end
-    )
-end
-
-function GetAttachedParticles(thruster)
-    return Filter(
-        thruster:GetAttachedEntities(),
-        function(entity)
-            return entity:IsA(Particle)
-        end
-    )
-end
