@@ -30,22 +30,27 @@ function HandleGoal(ball, teamScored)
     local ownGoal = not scorer and lastCharacter and lastCharacter:GetTeam() ~= teamScored
 
     if teamScored == Team.TeamA then
-        print("Team A scored! " .. "(" .. shown:GetName() .. ")")
+        print("The Witches scored! " .. "(" .. shown:GetName() .. ")")
         Game.ScoreA = Game.ScoreA + 1
         Events.BroadcastRemote("UpdateScoreA", Reliability.Reliable, Game.ScoreA)
 
     else
-        print("Team B scored! " .. "(" .. shown:GetName() .. ")")
+        print("The Pumpkins scored! " .. "(" .. shown:GetName() .. ")")
         Game.ScoreB = Game.ScoreB + 1
         Events.BroadcastRemote("UpdateScoreB", Reliability.Reliable, Game.ScoreB)
     end
 
+    -- x, y, z: where the pumpkin burst, for the clients' celebration (Client/Spooks.lua)
+    local location = ball:GetLocation()
     Events.BroadcastRemote("GoalScored", Reliability.Reliable, {
         playerName = shown:GetName(),
         playerImageUrl = shown:GetAccountIconURL(),
         team = teamScored,
         assistName = assister and assister:GetName() or nil,
         ownGoal = ownGoal and true or false,
+        x = location.X,
+        y = location.Y,
+        z = location.Z,
     })
 
     local particle = Particle(

@@ -1,11 +1,14 @@
-Package.Require("Sky.lua")
+Package.Require("Sounds.lua")
+Package.Require("Atmosphere.lua")
 Package.Require("Keys.lua")
 Package.Require("Car.lua")
 Package.Require("BoostFX.lua")
 Package.Require("BallCam.lua")
 Package.Require("Help.lua")
 Package.Require("Leaderboard.lua")
-Package.Require("Sounds.lua")
+Package.Require("PumpkinBall.lua")
+Package.Require("Arena.lua")
+Package.Require("Spooks.lua")
 
 local main_hud = WebUI("Main HUD", "file://UI/index.html")
 main_hud:Subscribe("Ready", SendControls)
@@ -38,10 +41,8 @@ Events.SubscribeRemote("DevMode", function(on)
 end)
 Events.CallRemote("AskDevMode", Reliability.Reliable)
 
-InitSky()
-StartSoundtrack()
-
 Events.SubscribeRemote("UpdateCountDownTime", function(time)
+  PlayCountdownSound(time)
   main_hud:CallEvent("UpdateCountDownTime", time)
 end)
 
@@ -49,7 +50,17 @@ Events.SubscribeRemote("UpdateTime", function(time)
   if (time == 0) then
     PlayEndSound()
   end
+  UpdateWitchingHour(time)
   main_hud:CallEvent("UpdateTime", time)
+end)
+
+-- The last minute (Client/Atmosphere.lua): the HUD's timer bleeds, a banner when it starts. Kept to send
+-- again once the HUD has loaded, for a player joining in the middle of it
+local witching_hour = false
+
+Events.Subscribe("WitchingHour", function(on, announce)
+  witching_hour = on
+  main_hud:CallEvent("WitchingHour", on, announce)
 end)
 
 Events.SubscribeRemote("UpdateScoreA", function(score)
@@ -62,8 +73,8 @@ end)
 
 Events.SubscribeRemote("GoalScored", function(info)
   main_hud:CallEvent("GoalScored", info)
-  
-  PlayRandomScoreSound()
+
+  PlayGoalSound()
 end)
 
 Events.Subscribe("UpdateBoost", function(boost)
@@ -119,4 +130,5 @@ end)
 main_hud:Subscribe("Ready", function()
   if last_leaderboard then main_hud:CallEvent("UpdateLeaderboard", last_leaderboard) end
   if last_game_over then main_hud:CallEvent("GameOver", last_game_over) end
+  if witching_hour then main_hud:CallEvent("WitchingHour", true, false) end
 end)

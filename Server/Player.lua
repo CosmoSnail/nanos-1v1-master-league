@@ -84,6 +84,15 @@ function ShuffleTeams()
     end
 end
 
+-- The welcome once the player's game has loaded (chat messages sent before that are lost)
+Player.Subscribe("Ready", function(player)
+    local character = player:GetControlledCharacter()
+    Chat.SendMessage(player, "Happy Halloween! Welcome to the Intergalactic Champions Monster League")
+    if character then
+        Chat.SendMessage(player, "You play for the " .. TeamName(character:GetTeam()) .. ": kick the pumpkin into the other team's goal!")
+    end
+end)
+
 Player.Subscribe("Destroy", function(player)
 	local character = player:GetControlledCharacter()
 	if character then

@@ -1,8 +1,23 @@
 /* =====================================================
+   BROWSER PREVIEW
+   Outside the game there is no Events: a stand-in, so the
+   HUD can be worked on in a browser with emit('Event', ...)
+===================================================== */
+if (typeof Events === 'undefined') {
+  const handlers = {}
+  window.Events = {
+    Subscribe: (name, fn) => (handlers[name] = handlers[name] || []).push(fn),
+    Call: () => {},
+  }
+  window.emit = (name, ...args) => (handlers[name] || []).forEach((fn) => fn(...args))
+}
+
+/* =====================================================
    HUD REFERENCES (DOM CACHE)
    Cache all static DOM references once
 ===================================================== */
 const timerEl = document.querySelector('#timer')
+const timerCaptionEl = document.querySelector('#timer-caption')
 const teamAScoreEl = document.querySelector('#team-a-score')
 const teamBScoreEl = document.querySelector('#team-b-score')
 const timerContainerEl = document.querySelector('#timer-container')
@@ -12,6 +27,8 @@ const countdownNumberEl = document.querySelector('#countdown-number')
 
 const leaderboardScoreAEl = document.querySelector('#leaderboard-score-a')
 const leaderboardScoreBEl = document.querySelector('#leaderboard-score-b')
+
+const TEAM_NAMES = { 1: 'WITCHES', 2: 'PUMPKINS' }
 
 /* =====================================================
    HUD STATE MACHINE
@@ -65,6 +82,80 @@ function setHudState(state) {
 }
 
 /* =====================================================
+   BATS
+   A flock crossing the top of the screen now and then,
+   and a burst of them out of the goal banner
+===================================================== */
+const hudBatsEl = document.querySelector('#hud-bats')
+
+function spawnBat(from, to, duration, size, delay) {
+  const bat = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+  bat.setAttribute('class', 'hud-bat')
+  bat.innerHTML = '<use href="#icon-bat" />'
+  bat.style.width = `${size}px`
+  bat.style.height = `${size * 0.47}px`
+  bat.style.animationDuration = `${0.14 + Math.random() * 0.08}s`
+  hudBatsEl.appendChild(bat)
+
+  gsap.set(bat, { x: from.x, y: from.y, opacity: 0 })
+  gsap
+    .timeline({ delay, onComplete: () => bat.remove() })
+    .to(bat, { opacity: 1, duration: 0.2 })
+    .to(bat, { x: to.x, duration, ease: 'none' }, 0)
+    .to(
+      bat,
+      {
+        y: to.y,
+        duration,
+        ease: `sine.inOut`,
+      },
+      0
+    )
+    .to(bat, { opacity: 0, duration: 0.3 }, duration - 0.3)
+}
+
+function batFlock() {
+  const w = window.innerWidth
+  const h = window.innerHeight
+  const leftToRight = Math.random() < 0.5
+  const count = 3 + Math.floor(Math.random() * 4)
+  const baseY = h * (0.08 + Math.random() * 0.22)
+  for (let i = 0; i < count; i++) {
+    const y = baseY + (Math.random() - 0.5) * 120
+    spawnBat(
+      { x: leftToRight ? -80 : w + 80, y },
+      { x: leftToRight ? w + 80 : -80, y: y + (Math.random() - 0.5) * 160 },
+      5 + Math.random() * 3,
+      26 + Math.random() * 22,
+      i * 0.25 + Math.random() * 0.4
+    )
+  }
+}
+
+function batBurst() {
+  const w = window.innerWidth
+  const h = window.innerHeight
+  for (let i = 0; i < 16; i++) {
+    const angle = Math.random() * Math.PI * 2
+    const reach = Math.max(w, h)
+    spawnBat(
+      { x: w / 2 + (Math.random() - 0.5) * 400, y: h / 2 + (Math.random() - 0.5) * 120 },
+      { x: w / 2 + Math.cos(angle) * reach, y: h / 2 + Math.sin(angle) * reach * 0.6 },
+      1.6 + Math.random() * 1.2,
+      34 + Math.random() * 30,
+      0.15 + Math.random() * 0.5
+    )
+  }
+}
+
+;(function scheduleFlock() {
+  setTimeout(() => {
+    if (currentHudState === HUD_STATE.NORMAL) batFlock()
+    scheduleFlock()
+  }, 35000 + Math.random() * 40000)
+})()
+
+/* =====================================================
    GAME TIME UPDATE
    Fired every second by the game engine
 ===================================================== */
@@ -78,6 +169,29 @@ Events.Subscribe('UpdateTime', function (time) {
   timerEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds
     .toString()
     .padStart(2, '0')}`
+})
+
+/* =====================================================
+   WITCHING HOUR
+   The last minute (Client/Atmosphere.lua): the timer bleeds,
+   and a banner when it starts
+===================================================== */
+const witchingBannerEl = document.querySelector('#witching-banner')
+
+Events.Subscribe('WitchingHour', (on, announce) => {
+  timerContainerEl.classList.toggle('witching', on)
+  timerCaptionEl.textContent = on ? 'WITCHING HOUR' : 'MONSTER LEAGUE'
+  if (!on || !announce) return
+
+  gsap
+    .timeline()
+    .fromTo(
+      witchingBannerEl,
+      { autoAlpha: 0, scale: 1.6, y: -20 },
+      { autoAlpha: 1, scale: 1, y: 0, duration: 0.6, ease: 'back.out(1.8)' }
+    )
+    .to(witchingBannerEl, { autoAlpha: 0, y: 10, duration: 0.6, ease: 'power2.in' }, '+=3.4')
+  batFlock()
 })
 
 /* =====================================================
@@ -127,17 +241,20 @@ Events.Subscribe('GoalScored', function (goalInfo) {
   ===================== */
   nameEl.textContent = playerName
   detailEl.textContent = ownGoal
-    ? 'OWN GOAL'
+    ? `OWN GHOUL · A GIFT FOR THE ${TEAM_NAMES[team]}`
     : assistName
     ? `ASSIST · ${assistName}`
     : ''
-  avatarEl.src = playerImageUrl
+  avatarEl.classList.toggle('no-avatar', !playerImageUrl)
+  avatarEl.onerror = () => avatarEl.classList.add('no-avatar')
+  if (playerImageUrl) avatarEl.src = playerImageUrl
 
   /* =====================
      PLAY ANIMATIONS
   ===================== */
   window.goalTl.restart()
   window.goalPlayerTl.restart()
+  batBurst()
 
   /* =====================
      RESTORE HUD AFTER GOAL
@@ -297,7 +414,7 @@ function renderLeaderboard() {
       tr.className = 'leaderboard-empty'
       const td = document.createElement('td')
       td.colSpan = 6
-      td.textContent = 'NO PLAYERS'
+      td.textContent = 'NOBODY HERE... YET'
       tr.appendChild(td)
       bodyEl.appendChild(tr)
       continue
@@ -410,7 +527,9 @@ Events.Subscribe('GameOver', (info) => {
     info.winner === 1 ? 'team-a' : info.winner === 2 ? 'team-b' : 'draw'
   gameOverTitleEl.className = `game-over-title ${winnerClass}`
   gameOverTitleEl.textContent =
-    info.winner === 1 ? 'BLUE WINS' : info.winner === 2 ? 'RED WINS' : 'DRAW'
+    info.winner === 1 || info.winner === 2
+      ? `${TEAM_NAMES[info.winner]} WIN!`
+      : 'DEAD EVEN'
 
   gameOverScoreAEl.textContent = info.scoreA.toString()
   gameOverScoreBEl.textContent = info.scoreB.toString()
@@ -469,6 +588,8 @@ Events.Subscribe('UpdateNextGameTime', (seconds) => {
 })
 
 Events.Subscribe('NewGame', () => {
+  timerContainerEl.classList.remove('witching')
+  timerCaptionEl.textContent = 'MONSTER LEAGUE'
   if (gameOverInfo === null) return
   gameOverInfo = null
 

@@ -19,10 +19,16 @@ Config = {
     BallSpawnPoint = Vector(0, 0, 500),
     GoalPointA = Vector(-13700, 0, 900),
     GoalPointB = Vector(13700, 0, 900),
-    ColorA = Color(0, 0, 1),
-    ColorB = Color(1, 0, 0),
+    -- Witches and Pumpkins (Shared/Theme.lua)
+    ColorA = Theme.Teams[1].color,
+    ColorB = Theme.Teams[2].color,
+    PaintCars = true,           -- tint the car bodies in their team's color
     -- render distance of the ball, cars and everything attached to them (whole arena)
     RenderCullDistance = 1000000,
+    -- seconds between two lightning strikes over the graveyard (Weather.lua), and in the last minute
+    LightningInterval = { 14, 32 },
+    WitchingLightningInterval = { 4, 10 },
+    WitchingHour = Theme.WitchingHour,
 }
 
 local settings = Server.GetCustomSettings() or {}

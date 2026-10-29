@@ -12,6 +12,14 @@ function SpawnFireworksEndGame()
     SpawnRandomFireworks(20000, 20000, 7500, 12000, 100, team, 12000)
 end
 
+-- Palm bursts mostly, now and then a chrysanthemum or a ring
+local BURSTS = {
+    "ts-fireworks::PS_TS_Fireworks_Burst_Palm",
+    "ts-fireworks::PS_TS_Fireworks_Burst_Palm",
+    "ts-fireworks::PS_TS_Fireworks_Burst_Chrys",
+    "ts-fireworks::PS_TS_Fireworks_Burst_Circle",
+}
+
 function SpawnRandomFireworks(range_x, range_y, range_z_0, range_z_1, count, team, max_delay)
     for i = 1, count do
         local delay = math.random(0, max_delay)
@@ -25,7 +33,7 @@ function SpawnRandomFireworks(range_x, range_y, range_z_0, range_z_1, count, tea
         local firework = Particle(
             location,
             Rotator(),
-            "ts-fireworks::PS_TS_Fireworks_Burst_Palm",
+            BURSTS[math.random(#BURSTS)],
             true,
             true
         )
@@ -34,8 +42,11 @@ function SpawnRandomFireworks(range_x, range_y, range_z_0, range_z_1, count, tea
         firework:SetScale(Vector(2))
         KeepVisible(firework)
 
+        -- the team's color, with a slime green one now and then for Halloween
         local color
-        if team == Team.TeamA then
+        if math.random() < 0.2 then
+            color = Theme.Slime
+        elseif team == Team.TeamA then
             color = Config.ColorA
         elseif team == Team.TeamB then
             color = Config.ColorB

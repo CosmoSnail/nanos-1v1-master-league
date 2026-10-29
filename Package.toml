@@ -1,11 +1,11 @@
 # vault configurations
 [meta]
     # friendly name
-    title =                 "Intergalactic Champions Master League"
+    title =                 "Intergalactic Champions Monster League (Halloween)"
     # contributors
     author =                "CosmoSnail"
     # version
-    version =               "2.0.0"
+    version =               "2.1.0"
 
 # game-mode configurations
 [game_mode]
@@ -14,7 +14,7 @@
     # auto destroy all entities spawned by this package when it unloads
     auto_cleanup =          true
     # whether to load all level entities on client - only enable it if your package needs to use level static meshes entities
-    load_level_entities =   false
+    load_level_entities =   true
     # the game version (major.minor) at the time this package was created, for granting compatibility between breaking changes
     compatibility_version = "1.157"
     # packages requirements
@@ -26,6 +26,8 @@
     assets_requirements = [
                             "polygon-hats",
                             "ts-fireworks",
+                            "burn-the-witch-vfx",
+                            "burn-the-witch-assets",
     ]
     # compatible maps - maps to be highlighted when starting a new game through main menu
     compatible_maps = [

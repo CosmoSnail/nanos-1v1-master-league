@@ -1,12 +1,23 @@
 local Commands = {}
 
 Commands["/help"] = function(player, args)
-    Chat.SendMessage(player, "/goal [red|blue] - score a goal for that team")
+    Chat.SendMessage(player, "/goal [witches|pumpkins] - score a goal for that team")
     Chat.SendMessage(player, "/fireworks [end] - goal fireworks (end: the end of game ones)")
     Chat.SendMessage(player, "/reload - reload the game-mode")
     Chat.SendMessage(player, "/swap - switch to the other team")
     Chat.SendMessage(player, "/hat [number|name] - change your team's hat (next one if empty)")
     Chat.SendMessage(player, "/end - end the game now (during the end screen: start the next one)")
+    Chat.SendMessage(player, "/witching - skip to the Witching Hour (the last minute)")
+    Chat.SendMessage(player, "/lightning - a lightning strike now")
+end
+
+Commands["/witching"] = function(player, args)
+    if Game.State ~= State.Running and Game.State ~= State.Scored and Game.State ~= State.CountDown then return end
+    Game.Timer = math.min(Game.Timer, Config.WitchingHour + 1)
+end
+
+Commands["/lightning"] = function(player, args)
+    StrikeLightning()
 end
 
 Commands["/hat"] = function(player, args)
@@ -25,7 +36,7 @@ Commands["/hat"] = function(player, args)
         else
             local search = args[1]:lower()
             for _, h in ipairs(Hats) do
-                if h.name:lower():find(search, 1, true) then
+                if h.label:lower():find(search, 1, true) or h.name:lower():find(search, 1, true) then
                     hat = h
                     break
                 end
@@ -33,7 +44,7 @@ Commands["/hat"] = function(player, args)
         end
         if not hat then
             for i, h in ipairs(Hats) do
-                Chat.SendMessage(player, i .. " - " .. h.name:gsub("^polygon%-hats::", ""))
+                Chat.SendMessage(player, i .. " - " .. h.label)
             end
             return
         end
@@ -50,7 +61,7 @@ Commands["/hat"] = function(player, args)
     end
 
     SetTeamHat(team, hat)
-    Chat.BroadcastMessage("The " .. Ternary(team == Team.TeamA, "blue", "red") .. " team now wears " .. hat.name:gsub("^polygon%-hats::", ""))
+    Chat.BroadcastMessage("The " .. TeamName(team) .. " now wear the " .. hat.label)
 end
 
 Commands["/end"] = function(player, args)
@@ -90,7 +101,7 @@ Commands["/swap"] = function(player, args)
     SpawnVehicle(character)
     player:SetCameraRotation(Ternary(team == Team.TeamA, Rotator(0, 0, 0), Rotator(0, 180, 0)))
 
-    Chat.SendMessage(player, "You are now on the " .. Ternary(team == Team.TeamA, "blue", "red") .. " team")
+    Chat.SendMessage(player, "You now play for the " .. TeamName(team))
 end
 
 Commands["/goal"] = function(player, args)
@@ -100,11 +111,12 @@ Commands["/goal"] = function(player, args)
         AddBallTouch(player)
     end
 
-    local team = (args[1] or "red"):lower()
+    -- the Pumpkins score in the Witches' goal (A) and the other way round
+    local team = ParseTeam(args[1] or "pumpkins")
 
-    if team == "red" then
+    if team == Team.TeamB then
         TeleportBall(Config.GoalPointA)
-    elseif team == "blue" then
+    elseif team == Team.TeamA then
         TeleportBall(Config.GoalPointB)
     end
 end

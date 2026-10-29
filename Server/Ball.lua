@@ -60,8 +60,8 @@ end
 function LogBallTouch(player)
     if not Config.LogBallTouches then return end
 
-    local team = Ternary(player:GetControlledCharacter():GetTeam() == Team.TeamA, "blue", "red")
-    local message = player:GetName() .. " (" .. team .. ") touched the ball"
+    local team = TeamName(player:GetControlledCharacter():GetTeam())
+    local message = player:GetName() .. " (" .. team .. ") touched the pumpkin"
     print(message)
     -- in dev mode it also goes to the chat
     if Config.EnableCommands and Config.LogLevel ~= LogLevel.GameChat then
@@ -126,9 +126,10 @@ function GetLastPlayerHitBall()
     if Game.LastPlayerHitBall and Game.LastPlayerHitBall:IsValid() then
         return Game.LastPlayerHitBall
     end
+    -- nobody touched it: a ghost did (the HUD shows no picture for an empty URL)
     return {
-        GetName = function() return "nil" end,
-        GetAccountIconURL = function() return "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Atheism_symbol_syreeni.svg/1280px-Atheism_symbol_syreeni.svg.png" end
+        GetName = function() return "A Ghost" end,
+        GetAccountIconURL = function() return "" end
     }
 end
 

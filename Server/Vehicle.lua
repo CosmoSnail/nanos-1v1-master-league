@@ -40,8 +40,9 @@ function SpawnVehicle(character)
 
     SpawnThruster(vehicle)
     AttachVehicleLights(vehicle, character:GetTeam())
-    AttachVehiclePlayerName(vehicle, character:GetPlayer():GetName())
+    AttachVehiclePlayerName(vehicle, character:GetPlayer():GetName(), character:GetTeam())
     AttachVehicleHat(vehicle, character:GetTeam())
+    DecorateVehicle(vehicle, character:GetTeam())
     KeepVisible(vehicle)
     -- always sync cars at full rate, even from the other end of the arena
     vehicle:SetDistanceOptimizationMultiplier(0)
@@ -64,6 +65,22 @@ function AttachVehicleHat(vehicle, team)
     vehicle:SetValue("Hat", hat)
 end
 
+-- Halloween paint and trinkets: the body tinted in the team's color, and the Witches drive with a witch's
+-- staff for an antenna, its crystal glowing slime green (burn-the-witch-vfx)
+function DecorateVehicle(vehicle, team)
+    if Config.PaintCars then
+        vehicle:SetMaterialColorParameter("Tint", Theme.Teams[team].paint, -1, "body")
+    end
+    if team == Team.TeamA then
+        local staff = StaticMesh(Vector(), Rotator(), "burn-the-witch-vfx::SM_FX_Staff", CollisionType.NoCollision)
+        staff:SetScale(Vector(1.5))
+        staff:AttachTo(vehicle, AttachmentRule.SnapToTarget, "", 0)
+        staff:SetRelativeLocation(Vector(-165, 55, 150))
+        staff:SetRelativeRotation(Rotator(18, 0, 0))
+        staff:SetMaterialColorParameter("Color", Theme.Slime)
+    end
+end
+
 -- changes a team's hat and swaps it on that team's cars already on the field
 function SetTeamHat(team, hatConfig)
     if team == Team.TeamA then
@@ -71,7 +88,7 @@ function SetTeamHat(team, hatConfig)
     else
         Game.HatB = hatConfig
     end
-    for _, vehicle in pairs(Vehicle.GetAll()) do
+    for _, vehicle in pairs(VehicleWheeled.GetAll()) do
         if vehicle:GetValue("Team") == team then
             local hat = vehicle:GetValue("Hat")
             if hat and hat:IsValid() then
@@ -184,17 +201,19 @@ function AttachVehicleLights(vehicle, team)
     end
 end
 
-function AttachVehiclePlayerName(vehicle, name)
+function AttachVehiclePlayerName(vehicle, name, team)
     if not Config.ShowNamesOnVehicles then
         return
     end
 
+    -- the team's color, washed out towards white so it reads at night
+    local color = TeamColor(team)
     local text = Text3D(
         Vector(),
         Rotator(),
         name,
         Vector(0.6),
-        Color(1, 1, 1),
+        Color(0.45 + color.R * 0.55, 0.45 + color.G * 0.55, 0.45 + color.B * 0.55),
         FontType.OpenSans,
         Text3DAlignCamera.FaceCamera
     )

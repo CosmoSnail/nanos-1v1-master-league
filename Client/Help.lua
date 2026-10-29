@@ -11,7 +11,7 @@ local CONTROLS = {
     { "Boost", { "CarBoost", "CarBoost2" } },
     { "Powerslide / air roll", { "CarSlide" } },
     { "Air roll left / right", { "CarRollLeft", "CarRollRight" } },
-    { "Ball cam", { "CarBallCam" } },
+    { "Pumpkin cam", { "CarBallCam" } },
     { "Leaderboard (hold)", { "CarLeaderboard" } },
     { "Controls", { "CarHelp" } },
 }

@@ -1,78 +1,57 @@
+-- What the cars wear on their roof. Each game the Witches get the witch hat and the Pumpkins a glowing
+-- jack-o'-lantern head (`team`); /hat (dev) goes through all of them.
+-- burn-the-witch-vfx meshes are centred on their origin and look along +X, like the car
 Hats = {
     {
-        name = "polygon-hats::CulturalHat",
-        rotation = Rotator(0, 0, 0),
-        location = Vector(-20, 0, 156),
-        scale = 2
-    },
-    {
-        name = "polygon-hats::SM_PenguinBaseMesh",
-        rotation = Rotator(0, -90, 0),
-        location = Vector(9, 0, 70),
-        scale = 3
-    },
-    {
-        name = "polygon-hats::SM_PirateHat",
-        rotation = Rotator(2, 0, 0),
-        location = Vector(-10, 0, 152),
-        scale = 3.2
-    },
-    {
-        name = "polygon-hats::SM_PropellerHat",
-        rotation = Rotator(0, -90, 0),
-        location = Vector(-30, 0, 154),
-        scale = 4
-    },
-    {
-        name = "polygon-hats::SM_QueenCrown",
-        rotation = Rotator(2, 0, 0),
-        location = Vector(-7, 0, 154),
-        scale = 4
-    },
-    {
-        name = "polygon-hats::SM_TopHat",
-        rotation = Rotator(2, 0, 0),
-        location = Vector(-10, 0, 152),
-        scale = 3
-    },
-    {
-        name = "polygon-hats::SM_VikingHat",
-        rotation = Rotator(0, 80, 0),
-        location = Vector(-8, 0, 152),
-        scale = 3.4
-    },
-    {
-        name = "polygon-hats::SM_WorkerHat",
-        rotation = Rotator(1, 0, 0),
-        location = Vector(-8, 0, 152),
-        scale = 3.4
-    },
-    {
-        name = "polygon-hats::SM_queencrown_hat",
-        rotation = Rotator(1, 0, 0),
-        location = Vector(-6, 0, 152),
-        scale = 3.6
-    },
-    {
-        name = "polygon-hats::SM_top_hat2",
-        rotation = Rotator(2, 0, 0),
-        location = Vector(-10, 0, 152),
-        scale = 3
-    },
-    {
-        name = "polygon-hats::Sheriffs_Hat",
-        rotation = Rotator(0, -90, 0),
-        location = Vector(-10, 0, 156),
-        scale = 3
-    },
-    {
+        label = "Witch Hat",
         name = "polygon-hats::WitchHat",
         rotation = Rotator(0, -90, 0),
         location = Vector(-20, 0, 153),
-        scale = 3
+        scale = 3,
+        team = 1,
+    },
+    {
+        label = "Jack-o'-Lantern",
+        name = "burn-the-witch-vfx::SM_FX_Pumpkin",
+        rotation = Rotator(0, 0, 0),
+        location = Vector(-15, 0, 200),
+        scale = 1.35,
+        team = 2,
+    },
+    {
+        label = "Skull",
+        name = "burn-the-witch-vfx::SM_FX_Skull",
+        rotation = Rotator(0, 0, 0),
+        location = Vector(-15, 0, 210),
+        scale = 1.5,
+    },
+    {
+        label = "Vampire Top Hat",
+        name = "polygon-hats::SM_TopHat",
+        rotation = Rotator(2, 0, 0),
+        location = Vector(-10, 0, 152),
+        scale = 3,
+    },
+    {
+        label = "Undertaker Hat",
+        name = "polygon-hats::SM_top_hat2",
+        rotation = Rotator(2, 0, 0),
+        location = Vector(-10, 0, 152),
+        scale = 3,
+    },
+    {
+        label = "Ghost Pirate Hat",
+        name = "polygon-hats::SM_PirateHat",
+        rotation = Rotator(2, 0, 0),
+        location = Vector(-10, 0, 152),
+        scale = 3.2,
     },
 }
 
-function GetRandomHat()
-    return Hats[math.random(#Hats)]
+-- The hat a team wears at the start of every game
+function GetTeamHat(team)
+    for _, hat in ipairs(Hats) do
+        if hat.team == team then return hat end
+    end
+    return Hats[1]
 end

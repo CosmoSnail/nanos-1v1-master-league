@@ -1,5 +1,5 @@
 -- Boost flames drawn on every client: solid flame cones attached to the thrusters, a rocket exhaust
--- particle on each nozzle and a flickering light behind the car.
+-- particle on each nozzle and a flickering light behind the car, all in the team's colors.
 -- The driver's own car reacts to its local boost state right away; the other cars follow the
 -- "Boosting" value the server replicates.
 
@@ -16,18 +16,22 @@ local CORE_WIDTH = 0.28
 local IGNITE_SPEED = 12         -- how fast the flames grow when boosting starts (1/s)
 local FADE_SPEED = 8            -- and shrink when it stops
 local LIGHT_INTENSITY = 9
--- Exhaust by the "Team" value of the vehicle (1 = blue, 2 = red, see Team in Server/Tables.lua); any of the
+-- Exhaust by the "Team" value of the vehicle (1 = Witches, 2 = Pumpkins, see Shared/Theme.lua); any of the
 -- default pack's P_RocketExhaust_* works (Afterburn, Afterburn_Jet, Realistic, Crackling, Plume_01...)
 local EXHAUST_PARTICLES = {
-    [1] = "nanos-world::P_RocketExhaust_Blue",
-    [2] = "nanos-world::P_RocketExhaust_Red",
+    [1] = "nanos-world::P_RocketExhaust_Violet",
+    [2] = "nanos-world::P_RocketExhaust_Afterburn",
 }
 local EXHAUST_DEFAULT = "nanos-world::P_RocketExhaust_Afterburn"
 local EXHAUST_SCALE = 0.4
 local RENDER_CULL_DISTANCE = 1000000  -- whole arena, like Config.RenderCullDistance on the server
 
-local OUTER_EMISSIVE = Color(2, 0.4, 0.05)
-local CORE_EMISSIVE = Color(3.5, 2.5, 1.1)
+-- Flames by team: the Witches' burn purple round a slime green core (witch fire), the Pumpkins' like a candle
+local FLAMES = {
+    [1] = { outer = Color(1.3, 0.2, 2.6), core = Color(1.4, 3.4, 0.6), light = Color(0.6, 0.2, 1.0) },
+    [2] = { outer = Color(2, 0.4, 0.05), core = Color(3.5, 2.5, 1.1), light = Color(1, 0.45, 0.1) },
+}
+local FLAMES_DEFAULT = FLAMES[2]
 
 -- vehicle -> { cones = { { mesh, nozzle, length, width } }, exhausts = {}, light, power, burning }
 local effects = {}
@@ -50,10 +54,11 @@ end
 local function CreateEffect(vehicle)
     local fx = { cones = {}, exhausts = {}, power = 0, burning = false }
     local exhaustParticle = EXHAUST_PARTICLES[vehicle:GetValue("Team")] or EXHAUST_DEFAULT
+    local flames = FLAMES[vehicle:GetValue("Team")] or FLAMES_DEFAULT
 
     for _, nozzle in ipairs(NOZZLES) do
-        table.insert(fx.cones, { mesh = SpawnCone(vehicle, nozzle, OUTER_EMISSIVE, 0.55), nozzle = nozzle, length = FLAME_LENGTH, width = FLAME_WIDTH })
-        table.insert(fx.cones, { mesh = SpawnCone(vehicle, nozzle, CORE_EMISSIVE, 0.9), nozzle = nozzle, length = CORE_LENGTH, width = CORE_WIDTH })
+        table.insert(fx.cones, { mesh = SpawnCone(vehicle, nozzle, flames.outer, 0.55), nozzle = nozzle, length = FLAME_LENGTH, width = FLAME_WIDTH })
+        table.insert(fx.cones, { mesh = SpawnCone(vehicle, nozzle, flames.core, 0.9), nozzle = nozzle, length = CORE_LENGTH, width = CORE_WIDTH })
 
         -- the exhaust blows along +X: pitch 180 turns it backwards (like the sandbox thrusters)
         local exhaust = Particle(Vector(), Rotator(), exhaustParticle, false, false)
@@ -65,7 +70,7 @@ local function CreateEffect(vehicle)
         table.insert(fx.exhausts, exhaust)
     end
 
-    fx.light = Light(Vector(), Rotator(), Color(1, 0.45, 0.1), LightType.Point, 0, 600, 44, 0, 8000, true, false, true)
+    fx.light = Light(Vector(), Rotator(), flames.light, LightType.Point, 0, 600, 44, 0, 8000, true, false, true)
     fx.light:AttachTo(vehicle, AttachmentRule.SnapToTarget, "", 0)
     fx.light:SetRelativeLocation(Vector(-260, 0, 50))
     fx.light:SetRenderCullDistance(RENDER_CULL_DISTANCE)

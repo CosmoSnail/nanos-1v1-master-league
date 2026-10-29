@@ -14,6 +14,7 @@ Package.Require("Tables.lua")
 Package.Require("Stats.lua")
 Package.Require("Chat.lua")
 Package.Require("Fireworks.lua")
+Package.Require("Weather.lua")
 
 function InitGame()
     Game.State = State.CountDown
@@ -24,10 +25,8 @@ function InitGame()
     Game.CurrentSpawnPointA = Config.SpawnPointA
     Game.CurrentSpawnPointB = Config.SpawnPointB
     Game.LastPlayerHitBall = nil
-    Game.HatA = GetRandomHat()
-    repeat
-        Game.HatB = GetRandomHat()
-    until Game.HatB.name ~= Game.HatA.name or #Hats <= 1
+    Game.HatA = GetTeamHat(Team.TeamA)
+    Game.HatB = GetTeamHat(Team.TeamB)
     Game.GameOverInfo = nil
     ShuffleTeams()
     ResetStats()
@@ -40,8 +39,12 @@ end
 function EndGame()
     Game.State = State.Ended
     Game.EndedTimer = Config.EndedDuration
-    print("Game Over! Final Score - Team Blue: " .. tostring(Game.ScoreA) .. " | Team Red: " .. tostring(Game.ScoreB))
-    Chat.BroadcastMessage("Game Over! Final Score - Team Blue: " .. tostring(Game.ScoreA) .. " | Team Red: " .. tostring(Game.ScoreB))
+    local result = "The night is over! Witches " .. tostring(Game.ScoreA) .. " x " .. tostring(Game.ScoreB) .. " Pumpkins"
+    if Game.ScoreA ~= Game.ScoreB then
+        result = result .. " - the " .. TeamName(Ternary(Game.ScoreA > Game.ScoreB, Team.TeamA, Team.TeamB)) .. " rule the graveyard!"
+    end
+    print(result)
+    Chat.BroadcastMessage(result)
     TogglePlayersInput(false)
     SpawnFireworksEndGame()
     -- end of game screen with the leaderboard and the time to the next game (Client/UI)
