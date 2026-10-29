@@ -57,6 +57,7 @@ Input.Register("CarBackward", "S", "Reverse / pitch up")
 Input.Register("CarLeft", "A", "Steer / yaw left")
 Input.Register("CarRight", "D", "Steer / yaw right")
 Input.Register("CarJump", "SpaceBar", "Jump, double jump, flip")
+Input.Register("CarJump2", "RightMouseButton", "Jump, double jump, flip")
 Input.Register("CarBoost", "LeftMouseButton", "Boost")
 Input.Register("CarBoost2", "LeftShift", "Boost")
 Input.Register("CarSlide", "LeftControl", "Powerslide / air roll with A and D")
@@ -312,12 +313,14 @@ local function ControlInAir(vehicle, dt, f, r, u, w, now)
     return deltaV
 end
 
-Input.Bind("CarJump", InputEvent.Pressed, function()
+local function OnJumpPressed()
     local vehicle = GetLocalVehicle()
     if vehicle then
         Jump(vehicle)
     end
-end)
+end
+Input.Bind("CarJump", InputEvent.Pressed, OnJumpPressed)
+Input.Bind("CarJump2", InputEvent.Pressed, OnJumpPressed)
 
 Client.Subscribe("Tick", function(dt)
     local vehicle = GetLocalVehicle()
@@ -369,7 +372,8 @@ Client.Subscribe("Tick", function(dt)
 
     -- Holding jump right after the first jump makes it higher
     if car.jumpHolding then
-        if Input.IsBindingDown("CarJump") and now - car.jumpTime < CarTuning.JumpHoldTime then
+        local holding = Input.IsBindingDown("CarJump") or Input.IsBindingDown("CarJump2")
+        if holding and now - car.jumpTime < CarTuning.JumpHoldTime then
             deltaV = deltaV + u * (CarTuning.JumpHoldAccel * dt)
         else
             car.jumpHolding = false
