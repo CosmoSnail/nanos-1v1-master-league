@@ -36,6 +36,14 @@ function GetAttachedEntitiesByClass(entity, class)
     return filteredEntities
 end
 
+-- Keeps an actor and everything attached to it (recursively) rendered from anywhere in the arena
+function KeepVisible(actor)
+    actor:SetRenderCullDistance(Config.RenderCullDistance)
+    for _, attached in pairs(actor:GetAttachedEntities()) do
+        KeepVisible(attached)
+    end
+end
+
 function FormatTime(seconds)
     local minutes = math.floor(seconds / 60)
     local secs = seconds % 60

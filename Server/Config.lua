@@ -18,4 +18,6 @@ Config = {
     GoalPointB = Vector(13700, 0, 900),
     ColorA = Color(0, 0, 1),
     ColorB = Color(1, 0, 0),
+    -- render distance of the ball, cars and everything attached to them (whole arena)
+    RenderCullDistance = 1000000,
 }

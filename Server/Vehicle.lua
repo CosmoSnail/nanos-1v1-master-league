@@ -40,6 +40,9 @@ function SpawnVehicle(character)
     AttachVehicleLights(vehicle, character:GetTeam())
     AttachVehiclePlayerName(vehicle, character:GetPlayer():GetName())
     AttachVehicleHat(vehicle, character:GetTeam())
+    KeepVisible(vehicle)
+    -- always sync cars at full rate, even from the other end of the arena
+    vehicle:SetDistanceOptimizationMultiplier(0)
 
     character:EnterVehicle(vehicle)
     character:SetVisibility(Config.ShowCharactersOnVehicles)
