@@ -5,6 +5,62 @@ Commands["/help"] = function(player, args)
     Chat.SendMessage(player, "/fireworks [end] - goal fireworks (end: the end of game ones)")
     Chat.SendMessage(player, "/reload - reload the game-mode")
     Chat.SendMessage(player, "/swap - switch to the other team")
+    Chat.SendMessage(player, "/hat [number|name] - change your team's hat (next one if empty)")
+    Chat.SendMessage(player, "/end - end the game now (during the end screen: start the next one)")
+end
+
+Commands["/hat"] = function(player, args)
+    local character = player:GetControlledCharacter()
+    if not character then return end
+
+    local team = character:GetTeam()
+    local current = Ternary(team == Team.TeamA, Game.HatA, Game.HatB)
+    local other = Ternary(team == Team.TeamA, Game.HatB, Game.HatA)
+
+    local hat
+    if args[1] then
+        local index = tonumber(args[1])
+        if index then
+            hat = Hats[index]
+        else
+            local search = args[1]:lower()
+            for _, h in ipairs(Hats) do
+                if h.name:lower():find(search, 1, true) then
+                    hat = h
+                    break
+                end
+            end
+        end
+        if not hat then
+            for i, h in ipairs(Hats) do
+                Chat.SendMessage(player, i .. " - " .. h.name:gsub("^polygon%-hats::", ""))
+            end
+            return
+        end
+    else
+        -- the next hat in the list, skipping the other team's
+        local index = 0
+        for i, h in ipairs(Hats) do
+            if h.name == current.name then index = i end
+        end
+        repeat
+            index = index % #Hats + 1
+            hat = Hats[index]
+        until hat.name ~= other.name or #Hats <= 2
+    end
+
+    SetTeamHat(team, hat)
+    Chat.BroadcastMessage("The " .. Ternary(team == Team.TeamA, "blue", "red") .. " team now wears " .. hat.name:gsub("^polygon%-hats::", ""))
+end
+
+Commands["/end"] = function(player, args)
+    if Game.State == State.Ended then
+        StartNewGame()
+        return
+    end
+    Game.Timer = 0
+    Events.BroadcastRemote("UpdateTime", Reliability.Reliable, Game.Timer)
+    EndGame()
 end
 
 Commands["/fireworks"] = function(player, args)

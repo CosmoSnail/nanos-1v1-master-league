@@ -61,6 +61,25 @@ function AttachVehicleHat(vehicle, team)
     hat:AttachTo(vehicle, AttachmentRule.SnapToTarget, "", 0)
     hat:SetRelativeLocation(hatConfig.location)
     hat:SetRelativeRotation(hatConfig.rotation)
+    vehicle:SetValue("Hat", hat)
+end
+
+-- changes a team's hat and swaps it on that team's cars already on the field
+function SetTeamHat(team, hatConfig)
+    if team == Team.TeamA then
+        Game.HatA = hatConfig
+    else
+        Game.HatB = hatConfig
+    end
+    for _, vehicle in pairs(Vehicle.GetAll()) do
+        if vehicle:GetValue("Team") == team then
+            local hat = vehicle:GetValue("Hat")
+            if hat and hat:IsValid() then
+                hat:Destroy()
+            end
+            AttachVehicleHat(vehicle, team)
+        end
+    end
 end
 
 function ResetVehicles()

@@ -36,6 +36,24 @@ function InitGame()
     Events.BroadcastRemote("UpdateScoreB", Reliability.Reliable, Game.ScoreB)
 end
 
+function EndGame()
+    Game.State = State.Ended
+    Game.EndedTimer = Config.EndedDuration
+    print("Game Over! Final Score - Team Blue: " .. tostring(Game.ScoreA) .. " | Team Red: " .. tostring(Game.ScoreB))
+    Chat.BroadcastMessage("Game Over! Final Score - Team Blue: " .. tostring(Game.ScoreA) .. " | Team Red: " .. tostring(Game.ScoreB))
+    Chat.BroadcastMessage("New game starting in " .. tostring(Config.EndedDuration) .. " seconds...")
+    TogglePlayersInput(false)
+    SpawnFireworksEndGame()
+end
+
+function StartNewGame()
+    print("Starting new game!")
+    InitGame()
+    ResetVehicles()
+    ResetBall()
+    TogglePlayersInput(false)
+end
+
 InitGame()
 InitPlayers()
 InitBall()
@@ -72,13 +90,7 @@ Timer.SetInterval(function()
         CheckBallOutOfBounds()
         CheckVehiclesOutOfBounds()
         if (Game.Timer <= 0) then
-            Game.State = State.Ended
-            Game.EndedTimer = Config.EndedDuration
-            print("Game Over! Final Score - Team Blue: " .. tostring(Game.ScoreA) .. " | Team Red: " .. tostring(Game.ScoreB))
-            Chat.BroadcastMessage("Game Over! Final Score - Team Blue: " .. tostring(Game.ScoreA) .. " | Team Red: " .. tostring(Game.ScoreB))
-            Chat.BroadcastMessage("New game starting in " .. tostring(Config.EndedDuration) .. " seconds...")
-            TogglePlayersInput(false)
-            SpawnFireworksEndGame()
+            EndGame()
             return
         end
         print("State: Running. Timer: " .. tostring(Game.Timer))
@@ -86,11 +98,7 @@ Timer.SetInterval(function()
     elseif Game.State == State.Ended then
         Game.EndedTimer = Game.EndedTimer - 1
         if (Game.EndedTimer <= 0) then
-            print("Starting new game!")
-            InitGame()
-            ResetVehicles()
-            ResetBall()
-            TogglePlayersInput(false)
+            StartNewGame()
             return
         end
         print("State: Ended. Timer: " .. tostring(Game.EndedTimer))
