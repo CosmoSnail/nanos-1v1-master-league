@@ -47,6 +47,7 @@ function HandleGoal(ball, teamScored)
         true
     )
     particle:SetScale(50)
+    KeepVisible(particle)
     ImpulseAllVehicles(ball:GetLocation())
     Game.State = State.Scored
     Game.ScoredTimer = Config.ScoredDuration
