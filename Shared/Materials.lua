@@ -39,6 +39,6 @@ FloorMaterials = {
     "MI_Surface_Copper",
     "MI_Surface_Neon",
 }
-DefaultFloorMaterial = 8    -- concrete tiles: matte, and the tiles show how fast you go
+DefaultFloorMaterial = 1    -- dark metal
 DefaultFloorSize = 500
 DefaultFloorAspect = 1
