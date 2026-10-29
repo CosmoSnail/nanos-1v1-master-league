@@ -2,7 +2,7 @@
 
 - music_main.ogg: "In the Hall of the Mountain King" (Grieg, 1875, public domain) as a spooky march: pizzicato
   bass, a bone xylophone, a church organ, a ghostly choir and a theremin. A seamless loop.
-- music_witching.ogg: the same theme, much faster and louder, for the last minute (the Witching Hour).
+- music_finale.ogg: the same theme, much faster and louder, for the last minute of a game.
 - goal_*.ogg: four goal stingers (Bach's Toccata in D minor on the organ, bells and choir, a theremin wail,
   a skeleton xylophone run). end_organ.ogg: the whole Toccata opening, when the time runs out.
 - countdown_tick.ogg / countdown_go.ogg, thunder_*.ogg, wind_loop.ogg, owl.ogg, wolf_howl.ogg, bonk_*.ogg.
@@ -344,7 +344,7 @@ def music_main():
     save("music_main.ogg", master(loop(tr)))
 
 
-def music_witching():
+def music_finale():
     bpm = 168
     tr = Track(beats=128, bpm=bpm)
     eighth = 60 / bpm / 2
@@ -379,7 +379,7 @@ def music_witching():
         bar_s = 4 * 60 / bpm
         tr.add(theremin([(0, 83), (bar_s * 0.5, 90), (bar_s * 1.8, 88), (bar_s * 2.5, 94), (bar_s * 3.6, 78)], vibrato=0.02),
                time=start, gain=0.45, pan=0.35)
-    save("music_witching.ogg", master(loop(tr, 2.0, 0.18), peak=0.92, drive=1.8))
+    save("music_finale.ogg", master(loop(tr, 2.0, 0.18), peak=0.92, drive=1.8))
 
 
 # --- Stingers --------------------------------------------------------------------------------------------------
@@ -575,7 +575,7 @@ def bonk(pitch=1.0):
 
 if __name__ == "__main__":
     music_main()
-    music_witching()
+    music_finale()
     stinger("goal_toccata.ogg", goal_toccata, 4.6)
     stinger("goal_bells.ogg", goal_bells, 4.5)
     stinger("goal_theremin.ogg", goal_theremin, 4.4)

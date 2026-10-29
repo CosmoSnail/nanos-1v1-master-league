@@ -17,6 +17,8 @@ Hats = {
         location = Vector(-15, 0, 200),
         scale = 1.35,
         team = 2,
+        -- only the carved face glows, like the ball (Client/PumpkinBall.lua)
+        parameters = { Seep = 0, Ambient = 0.12 },
     },
     {
         label = "Skull",

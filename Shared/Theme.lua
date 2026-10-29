@@ -17,9 +17,8 @@ Theme = {
     },
     Slime = Color(0.35, 1.0, 0.12),
     Bone = Color(0.96, 0.93, 0.85),
-    -- the last seconds of a game: blood moon, faster music, lightning more often (Client/Atmosphere.lua,
-    -- Server/Weather.lua)
-    WitchingHour = 60,
+    -- seconds in a game (Server/Config.lua); the night deepens over it (Client/Atmosphere.lua, Server/Weather.lua)
+    GameLength = 5 * 60,
 }
 
 function TeamName(team)

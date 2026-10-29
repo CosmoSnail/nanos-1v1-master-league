@@ -30,7 +30,6 @@
   --slime: 140, 255, 70;
   --slime-dark: 40, 140, 20;
   --bone: 246, 238, 218;
-  --blood: 255, 40, 30;
   --night: 12, 6, 20;
 }
 
@@ -138,7 +137,7 @@ svg.ball-cam-icon {
   font-weight: 700;
   letter-spacing: 10px;
   color: rgba(var(--bone), 0.85);
-  text-shadow: 0 0 10px rgba(var(--slime), 0.6);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
 }
 
 /* =====================================================
@@ -152,8 +151,7 @@ svg.ball-cam-icon {
 
   color: rgb(var(--slime));
 
-  text-shadow: 0 0 12px rgba(var(--slime), 1), 0 0 36px rgba(var(--slime), 0.8),
-    0 0 72px rgba(var(--slime-dark), 0.9), 0 6px 0 rgba(0, 0, 0, 0.6);
+  text-shadow: 0 5px 0 rgba(0, 0, 0, 0.55), 0 0 18px rgba(var(--slime), 0.4);
 
   transform-origin: center bottom;
   will-change: transform, opacity;
@@ -302,12 +300,12 @@ svg.ball-cam-icon {
 
 .score-block.team-a .team-label {
   color: rgb(var(--witch-soft));
-  text-shadow: 0 0 6px rgba(var(--witch), 0.9);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
 }
 
 .score-block.team-b .team-label {
   color: rgb(var(--pumpkin-soft));
-  text-shadow: 0 0 6px rgba(var(--pumpkin), 0.9);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
 }
 
 /* =====================================================
@@ -323,8 +321,7 @@ svg.ball-cam-icon {
   letter-spacing: 6px;
   color: rgb(var(--bone));
 
-  text-shadow: 0 0 6px rgba(var(--slime), 0.9), 0 0 14px rgba(var(--slime), 0.6),
-    0 0 30px rgba(var(--slime-dark), 0.7);
+  text-shadow: 0 3px 0 rgba(0, 0, 0, 0.5), 0 0 10px rgba(var(--slime), 0.3);
 }
 
 .timer-caption {
@@ -334,31 +331,7 @@ svg.ball-cam-icon {
   color: rgba(var(--bone), 0.55);
 }
 
-/* The last minute: the timer bleeds */
-.timer-container.witching .timer {
-  color: rgb(255, 225, 215);
-  text-shadow: 0 0 6px rgba(var(--blood), 1), 0 0 16px rgba(var(--blood), 0.9),
-    0 0 34px rgba(150, 0, 0, 0.9);
-  animation: heartbeat 1s ease-in-out infinite;
-}
 
-.timer-container.witching .timer-caption {
-  color: rgba(255, 120, 110, 0.9);
-}
-
-@keyframes heartbeat {
-  0%,
-  40%,
-  100% {
-    transform: scale(1);
-  }
-  12% {
-    transform: scale(1.09);
-  }
-  26% {
-    transform: scale(1.04);
-  }
-}
 
 /* =====================================================
    SCORES
@@ -374,52 +347,16 @@ svg.ball-cam-icon {
 /* WITCHES */
 .score-left {
   color: rgb(var(--witch-soft));
-  text-shadow: 0 0 6px rgba(var(--witch), 1), 0 0 14px rgba(var(--witch), 0.9),
-    0 0 30px rgba(var(--witch-dark), 0.9);
+  text-shadow: 0 3px 0 rgba(0, 0, 0, 0.5), 0 0 10px rgba(var(--witch), 0.4);
 }
 
 /* PUMPKINS */
 .score-right {
   color: rgb(var(--pumpkin-soft));
-  text-shadow: 0 0 6px rgba(var(--pumpkin), 1),
-    0 0 14px rgba(var(--pumpkin), 0.9), 0 0 30px rgba(var(--pumpkin-dark), 0.9);
+  text-shadow: 0 3px 0 rgba(0, 0, 0, 0.5), 0 0 10px rgba(var(--pumpkin), 0.4);
 }
 
-/* =====================================================
-   WITCHING HOUR BANNER
-===================================================== */
-.witching-banner {
-  position: absolute;
-  top: 150px;
-  left: 50%;
-  transform: translateX(-50%);
 
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
-
-.witching-title {
-  font-family: 'Creepster', cursive;
-  font-size: 76px;
-  letter-spacing: 8px;
-  white-space: nowrap;
-  color: rgb(255, 220, 210);
-  text-shadow: 0 0 8px rgba(var(--blood), 1), 0 0 22px rgba(var(--blood), 0.9),
-    0 0 50px rgba(120, 0, 0, 0.9);
-}
-
-.witching-subtitle {
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: 8px;
-  color: rgba(var(--bone), 0.9);
-  text-shadow: 0 0 8px rgba(0, 0, 0, 0.9);
-}
 
 /* =====================================================
    GOAL BANNER — COLOR TOKENS
@@ -495,9 +432,7 @@ svg.ball-cam-icon {
 
   color: rgb(var(--goal-soft));
 
-  text-shadow: 0 0 8px rgba(var(--goal-text), 0.9),
-    0 0 18px rgba(var(--goal-main), 1), 0 0 40px rgba(var(--goal-main), 0.9),
-    0 0 80px rgba(var(--goal-dark), 0.9), 0 8px 0 rgba(0, 0, 0, 0.55);
+  text-shadow: 0 8px 0 rgba(0, 0, 0, 0.5), 0 0 26px rgba(var(--goal-main), 0.5);
 
   will-change: transform;
 }
@@ -579,8 +514,7 @@ svg.ball-cam-icon {
 
   color: rgb(var(--bone));
 
-  text-shadow: 0 0 6px rgba(var(--goal-main), 0.9),
-    0 0 14px rgba(var(--goal-main), 0.5);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
 }
 
 /* =====================================================
@@ -648,8 +582,7 @@ svg.ball-cam-icon {
   font-family: 'Creepster', cursive;
   font-size: 64px;
   color: rgb(var(--bone));
-  text-shadow: 0 0 6px rgba(var(--slime), 1), 0 0 14px rgba(var(--slime), 0.8),
-    0 0 30px rgba(var(--slime-dark), 0.8);
+  text-shadow: 0 3px 0 rgba(0, 0, 0, 0.5), 0 0 10px rgba(var(--slime), 0.35);
 }
 
 .boost-bar {
@@ -739,7 +672,7 @@ svg.ball-cam-icon {
   font-size: 30px;
   letter-spacing: 3px;
   color: rgb(var(--pumpkin-soft));
-  text-shadow: 0 0 6px rgba(var(--pumpkin), 1), 0 0 14px rgba(var(--pumpkin), 0.8);
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.5), 0 0 8px rgba(var(--pumpkin), 0.4);
 }
 
 .ball-cam.hidden {
@@ -904,8 +837,7 @@ svg.ball-cam-icon {
   letter-spacing: 6px;
   color: rgb(var(--team-soft));
 
-  text-shadow: 0 0 6px rgba(var(--team-main), 1),
-    0 0 14px rgba(var(--team-main), 0.8), 0 0 30px rgba(var(--team-dark), 0.8);
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.55), 0 0 10px rgba(var(--team-main), 0.35);
 }
 
 .leaderboard-team-score {
@@ -913,8 +845,7 @@ svg.ball-cam-icon {
   font-size: 44px;
   color: rgb(var(--team-soft));
 
-  text-shadow: 0 0 6px rgba(var(--team-main), 1),
-    0 0 14px rgba(var(--team-main), 0.9), 0 0 30px rgba(var(--team-dark), 0.8);
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.55), 0 0 10px rgba(var(--team-main), 0.35);
 }
 
 /* =====================================================
@@ -996,7 +927,7 @@ svg.ball-cam-icon {
 .leaderboard td.col-score {
   font-weight: 800;
   color: #ffffff;
-  text-shadow: 0 0 6px rgba(var(--team-main), 0.9);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 .leaderboard td.col-ping {
@@ -1014,7 +945,7 @@ svg.ball-cam-icon {
 
 .mvp-star {
   color: rgb(var(--slime));
-  text-shadow: 0 0 6px rgba(var(--slime), 0.9), 0 0 14px rgba(var(--slime-dark), 0.6);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 /* =====================================================
@@ -1044,9 +975,7 @@ svg.ball-cam-icon {
 
   color: rgb(var(--title-soft));
 
-  text-shadow: 0 0 8px rgba(var(--bone), 0.8),
-    0 0 16px rgba(var(--title-main), 1), 0 0 32px rgba(var(--title-main), 0.9),
-    0 0 64px rgba(var(--title-dark), 0.8), 0 8px 0 rgba(0, 0, 0, 0.5);
+  text-shadow: 0 8px 0 rgba(0, 0, 0, 0.5), 0 0 28px rgba(var(--title-main), 0.45);
 
   will-change: transform;
 }
@@ -1159,7 +1088,7 @@ svg.ball-cam-icon {
   font-weight: 800;
   letter-spacing: 4px;
   color: rgb(var(--slime));
-  text-shadow: 0 0 6px rgba(var(--slime), 0.9);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
 }
 
 .mvp-name {
@@ -1168,8 +1097,7 @@ svg.ball-cam-icon {
   letter-spacing: 2px;
   color: rgb(var(--bone));
 
-  text-shadow: 0 0 6px rgba(var(--team-main), 0.9),
-    0 0 14px rgba(var(--team-main), 0.5);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
 }
 
 /* =====================================================
@@ -1181,7 +1109,7 @@ svg.ball-cam-icon {
   letter-spacing: 5px;
   color: rgba(var(--bone), 0.85);
 
-  text-shadow: 0 0 6px rgba(var(--slime), 0.5);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
 }
 
 .next-game.hidden {
@@ -1197,7 +1125,7 @@ svg.ball-cam-icon {
   font-size: 40px;
   color: rgb(var(--slime));
 
-  text-shadow: 0 0 6px rgba(var(--slime), 0.9), 0 0 16px rgba(var(--slime-dark), 0.8);
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.5), 0 0 8px rgba(var(--slime), 0.35);
 }
 
 /* =====================================================

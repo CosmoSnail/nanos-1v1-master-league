@@ -7,14 +7,19 @@ Commands["/help"] = function(player, args)
     Chat.SendMessage(player, "/swap - switch to the other team")
     Chat.SendMessage(player, "/hat [number|name] - change your team's hat (next one if empty)")
     Chat.SendMessage(player, "/end - end the game now (during the end screen: start the next one)")
-    Chat.SendMessage(player, "/witching - skip to the Witching Hour (the last minute)")
+    Chat.SendMessage(player, "/time <seconds> - set the time left in the game")
     Chat.SendMessage(player, "/lightning - a lightning strike now")
     Chat.SendMessage(player, "/fog <0-100> - try a density of mist (until a reload)")
 end
 
-Commands["/witching"] = function(player, args)
-    if Game.State ~= State.Running and Game.State ~= State.Scored and Game.State ~= State.CountDown then return end
-    Game.Timer = math.min(Game.Timer, Config.WitchingHour + 1)
+Commands["/time"] = function(player, args)
+    local seconds = tonumber(args[1] or "")
+    if not seconds or Game.State == State.Ended then
+        Chat.SendMessage(player, "/time <seconds> - set the time left in the game")
+        return
+    end
+    Game.Timer = math.max(1, math.floor(seconds))
+    Events.BroadcastRemote("UpdateTime", Reliability.Reliable, Game.Timer)
 end
 
 Commands["/lightning"] = function(player, args)

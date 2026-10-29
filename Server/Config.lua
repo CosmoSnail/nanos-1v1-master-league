@@ -8,7 +8,7 @@ Config = {
     ShowHats = true,
     ShowNamesOnVehicles = true,
     ShowCharactersOnVehicles = false,
-    GameDuration = 5 * 60,
+    GameDuration = Theme.GameLength,
     CountDownDuration = 4,
     ScoredDuration = 7,
     EndedDuration = 20,
@@ -25,10 +25,10 @@ Config = {
     PaintCars = true,           -- tint the car bodies in their team's color
     -- render distance of the ball, cars and everything attached to them (whole arena)
     RenderCullDistance = 1000000,
-    -- seconds between two lightning strikes over the graveyard (Weather.lua), and in the last minute
+    -- seconds between two lightning strikes over the graveyard (Weather.lua) when a game starts, closing in
+    -- on the second range as it ends
     LightningInterval = { 14, 32 },
-    WitchingLightningInterval = { 4, 10 },
-    WitchingHour = Theme.WitchingHour,
+    FinalLightningInterval = { 4, 10 },
 }
 
 local settings = Server.GetCustomSettings() or {}

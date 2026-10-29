@@ -1,6 +1,6 @@
 -- Music and sounds of the Halloween edition: Client/Sounds, made by tools/make_sounds.py (bell, ghost_boo and
--- ghost_wail come from burn-the-witch). The music is "In the Hall of the Mountain King", faster in the
--- Witching Hour; the night outside has wind, owls and a wolf now and then
+-- ghost_wail come from burn-the-witch). The music is "In the Hall of the Mountain King", building up into a
+-- much faster version for the last minute; the night outside has wind, owls and a wolf now and then
 local SoundsDir = "package://" .. Package.GetName() .. "/Client/Sounds/"
 
 local MUSIC_VOLUME = 0.3
@@ -34,25 +34,26 @@ local function MusicVolume()
     return ducked and MUSIC_DUCKED or MUSIC_VOLUME
 end
 
--- Swaps the looping track, fading the old one out and the new one in
-local function StartMusic(file)
+-- Swaps the looping track, fading the old one out and the new one in over `fade` seconds
+local function StartMusic(file, fade)
     if music_file == file then return end
+    fade = fade or 1.5
     if music and music:IsValid() then
-        music:FadeOut(1.5, 0, true)
+        music:FadeOut(fade, 0, true)
     end
     music_file = file
     music = Sound(Vector(), SoundsDir .. file, true, false, SoundType.Music, MusicVolume(), 1, 400, 3600,
         AttenuationFunction.Linear, false, SoundLoopMode.Forever, false)
-    music:FadeIn(1.5, MusicVolume())
+    music:FadeIn(fade, MusicVolume())
 end
 
 function StartSoundtrack()
     StartMusic("music_main.ogg")
 end
 
--- The last minute (Client/Atmosphere.lua)
-function SetWitchingMusic(on)
-    StartMusic(on and "music_witching.ogg" or "music_main.ogg")
+-- The last minute of a game (Client/Atmosphere.lua): the faster version swells in slowly, no announcement
+function SetFinaleMusic(on)
+    StartMusic(on and "music_finale.ogg" or "music_main.ogg", on and 8 or 1.5)
 end
 
 function PlayGoalSound()
@@ -91,11 +92,6 @@ function PlayCountdownSound(seconds)
             Timer.SetTimeout(function() PlaySound2D("wolf_howl.ogg", 0.3, 0.9 + math.random() * 0.2) end, 700)
         end
     end
-end
-
--- The bell at midnight, when the Witching Hour starts
-function PlayMidnightBell()
-    PlaySound2D("bell.ogg", 0.7, 0.8)
 end
 
 -- Thunder after a lightning strike `distance` cm away: sound is slower than light

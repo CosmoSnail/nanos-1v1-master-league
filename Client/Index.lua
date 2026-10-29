@@ -39,7 +39,14 @@ Events.SubscribeRemote("DevMode", function(on)
   end
   pending_errors = {}
 end)
-Events.CallRemote("AskDevMode", Reliability.Reliable)
+-- Asked again until the server answers: on joining, the package loads before the server has our player
+-- ("Player not found for Remote Event") and the first question is lost
+local function AskDevMode()
+  if dev_mode ~= nil then return end
+  Events.CallRemote("AskDevMode", Reliability.Reliable)
+  Timer.SetTimeout(AskDevMode, 3000)
+end
+AskDevMode()
 
 Events.SubscribeRemote("UpdateCountDownTime", function(time)
   PlayCountdownSound(time)
@@ -50,17 +57,8 @@ Events.SubscribeRemote("UpdateTime", function(time)
   if (time == 0) then
     PlayEndSound()
   end
-  UpdateWitchingHour(time)
+  UpdateNight(time)
   main_hud:CallEvent("UpdateTime", time)
-end)
-
--- The last minute (Client/Atmosphere.lua): the HUD's timer bleeds, a banner when it starts. Kept to send
--- again once the HUD has loaded, for a player joining in the middle of it
-local witching_hour = false
-
-Events.Subscribe("WitchingHour", function(on, announce)
-  witching_hour = on
-  main_hud:CallEvent("WitchingHour", on, announce)
 end)
 
 Events.SubscribeRemote("UpdateScoreA", function(score)
@@ -130,5 +128,4 @@ end)
 main_hud:Subscribe("Ready", function()
   if last_leaderboard then main_hud:CallEvent("UpdateLeaderboard", last_leaderboard) end
   if last_game_over then main_hud:CallEvent("GameOver", last_game_over) end
-  if witching_hour then main_hud:CallEvent("WitchingHour", true, false) end
 end)

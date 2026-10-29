@@ -5,7 +5,10 @@
 
 local PUMPKIN = "burn-the-witch-vfx::SM_FX_Pumpkin"
 local PUMPKIN_SIZE = Vector(100, 100, 79)   -- the mesh at scale 1, centred on its origin (cm)
-local PUMPKIN_FIT = Vector(1.06, 1.06, 0.94) -- of the ball's diameter: a little wider and flatter than it
+local PUMPKIN_FIT = Vector(1.1, 1.1, 1.0)   -- of the ball's diameter: a little wider than it, the sphere all inside
+-- M_FX_Pumpkin lights its whole skin and its grooves by itself, regardless of the scene (Ambient, Seep): at night
+-- that read as a paper lantern you could see into. Only the carved face glows; the skin takes the scene's light
+local PUMPKIN_LOOK = { Seep = 0, Ambient = 0.12 }
 local BALL_RADIUS = 352                     -- if the bounds can't be read: the rest height 497 - the floor 145
 local CANDLE_COLOR = Color(1.0, 0.45, 0.08)
 local CANDLE_INTENSITY = 90
@@ -48,6 +51,9 @@ local function Dress(ball)
     pumpkin:SetRelativeLocation(Vector())
     pumpkin:SetScale(scale)
     pumpkin:SetRenderCullDistance(RENDER_CULL_DISTANCE)
+    for parameter, value in pairs(PUMPKIN_LOOK) do
+        pumpkin:SetMaterialScalarParameter(parameter, value)
+    end
 
     -- If the scale turned out relative to the ball's own (5), the pumpkin is that much too big: measure it
     -- once it has been placed and bring it back

@@ -62,22 +62,16 @@ function AttachVehicleHat(vehicle, team)
     hat:AttachTo(vehicle, AttachmentRule.SnapToTarget, "", 0)
     hat:SetRelativeLocation(hatConfig.location)
     hat:SetRelativeRotation(hatConfig.rotation)
+    for parameter, value in pairs(hatConfig.parameters or {}) do
+        hat:SetMaterialScalarParameter(parameter, value)
+    end
     vehicle:SetValue("Hat", hat)
 end
 
--- Halloween paint and trinkets: the body tinted in the team's color, and the Witches drive with a witch's
--- staff for an antenna, its crystal glowing slime green (burn-the-witch-vfx)
+-- Halloween paint: the body tinted in the team's color
 function DecorateVehicle(vehicle, team)
     if Config.PaintCars then
         vehicle:SetMaterialColorParameter("Tint", Theme.Teams[team].paint, -1, "body")
-    end
-    if team == Team.TeamA then
-        local staff = StaticMesh(Vector(), Rotator(), "burn-the-witch-vfx::SM_FX_Staff", CollisionType.NoCollision)
-        staff:SetScale(Vector(1.5))
-        staff:AttachTo(vehicle, AttachmentRule.SnapToTarget, "", 0)
-        staff:SetRelativeLocation(Vector(-165, 55, 150))
-        staff:SetRelativeRotation(Rotator(18, 0, 0))
-        staff:SetMaterialColorParameter("Color", Theme.Slime)
     end
 end
 

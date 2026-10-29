@@ -1,8 +1,8 @@
 """Textures of the Halloween edition (Client/Images), drawn here with PIL and numpy.
 
-- moon.png / moon_blood.png: the harvest moon with a witch flying across it on her broom, and its blood-red
-  version for the Witching Hour (Sky.SetMoonTexture, Client/Sky.lua)
-- bat_1.png / bat_2.png: a bat with its wings up and down (the flapping bats round the dome, Client/Bats.lua)
+- moon_0.png to moon_4.png: the harvest moon with a witch flying across it on her broom, turning blood red
+  step by step as the night deepens through a game (Sky.SetMoonTexture, Client/Atmosphere.lua)
+- bat_1.png / bat_2.png: a bat with its wings up and down (the flapping bats round the dome, Client/Spooks.lua)
 - witch.png / witch_left.png: the witch on her broom alone, facing right and left (crossing the sky now and then)
 - leaves_1.png / leaves_2.png: fallen autumn leaves, decals on the pitch (Client/Arena.lua)
 - ground.png: dark graveyard earth, tiling, for the ground round the arena
@@ -179,8 +179,12 @@ def ground(size=512):
 
 
 if __name__ == "__main__":
-    save(moon((1.0, 0.78, 0.38), (0.93, 0.45, 0.12), (0.7, 0.9, 1.0)), "moon.png")
-    save(moon((0.95, 0.25, 0.16), (0.55, 0.04, 0.04), (0.8, 1.0, 1.0)), "moon_blood.png")
+    # from the harvest moon (0) to the blood moon (4)
+    harvest = np.array([(1.0, 0.78, 0.38), (0.93, 0.45, 0.12), (0.7, 0.9, 1.0)])
+    blood = np.array([(0.95, 0.25, 0.16), (0.55, 0.04, 0.04), (0.8, 1.0, 1.0)])
+    for k in range(5):
+        inner, outer, maria = harvest + (blood - harvest) * (k / 4)
+        save(moon(tuple(inner), tuple(outer), tuple(maria)), "moon_%d.png" % k)
     save(silhouette(512, 256, lambda d, s: bat_shapes(d, 0, 0, s, 255, True)), "bat_1.png")
     save(silhouette(512, 256, lambda d, s: bat_shapes(d, 0, 0, s, 255, False)), "bat_2.png")
     witch = silhouette(512, 256, lambda d, s: witch_shapes(d, 24 * s, 34 * s, 0.9 * s, 255))

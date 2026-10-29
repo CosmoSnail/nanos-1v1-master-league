@@ -17,7 +17,7 @@ if (typeof Events === 'undefined') {
    Cache all static DOM references once
 ===================================================== */
 const timerEl = document.querySelector('#timer')
-const timerCaptionEl = document.querySelector('#timer-caption')
+
 const teamAScoreEl = document.querySelector('#team-a-score')
 const teamBScoreEl = document.querySelector('#team-b-score')
 const timerContainerEl = document.querySelector('#timer-container')
@@ -171,28 +171,7 @@ Events.Subscribe('UpdateTime', function (time) {
     .padStart(2, '0')}`
 })
 
-/* =====================================================
-   WITCHING HOUR
-   The last minute (Client/Atmosphere.lua): the timer bleeds,
-   and a banner when it starts
-===================================================== */
-const witchingBannerEl = document.querySelector('#witching-banner')
 
-Events.Subscribe('WitchingHour', (on, announce) => {
-  timerContainerEl.classList.toggle('witching', on)
-  timerCaptionEl.textContent = on ? 'WITCHING HOUR' : 'MONSTER LEAGUE'
-  if (!on || !announce) return
-
-  gsap
-    .timeline()
-    .fromTo(
-      witchingBannerEl,
-      { autoAlpha: 0, scale: 1.6, y: -20 },
-      { autoAlpha: 1, scale: 1, y: 0, duration: 0.6, ease: 'back.out(1.8)' }
-    )
-    .to(witchingBannerEl, { autoAlpha: 0, y: 10, duration: 0.6, ease: 'power2.in' }, '+=3.4')
-  batFlock()
-})
 
 /* =====================================================
    SCORE UPDATES
@@ -588,8 +567,7 @@ Events.Subscribe('UpdateNextGameTime', (seconds) => {
 })
 
 Events.Subscribe('NewGame', () => {
-  timerContainerEl.classList.remove('witching')
-  timerCaptionEl.textContent = 'MONSTER LEAGUE'
+  
   if (gameOverInfo === null) return
   gameOverInfo = null
 
