@@ -44,8 +44,7 @@ season). Same game and controls: cars driven by `Client/Car.lua`, a ball, two go
 - How bright the pitch is at night, the moon, clouds and fog: the `NIGHT` table at the top of
   `Client/Atmosphere.lua` (where the night ends up in `LATE`, when it starts to deepen in `DEEPEN_FROM`).
 - The colors the arena's own materials glow in: `ARENA_GLOW` in `Client/Arena.lua` (slots of the arena mesh:
-  0 glass dome, 1 ramp rims, 9 ring; the goal frames, 5, are left alone to take the color of the light in their
-  goal: `goal_light` or the team color in `Shared/Theme.lua`).
+  0 glass dome, 1 ramp rims, 5 goal frames, 9 ring).
 - Lightning frequency, car paint on or off: `Server/Config.lua`. Team names and colors: `Shared/Theme.lua`.
 
 ## Dev commands

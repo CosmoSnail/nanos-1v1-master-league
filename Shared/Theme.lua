@@ -13,7 +13,6 @@ Theme = {
             name = "Skeletons",
             color = Color(0.95, 0.88, 0.7),      -- old bone
             paint = Color(0.86, 0.8, 0.64),
-            goal_light = Color(1, 1, 1),         -- their goal's frame lit white (Server/Goal.lua)
         },
     },
     Slime = Color(0.35, 1.0, 0.12),
