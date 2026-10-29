@@ -3,10 +3,12 @@ Package.Require("Keys.lua")
 Package.Require("Car.lua")
 Package.Require("BoostFX.lua")
 Package.Require("BallCam.lua")
+Package.Require("Help.lua")
 Package.Require("Leaderboard.lua")
 Package.Require("Sounds.lua")
 
 local main_hud = WebUI("Main HUD", "file://UI/index.html")
+main_hud:Subscribe("Ready", SendControls)
 
 -- With the dev_commands setting on, script errors also go to the server log (once each, so a broken Tick
 -- doesn't flood it); the ones before the server answers wait in pending_errors
@@ -70,6 +72,14 @@ end)
 
 Events.Subscribe("UpdateBallCam", function(enabled)
   main_hud:CallEvent("UpdateBallCam", enabled)
+end)
+
+Events.Subscribe("UpdateControls", function(rows, help_key)
+  main_hud:CallEvent("UpdateControls", rows, help_key)
+end)
+
+Events.Subscribe("ToggleHelp", function(open)
+  main_hud:CallEvent("ToggleHelp", open)
 end)
 
 -- Leaderboard and end of game screen. The last ones are kept to send again once the HUD has loaded:

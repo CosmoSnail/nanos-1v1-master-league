@@ -218,6 +218,35 @@ Events.Subscribe('UpdateBallCam', (enabled) => {
 })
 
 /* =====================================================
+   CONTROLS
+   Fired by Client/Help.lua: the list (with the keys bound) and H to open it
+===================================================== */
+const controlsPanelEl = document.querySelector('#controls-panel')
+const controlsHintKeyEl = document.querySelector('#controls-hint-key')
+
+Events.Subscribe('UpdateControls', (rows, helpKey) => {
+  controlsPanelEl.replaceChildren()
+  for (const row of rows) {
+    const keys = document.createElement('span')
+    keys.className = 'controls-keys'
+    for (const key of row.keys) {
+      const keyEl = document.createElement('span')
+      keyEl.className = 'controls-key'
+      keyEl.textContent = key
+      keys.appendChild(keyEl)
+    }
+    const action = document.createElement('span')
+    action.textContent = row.action
+    controlsPanelEl.append(keys, action)
+  }
+  controlsHintKeyEl.textContent = helpKey
+})
+
+Events.Subscribe('ToggleHelp', (open) => {
+  controlsPanelEl.classList.toggle('hidden', !open)
+})
+
+/* =====================================================
    LEADERBOARD
    Rows sent by the server (Server/Stats.lua) every few
    seconds; held open with Tab, always open at game over

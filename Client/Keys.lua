@@ -28,3 +28,17 @@ end
 function IsKeyDown(binding)
     return Input.IsBindingDown(names[binding] or binding)
 end
+
+local KEY_LABELS = {
+    SpaceBar = "Space", LeftShift = "Shift", RightShift = "Shift", LeftControl = "Ctrl", RightControl = "Ctrl",
+    LeftAlt = "Alt", RightAlt = "Alt", Escape = "Esc", Tab = "Tab", CapsLock = "Caps",
+    LeftMouseButton = "LMB", RightMouseButton = "RMB", MiddleMouseButton = "MMB",
+    ThumbMouseButton = "Mouse 4", ThumbMouseButton2 = "Mouse 5",
+}
+
+-- The key a binding registered with RegisterKey is bound to, as the HUD writes it ("-" when none)
+function KeyLabel(binding)
+    local key = (Input.GetMappedKeys(names[binding] or binding) or {})[1]
+    if not key or key == "" then return "-" end
+    return KEY_LABELS[key] or key
+end
