@@ -2,7 +2,7 @@
 -- Outside the glass dome: dark ground all round, a graveyard along both sides (tombstones and crosses, a crypt,
 -- dead trees, scarecrows, jack-o'-lanterns lined up at the foot of the walls), the witches' coven behind their
 -- goal (hut, cauldron, standing stones round a glowing pentagram), the pumpkin patch behind the Pumpkins' goal
--- with the Pumpkin King (a jack-o'-lantern 22 m wide), dead trees on the horizon, mist and will-o'-wisps.
+-- with the Pumpkin King (a jack-o'-lantern 60 m wide), dead trees on the horizon, mist and will-o'-wisps.
 -- Inside: a turning magic circle on the centre spot and one in each goal in its team's color, fallen leaves
 -- on the pitch, and the arena's own rings and glass lit in Halloween colors.
 --
@@ -15,7 +15,15 @@ local VFX = "burn-the-witch-vfx::"
 local IMAGES = "package://" .. Package.GetName() .. "/Client/Images/"
 local GROUND_Z = 120
 local FLOOR_Z = 145
+local SIDE_WALL = 8000      -- Y of the side walls
+local GOAL_BACK = 14200     -- X of the back of the goals
 local RENDER_CULL_DISTANCE = 1000000
+
+-- The world outside is built bigger than life, like the arena itself (about 2.2 times Rocket League's, cars
+-- included): at life size a tombstone seen from the pitch, a hundred metres away, is a speck. The layout
+-- below is written at life size (cm out from the walls, or from the middle of each place), and BIG scales
+-- the meshes, the distances between them and the lights' reach together
+local BIG = 2.7
 
 local PUMPKIN_GLOW = Color(1.0, 0.42, 0.08)
 local WITCH_GLOW = Color(0.55, 0.15, 1.0)
@@ -25,9 +33,9 @@ local CAULDRON_GLOW = Color(0.3, 1.0, 0.15)
 -- parameter of the arena's materials
 local ARENA_GLOW = {
     { slot = 0, color = Color(0.03, 0.0, 0.06) },   -- the glass dome: a faint purple haze
-    { slot = 1, color = Color(0.9, 0.2, 2.2) },     -- the rims along the top of the ramps: purple
-    { slot = 5, color = Color(0.6, 2.2, 0.15) },    -- the goal frames: slime green
-    { slot = 9, color = Color(2.4, 0.7, 0.05) },    -- the ring: pumpkin orange
+    { slot = 1, color = Color(0.55, 0.08, 1.3) },   -- the rims along the top of the ramps: purple
+    { slot = 5, color = Color(0.35, 1.3, 0.06) },   -- the goal frames: slime green
+    { slot = 9, color = Color(1.4, 0.38, 0.02) },   -- the ring: pumpkin orange
 }
 
 -- A fixed sequence of random numbers, so every player gets the same graveyard (and the game's own
@@ -55,7 +63,7 @@ local function Mesh(asset, location, rotation, scale)
 end
 
 local function Glow(location, color, intensity, radius)
-    local light = Light(location, Rotator(), color, LightType.Point, intensity, radius, 44, 0, 60000, true, false, true)
+    local light = Light(location, Rotator(), color, LightType.Point, intensity, radius, 44, 0, 250000, true, false, true)
     light:SetRenderCullDistance(RENDER_CULL_DISTANCE)
     return light
 end
@@ -100,152 +108,174 @@ local function Wisps(location, size, height, color)
 end
 
 local function Ground()
-    local ground = Mesh("nanos-world::SM_Plane", Vector(0, 0, GROUND_Z), Rotator(), Vector(2400, 2400, 1))
+    local ground = Mesh("nanos-world::SM_Plane", Vector(0, 0, GROUND_Z), Rotator(), Vector(3400, 3400, 1))
     ground:SetMaterial("nanos-world::M_Default_Masked_Lit_WorldAligned")
     ground:SetMaterialTextureParameter("Texture", IMAGES .. "ground.png")
-    ground:SetMaterialScalarParameter("TextureSize", 1600)
+    ground:SetMaterialScalarParameter("TextureSize", 3000)
     ground:SetMaterialScalarParameter("Roughness", 1)
     ground:SetMaterialScalarParameter("Specular", 0.15)
     ground:SetMaterialScalarParameter("Opacity", 1)
 end
 
--- side: 1 along +Y, -1 along -Y
+-- Outside, a mesh at `scale` life size times BIG, and a light whose reach grows with it
+local function Big(asset, location, rotation, scale)
+    return Mesh(asset, location, rotation, scale * BIG)
+end
+
+local function BigGlow(location, color, intensity, radius)
+    return Glow(location, color, intensity * BIG * BIG, radius * BIG)
+end
+
+local function Up(life_cm)
+    return Vector(0, 0, life_cm * BIG)
+end
+
+-- side: 1 along +Y, -1 along -Y. x: along the wall, d: out from the wall (life size, cm)
 local function Graveyard(side)
     local facing = side > 0 and 0 or 180
-    -- rows of graves, leaning a little, the middle left free for the crypt
-    for row = 0, 3 do
-        local y = side * (10200 + row * 1900)
-        for x = -10500, 10500, 1600 do
-            if row < 2 or math.abs(x) > 2600 then
+    local function At(x, d)
+        return Vector(x, side * (SIDE_WALL + d * BIG), GROUND_Z)
+    end
+
+    -- rows of graves, leaning a little, the middle of the last one left free for the torches
+    for row = 0, 2 do
+        for x = -15000, 15000, 1600 * BIG do
+            if row < 2 or math.abs(x) > 2600 * BIG then
                 local stone = Pick({ "Tombstone1", "Tombstone2", "Tombstone3", "Tombstone1", "Tombstone3", "GraveCross" })
-                Mesh(BTW .. stone, Vector(x + Random(-350, 350), y + Random(-300, 300), GROUND_Z),
+                Big(BTW .. stone, At(x + Random(-350, 350) * BIG, 2200 + row * 1900 + Random(-300, 300)),
                     Rotator(Random(-4, 4), facing + Random(-14, 14), Random(-5, 5)), Random(2.4, 3.2))
             end
         end
     end
 
     -- the crypt, between two torches
-    Mesh(BTW .. "Crypt", Vector(0, side * 15600, GROUND_Z), Rotator(0, facing, 0), 2.6)
-    for _, x in ipairs({ -1900, 1900 }) do
-        Mesh(BTW .. "TorchPost", Vector(x, side * 13600, GROUND_Z), Rotator(0, Random(0, 360), 0), 2.2)
-        Glow(Vector(x, side * 13600, GROUND_Z + 640), PUMPKIN_GLOW, 260, 3200)
+    Big(BTW .. "Crypt", At(0, 7800), Rotator(0, facing, 0), 2.6)
+    for _, x in ipairs({ -1900 * BIG, 1900 * BIG }) do
+        Big(BTW .. "TorchPost", At(x, 5800), Rotator(0, Random(0, 360), 0), 2.2)
+        BigGlow(At(x, 5800) + Up(640), PUMPKIN_GLOW, 260, 3200)
     end
 
     -- dead trees behind the graves, scarecrows in front of them
-    for _, x in ipairs({ -11500, -6500, -1800, 3600, 8000, 12000 }) do
+    for _, x in ipairs({ -16000, -9000, -2500, 5000, 11000, 17000 }) do
         local tree = Pick({ "DeadTreeBig", "DeadTreeGnarled", "DeadTreeSnag", "DeadTreeTall" })
-        Mesh(BTW .. tree, Vector(x + Random(-800, 800), side * Random(18000, 21000), GROUND_Z),
-            Rotator(0, Random(0, 360), 0), Random(2.2, 3.0))
+        Big(BTW .. tree, At(x + Random(-1500, 1500), Random(10000, 13000)), Rotator(0, Random(0, 360), 0), Random(2.2, 3.0))
     end
-    for _, x in ipairs({ -7600, 5200 }) do
-        Mesh(BTW .. "Scarecrow", Vector(x, side * 9500, GROUND_Z), Rotator(0, facing + 180 + Random(-20, 20), 0), 2.3)
+    for _, x in ipairs({ -9000, 6500 }) do
+        Big(BTW .. "Scarecrow", At(x, 1400), Rotator(0, facing + 180 + Random(-20, 20), 0), 2.3)
     end
 
-    -- jack-o'-lanterns lined up at the foot of the wall, every fourth one casting its light
+    -- jack-o'-lanterns lined up at the foot of the wall, every other one casting its light
     local k = 0
-    for x = -11000, 11000, 1000 do
+    for x = -12000, 12000, 1000 * BIG do
         local lantern = Pick({ "JackOLantern", "JackOLantern2", "JackOLantern3" })
-        Mesh(BTW .. lantern, Vector(x + Random(-150, 150), side * (8700 + Random(-100, 200)), GROUND_Z),
-            Rotator(0, Random(0, 360), 0), Random(3, 4.2))
-        if k % 4 == 0 then
-            Glow(Vector(x, side * 8900, GROUND_Z + 250), PUMPKIN_GLOW, 140, 2400)
+        Big(BTW .. lantern, At(x + Random(-150, 150) * BIG, 700 + Random(-50, 100)), Rotator(0, Random(0, 360), 0), Random(3, 4.2))
+        if k % 2 == 0 then
+            BigGlow(At(x, 900) + Up(250), PUMPKIN_GLOW, 140, 2400)
         end
         k = k + 1
     end
 
     -- mist among the graves, wisps rising here and there
     for _ = 1, 4 do
-        Mist(Vector(Random(-10000, 10000), side * Random(10500, 17000), GROUND_Z + 60), Random(18, 26), Color(0.55, 0.5, 0.7), 0.35)
+        Mist(At(Random(-14000, 14000), Random(2500, 9000)) + Up(60), Random(18, 26) * BIG, Color(0.55, 0.5, 0.7), 0.3)
     end
     for _ = 1, 3 do
-        Wisps(Vector(Random(-9000, 9000), side * Random(11000, 16000), GROUND_Z), 7, 9, Theme.Slime)
+        Wisps(At(Random(-12000, 12000), Random(3000, 8000)), 7 * BIG, 9 * BIG, Theme.Slime)
     end
 end
 
 -- Behind the Witches' goal (-X): their hut, a cauldron bubbling green over a glowing pentagram ringed by
 -- standing stones, totems, an effigy, a gibbet and a pile of coffins
 local function Coven()
-    local center = Vector(-21000, 0, GROUND_Z)
-    Sigil(center + Vector(0, 0, 4), 55, WITCH_GLOW, 2, 5)
-    Mesh(BTW .. "Cauldron", center, Rotator(0, 90, 0), 3.5)
-    Glow(center + Vector(0, 0, 650), CAULDRON_GLOW, 600, 5000)
-    local steam = Mist(center + Vector(0, 0, 700), 7, Theme.Slime, 0.4)
-    steam:SetScale(Vector(7, 7, 12))
-    Wisps(center + Vector(0, 0, 300), 5, 12, Theme.Slime)
+    local center = Vector(-(GOAL_BACK + 6800 * BIG), 0, GROUND_Z)
+    local function At(x, y)
+        return center + Vector(x * BIG, y * BIG, 0)
+    end
+
+    Sigil(center + Vector(0, 0, 6), 55 * BIG, WITCH_GLOW, 2, 5)
+    Big(BTW .. "Cauldron", center, Rotator(0, 90, 0), 3.5)
+    BigGlow(center + Up(650), CAULDRON_GLOW, 600, 5000)
+    local steam = Mist(center + Up(700), 7 * BIG, Theme.Slime, 0.4)
+    steam:SetScale(Vector(7, 7, 12) * BIG)
+    Wisps(center + Up(300), 5 * BIG, 12 * BIG, Theme.Slime)
 
     for k = 0, 8 do
         local angle = k / 9 * math.pi * 2
-        Mesh(BTW .. "StandingStoneRune", center + Vector(math.cos(angle) * 3300, math.sin(angle) * 3300, 0),
+        Big(BTW .. "StandingStoneRune", At(math.cos(angle) * 3300, math.sin(angle) * 3300),
             Rotator(0, math.deg(angle) + 90 + Random(-10, 10), Random(-4, 4)), Random(2.2, 2.7))
     end
     for k = 0, 5 do
         local angle = (k + 0.5) / 6 * math.pi * 2
-        Mesh(BTW .. Pick({ "SkullPile", "SkullPile2" }), center + Vector(math.cos(angle) * 2000, math.sin(angle) * 2000, 0),
+        Big(BTW .. Pick({ "SkullPile", "SkullPile2" }), At(math.cos(angle) * 2000, math.sin(angle) * 2000),
             Rotator(0, Random(0, 360), 0), 3)
     end
 
-    Mesh(BTW .. "WitchHut", Vector(-31500, 5500, GROUND_Z), Rotator(0, 200, 0), 2.2)
+    Big(BTW .. "WitchHut", At(-10500, 5500), Rotator(0, 200, 0), 2.2)
     for _, y in ipairs({ -4600, 4600 }) do
-        Mesh(BTW .. "WitchTotem", Vector(-16800, y, GROUND_Z), Rotator(0, 90, 0), 2.6)
-        Mesh(BTW .. "WitchLantern", Vector(-17600, y * 0.7, GROUND_Z), Rotator(0, Random(0, 360), 0), 2.2)
-        Glow(Vector(-17600, y * 0.7, GROUND_Z + 560), WITCH_GLOW, 220, 3000)
+        Big(BTW .. "WitchTotem", At(4200, y), Rotator(0, 90, 0), 2.6)
+        Big(BTW .. "WitchLantern", At(3400, y * 0.7), Rotator(0, Random(0, 360), 0), 2.2)
+        BigGlow(At(3400, y * 0.7) + Up(560), WITCH_GLOW, 220, 3000)
     end
-    Mesh(BTW .. "WitchEffigy", Vector(-25500, -7500, GROUND_Z), Rotator(0, 60, 0), 2.6)
-    Mesh(BTW .. "Gibbet", Vector(-27500, 8800, GROUND_Z), Rotator(0, -30, 0), 2.4)
-    Mesh(BTW .. "CoffinPile", Vector(-24000, 10500, GROUND_Z), Rotator(0, 15, 0), 2.6)
+    Big(BTW .. "WitchEffigy", At(-4500, -7500), Rotator(0, 60, 0), 2.6)
+    Big(BTW .. "Gibbet", At(-6500, 8800), Rotator(0, -30, 0), 2.4)
+    Big(BTW .. "CoffinPile", At(-3000, 10500), Rotator(0, 15, 0), 2.6)
     for k = 1, 5 do
         local tree = Pick({ "DeadTreeBig", "DeadTreeGnarled", "DeadTreeSnag", "DeadTreeTall" })
-        Mesh(BTW .. tree, Vector(Random(-36000, -26000), Random(9000, 15000) * (k % 2 == 0 and 1 or -1), GROUND_Z),
+        Big(BTW .. tree, At(Random(-15000, -5000), Random(9000, 15000) * (k % 2 == 0 and 1 or -1)),
             Rotator(0, Random(0, 360), 0), Random(2.4, 3.2))
     end
     for _ = 1, 3 do
-        Mist(Vector(Random(-30000, -17000), Random(-9000, 9000), GROUND_Z + 60), Random(20, 28), Color(0.5, 0.42, 0.7), 0.3)
+        Mist(At(Random(-9000, 4000), Random(-9000, 9000)) + Up(60), Random(20, 28) * BIG, Color(0.5, 0.42, 0.7), 0.25)
     end
 end
 
 -- Behind the Pumpkins' goal (+X): the Pumpkin King, a giant jack-o'-lantern staring at the arena, in a patch
 -- of pumpkins with scarecrows and haystacks
 local function PumpkinPatch()
-    local king = Vector(27500, 0, GROUND_Z)
-    Mesh(VFX .. "SM_FX_Pumpkin", king + Vector(0, 0, 37 * 22), Rotator(0, 180, 0), 22)
-    Glow(king + Vector(-1800, 0, 900), PUMPKIN_GLOW, 3500, 14000)
-    Sigil(king + Vector(0, 0, 4), 36, PUMPKIN_GLOW, 1.6, 7)
+    local king = Vector(GOAL_BACK + 13300 * BIG, 0, GROUND_Z)
+    local function At(x, y)
+        return king + Vector(x * BIG, y * BIG, 0)
+    end
+
+    Big(VFX .. "SM_FX_Pumpkin", king + Up(37 * 22), Rotator(0, 180, 0), 22)
+    BigGlow(At(-1800, 0) + Up(900), PUMPKIN_GLOW, 3500, 14000)
+    Sigil(king + Vector(0, 0, 6), 36 * BIG, PUMPKIN_GLOW, 1.6, 7)
 
     local placed = 0
     while placed < 44 do
-        local spot = Vector(Random(16500, 34000), Random(-11000, 11000), GROUND_Z)
-        if (spot - king):Size() > 2400 then
+        local x, y = Random(-11000, 6500), Random(-11000, 11000)
+        if math.sqrt(x * x + y * y) > 2400 then
             local lit = Random() < 0.5
             local asset = lit and Pick({ "JackOLantern", "JackOLantern2", "JackOLantern3" }) or "Pumpkin"
             local giant = Random() < 0.12
-            Mesh(BTW .. asset, spot, Rotator(0, Random(0, 360), 0), giant and Random(7, 10) or Random(2.5, 5.5))
+            Big(BTW .. asset, At(x, y), Rotator(0, Random(0, 360), 0), giant and Random(7, 10) or Random(2.5, 5.5))
             placed = placed + 1
         end
     end
-    for _, spot in ipairs({ { 19500, -6500 }, { 19500, 6500 }, { 31500, -8500 }, { 31500, 8500 } }) do
-        Mesh(BTW .. "Scarecrow", Vector(spot[1], spot[2], GROUND_Z), Rotator(0, 90 + Random(-25, 25), 0), 2.4)
+    for _, spot in ipairs({ { -8000, -6500 }, { -8000, 6500 }, { 4000, -8500 }, { 4000, 8500 } }) do
+        Big(BTW .. "Scarecrow", At(spot[1], spot[2]), Rotator(0, 90 + Random(-25, 25), 0), 2.4)
     end
-    for _, spot in ipairs({ { 22000, -10500 }, { 33500, 4000 }, { 24500, 10500 } }) do
-        Mesh(BTW .. Pick({ "Haystack", "HayPile" }), Vector(spot[1], spot[2], GROUND_Z), Rotator(0, Random(0, 360), 0), 2.2)
+    for _, spot in ipairs({ { -5500, -10500 }, { 6000, 4000 }, { -3000, 10500 } }) do
+        Big(BTW .. Pick({ "Haystack", "HayPile" }), At(spot[1], spot[2]), Rotator(0, Random(0, 360), 0), 2.2)
     end
     for k = 1, 5 do
         local tree = Pick({ "DeadTreeBig", "DeadTreeGnarled", "DeadTreeSnag", "DeadTreeTall" })
-        Mesh(BTW .. tree, Vector(Random(28000, 38000), Random(12000, 17000) * (k % 2 == 0 and 1 or -1), GROUND_Z),
+        Big(BTW .. tree, At(Random(500, 10500), Random(12000, 17000) * (k % 2 == 0 and 1 or -1)),
             Rotator(0, Random(0, 360), 0), Random(2.4, 3.2))
     end
     for _ = 1, 3 do
-        Wisps(Vector(Random(17000, 33000), Random(-10000, 10000), GROUND_Z), 6, 8, PUMPKIN_GLOW)
+        Wisps(At(Random(-10000, 5500), Random(-10000, 10000)), 6 * BIG, 8 * BIG, PUMPKIN_GLOW)
     end
 end
 
--- Dead trees and a few autumn ones all round the horizon
+-- Dead trees and a few autumn ones all round the horizon, beyond everything else
 local function Horizon()
     for k = 0, 35 do
         local angle = (k + Random(-0.3, 0.3)) / 36 * math.pi * 2
-        local distance = Random(48000, 66000)
+        local distance = Random(100000, 140000)
         local tree = Random() < 0.75 and Pick({ "FarTreeDead1", "FarTreeDead2" }) or Pick({ "FarTreeAutumn1", "FarTreeAutumn2" })
-        Mesh(BTW .. tree, Vector(math.cos(angle) * distance, math.sin(angle) * distance, GROUND_Z),
-            Rotator(0, Random(0, 360), 0), Random(3, 5))
+        Big(BTW .. tree, Vector(math.cos(angle) * distance, math.sin(angle) * distance, GROUND_Z),
+            Rotator(0, Random(0, 360), 0), Random(4, 6.5))
     end
 end
 

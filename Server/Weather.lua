@@ -10,8 +10,8 @@ end
 -- A spot in the sky outside the dome, all round it; seed picks the bolt and the thunder on the clients
 function StrikeLightning()
     local angle = math.random() * math.pi * 2
-    local distance = math.random(26000, 60000)
-    local location = Vector(math.cos(angle) * distance, math.sin(angle) * distance, math.random(9000, 16000))
+    local distance = math.random(45000, 110000)
+    local location = Vector(math.cos(angle) * distance, math.sin(angle) * distance, math.random(12000, 22000))
     Events.BroadcastRemote("Lightning", Reliability.Unreliable, location, math.random(1, 1000))
 end
 
