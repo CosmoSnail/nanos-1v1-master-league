@@ -32,6 +32,7 @@ function SpawnRandomFireworks(range_x, range_y, range_z_0, range_z_1, count, tea
         -- Fallback in case the system never reports finished; otherwise late joiners replay every firework
         firework:SetLifeSpan(10)
         firework:SetScale(Vector(2))
+        KeepVisible(firework)
 
         local color
         if team == Team.TeamA then
