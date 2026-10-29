@@ -282,8 +282,9 @@ end
 -- Inside: the magic circles on the pitch and fallen leaves blown about
 local function Pitch()
     Sigil(Vector(0, 0, FLOOR_Z + 8), 26, Theme.Slime, 0.8, 7)
-    Sigil(Vector(-13200, 0, FLOOR_Z + 8), 17, Theme.Teams[1].color, 1.2, 5)
-    Sigil(Vector(13200, 0, FLOOR_Z + 8), 17, Theme.Teams[2].color, 1.2, 7)
+    -- the goals' floor is flat from their mouth (X 12050) to about 13780, where it curves up into the back wall
+    Sigil(Vector(-12900, 0, FLOOR_Z + 8), 15, Theme.Teams[1].color, 1.2, 5)
+    Sigil(Vector(12900, 0, FLOOR_Z + 8), 15, Theme.Teams[2].color, 1.2, 7)
 
     local placed = 0
     while placed < 26 do
