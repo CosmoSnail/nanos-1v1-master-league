@@ -1,6 +1,6 @@
 -- Music and sounds of the Halloween edition: Client/Sounds, made by tools/make_sounds.py (bell, ghost_boo and
 -- ghost_wail come from burn-the-witch). The music is "In the Hall of the Mountain King", building up into a
--- much faster version for the last minute; the night outside has wind, owls and a wolf now and then
+-- much faster version for the last minute; outside, an owl or a wolf now and then
 local SoundsDir = "package://" .. Package.GetName() .. "/Client/Sounds/"
 
 local MUSIC_VOLUME = 0.3
@@ -13,7 +13,6 @@ local LAUGHS = {
     "nanos-world::A_Male_01_Laugh", "nanos-world::A_Male_02_Laugh", "nanos-world::A_Male_03_Laugh",
     "nanos-world::A_Male_04_Laugh", "nanos-world::A_Male_05_Laugh", "nanos-world::A_Male_06_Laugh",
 }
-local AMBIENT_VOLUME = 0.22
 
 local music = nil
 local music_file = nil
@@ -108,11 +107,8 @@ function PlayBonk(location, strength)
     PlaySound3D("bonk_" .. math.random(1, 3) .. ".ogg", location, 0.35 + 0.65 * strength, 0.9 + math.random() * 0.25, 9000)
 end
 
--- Wind round the dome all the time, an owl or a distant wolf now and then
+-- An owl or a distant wolf now and then
 local function StartAmbience()
-    Sound(Vector(), SoundsDir .. "wind_loop.ogg", true, false, SoundType.Ambient, AMBIENT_VOLUME, 1, 400, 3600,
-        AttenuationFunction.Linear, false, SoundLoopMode.Forever, true)
-
     local function Owl()
         Timer.SetTimeout(function()
             if math.random() < 0.7 then

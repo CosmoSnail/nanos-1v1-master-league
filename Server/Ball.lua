@@ -126,10 +126,9 @@ function GetLastPlayerHitBall()
     if Game.LastPlayerHitBall and Game.LastPlayerHitBall:IsValid() then
         return Game.LastPlayerHitBall
     end
-    -- nobody touched it: a ghost did (the HUD shows no picture for an empty URL)
     return {
-        GetName = function() return "A Ghost" end,
-        GetAccountIconURL = function() return "" end
+        GetName = function() return "nil" end,
+        GetAccountIconURL = function() return "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Atheism_symbol_syreeni.svg/1280px-Atheism_symbol_syreeni.svg.png" end
     }
 end
 

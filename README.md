@@ -31,13 +31,13 @@ season). Same game and controls: cars driven by `Client/Car.lua`, a ball, two go
   thickens, the colors warm towards red and lightning strikes more and more often; in the last minute the
   music swells into a much faster version.
 - **HUD** (`Client/UI`): "GHOUL!" on a goal, "OWN GHOUL", "WITCHES WIN!" / "PUMPKINS WIN!" / "DEAD EVEN",
-  the MVP is the *Most Valuable Phantom*, souls and ghouls in the leaderboard, "PUMPKIN CAM" for ball cam,
+  the MVP is the *Most Valuable Phantom*, points and ghouls in the leaderboard, "PUMPKIN CAM" for ball cam,
   cobwebs and bats. Open `Client/UI/index.html` in a browser and call `emit('GoalScored', {...})`... from the
   console to work on it without the game.
 - **Music and sounds** (`Client/Sounds.lua`): "In the Hall of the Mountain King" as a spooky march (organ,
   bone xylophone, ghostly choir, theremin), much faster in the last minute; goal stingers (Bach's Toccata in
   D minor among them) and an evil laugh; a clock bell counting down the kickoff and a wolf answering now and
-  then; the Toccata on the organ when time runs out; wind, owls and distant wolves outside.
+  then; the Toccata on the organ when time runs out; owls and distant wolves outside.
 
 ## Tuning
 

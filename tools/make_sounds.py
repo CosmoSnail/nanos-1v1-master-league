@@ -5,7 +5,7 @@
 - music_finale.ogg: the same theme, much faster and louder, for the last minute of a game.
 - goal_*.ogg: four goal stingers (Bach's Toccata in D minor on the organ, bells and choir, a theremin wail,
   a skeleton xylophone run). end_organ.ogg: the whole Toccata opening, when the time runs out.
-- countdown_tick.ogg / countdown_go.ogg, thunder_*.ogg, wind_loop.ogg, owl.ogg, wolf_howl.ogg, bonk_*.ogg.
+- countdown_tick.ogg / countdown_go.ogg, thunder_*.ogg, owl.ogg, wolf_howl.ogg, bonk_*.ogg.
 
 Usage: python tools/make_sounds.py [output folder, default Client/Sounds]
 Needs numpy, scipy and ffmpeg (on the PATH, or its path in the FFMPEG environment variable).
@@ -503,27 +503,6 @@ def thunder_sound(length, crack=1.0, seed=None):
     return out * fade(n, 0.003, length * 0.3)[:, None]
 
 
-def wind_loop(length=28.0):
-    n = int(length * SR)
-    t = np.arange(n) / SR
-    out = np.zeros((n, 2))
-    for ch in range(2):
-        noise = RNG.standard_normal(n)
-        for low, high in ((120, 300), (250, 600), (500, 1100), (900, 2000)):
-            band = bandpass(noise, low, high)
-            gust = np.interp(t, np.linspace(0, length, 12), RNG.uniform(0.1, 1.0, 12)) ** 2
-            out[:, ch] += band * gust
-        # a hollow whistle wandering round 700 Hz
-        f = 700 + 250 * np.sin(2 * np.pi * t / length * 3 + ch) + 80 * np.sin(2 * np.pi * t / length * 7)
-        whistle = np.sin(2 * np.pi * np.cumsum(f) / SR)
-        out[:, ch] += whistle * 0.03 * (0.5 + 0.5 * np.sin(2 * np.pi * t / length * 2 + ch * 2))
-    # crossfade the end into the start for a seamless loop
-    xf = int(2.0 * SR)
-    ramp = np.linspace(0, 1, xf)[:, None]
-    out[:xf] = out[:xf] * ramp + out[-xf:] * (1 - ramp)
-    return master(out[:-xf], peak=0.6, drive=1.0)
-
-
 def owl():
     tr = Track(beats=8, bpm=60, tail=3)
     for k, (at, length) in enumerate(((0.0, 0.25), (0.45, 0.25), (1.1, 0.9))):
@@ -586,7 +565,6 @@ if __name__ == "__main__":
     for k in range(3):
         x = thunder_sound((7.0, 8.5, 6.0)[k], crack=(1.0, 0.5, 0.8)[k], seed=200 + k)
         save("thunder_%d.ogg" % (k + 1), master(x, peak=0.9, drive=1.6))
-    save("wind_loop.ogg", wind_loop())
     save("owl.ogg", owl())
     save("wolf_howl.ogg", wolf_howl())
     for k, p in enumerate((1.0, 0.85, 1.18)):
