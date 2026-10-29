@@ -30,9 +30,9 @@ function InitGame()
         Game.HatB = GetRandomHat()
     until Game.HatB.name ~= Game.HatA.name or #Hats <= 1
     ShuffleTeams()
-    Events.BroadcastRemote("UpdateTime", Game.Timer)
-    Events.BroadcastRemote("UpdateScoreA", Game.ScoreA)
-    Events.BroadcastRemote("UpdateScoreB", Game.ScoreB)
+    Events.BroadcastRemote("UpdateTime", Reliability.Reliable, Game.Timer)
+    Events.BroadcastRemote("UpdateScoreA", Reliability.Reliable, Game.ScoreA)
+    Events.BroadcastRemote("UpdateScoreB", Reliability.Reliable, Game.ScoreB)
 end
 
 InitGame()
@@ -43,7 +43,7 @@ TogglePlayersInput(false)
 Timer.SetInterval(function()
     if Game.State == State.CountDown then
         Game.CountDownTimer = Game.CountDownTimer - 1
-        Events.BroadcastRemote("UpdateCountDownTime", Game.CountDownTimer)
+        Events.BroadcastRemote("UpdateCountDownTime", Reliability.Reliable, Game.CountDownTimer)
         if (Game.CountDownTimer <= 0) then
             Game.State = State.Running
             print("Game Resumed!")
@@ -67,7 +67,7 @@ Timer.SetInterval(function()
         return
     elseif Game.State == State.Running then
         Game.Timer = Game.Timer - 1
-        Events.BroadcastRemote("UpdateTime", Game.Timer)
+        Events.BroadcastRemote("UpdateTime", Reliability.Reliable, Game.Timer)
         CheckBallOutOfBounds()
         CheckVehiclesOutOfBounds()
         if (Game.Timer <= 0) then

@@ -163,14 +163,14 @@ function AttachVehiclePlayerName(vehicle, name)
         return
     end
 
-    local text = TextRender(
+    local text = Text3D(
         Vector(),
         Rotator(),
         name,
         Vector(0.6),
         Color(1, 1, 1),
         FontType.OpenSans,
-        TextRenderAlignCamera.FaceCamera
+        Text3DAlignCamera.FaceCamera
     )
 
     text:AttachTo(vehicle, AttachmentRule.SnapToTarget, "", 1)

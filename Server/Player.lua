@@ -22,8 +22,8 @@ function SpawnPlayer(player)
         character:SetInputEnabled(false)
     end
 
-    Events.BroadcastRemote("UpdateScoreA", Game.ScoreA)
-    Events.BroadcastRemote("UpdateScoreB", Game.ScoreB)
+    Events.BroadcastRemote("UpdateScoreA", Reliability.Reliable, Game.ScoreA)
+    Events.BroadcastRemote("UpdateScoreB", Reliability.Reliable, Game.ScoreB)
 end
 
 function InitPlayers()
