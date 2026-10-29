@@ -4,6 +4,7 @@ Config = {
     LogLevel = LogLevel.Console,
     ShowTriggers = false,
     EnableCommands = false,
+    LogBallTouches = false,     -- "<player> touched the ball" in the log (and in the chat in dev mode)
     ShowHats = true,
     ShowNamesOnVehicles = true,
     ShowCharactersOnVehicles = false,

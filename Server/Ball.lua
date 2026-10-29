@@ -43,6 +43,8 @@ local lastTouchPlayer
 local lastTouchTime = 0
 
 function LogBallTouch(player)
+    if not Config.LogBallTouches then return end
+
     local now = Server.GetTime()
     if player == lastTouchPlayer and now - lastTouchTime < 500 then
         lastTouchTime = now
