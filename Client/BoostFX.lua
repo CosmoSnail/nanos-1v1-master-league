@@ -121,7 +121,7 @@ end
 Client.Subscribe("Tick", function(dt)
     local localVehicle, localBoosting = GetLocalBoost()
 
-    for _, vehicle in pairs(Vehicle.GetAll()) do
+    for _, vehicle in pairs(VehicleWheeled.GetAll()) do
         if vehicle:IsValid() then
             local boosting
             if vehicle == localVehicle then
@@ -143,4 +143,4 @@ Client.Subscribe("Tick", function(dt)
     end
 end)
 
-Vehicle.Subscribe("Destroy", DestroyEffect)
+VehicleWheeled.Subscribe("Destroy", DestroyEffect)
