@@ -16,8 +16,13 @@ local CORE_WIDTH = 0.28
 local IGNITE_SPEED = 12         -- how fast the flames grow when boosting starts (1/s)
 local FADE_SPEED = 8            -- and shrink when it stops
 local LIGHT_INTENSITY = 9
--- Any of the default pack's P_RocketExhaust_* (Afterburn, Afterburn_Jet, Realistic, Crackling, Plume_01...)
-local EXHAUST_PARTICLE = "nanos-world::P_RocketExhaust_Afterburn"
+-- Exhaust by the "Team" value of the vehicle (1 = blue, 2 = red, see Team in Server/Tables.lua); any of the
+-- default pack's P_RocketExhaust_* works (Afterburn, Afterburn_Jet, Realistic, Crackling, Plume_01...)
+local EXHAUST_PARTICLES = {
+    [1] = "nanos-world::P_RocketExhaust_Blue",
+    [2] = "nanos-world::P_RocketExhaust_Red",
+}
+local EXHAUST_DEFAULT = "nanos-world::P_RocketExhaust_Afterburn"
 local EXHAUST_SCALE = 0.4
 local RENDER_CULL_DISTANCE = 1000000  -- whole arena, like Config.RenderCullDistance on the server
 
@@ -44,13 +49,14 @@ end
 
 local function CreateEffect(vehicle)
     local fx = { cones = {}, exhausts = {}, power = 0, burning = false }
+    local exhaustParticle = EXHAUST_PARTICLES[vehicle:GetValue("Team")] or EXHAUST_DEFAULT
 
     for _, nozzle in ipairs(NOZZLES) do
         table.insert(fx.cones, { mesh = SpawnCone(vehicle, nozzle, OUTER_EMISSIVE, 0.55), nozzle = nozzle, length = FLAME_LENGTH, width = FLAME_WIDTH })
         table.insert(fx.cones, { mesh = SpawnCone(vehicle, nozzle, CORE_EMISSIVE, 0.9), nozzle = nozzle, length = CORE_LENGTH, width = CORE_WIDTH })
 
         -- the exhaust blows along +X: pitch 180 turns it backwards (like the sandbox thrusters)
-        local exhaust = Particle(Vector(), Rotator(), EXHAUST_PARTICLE, false, false)
+        local exhaust = Particle(Vector(), Rotator(), exhaustParticle, false, false)
         exhaust:AttachTo(vehicle, AttachmentRule.SnapToTarget, "", 0)
         exhaust:SetRelativeLocation(nozzle)
         exhaust:SetRelativeRotation(Rotator(180, 0, 0))

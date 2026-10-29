@@ -19,6 +19,8 @@ function SpawnVehicle(character)
     end
 
     local vehicle = Offroad(vehicleSpawnPoint, rotation)
+    -- the clients color the boost exhaust by team (Client/BoostFX.lua)
+    vehicle:SetValue("Team", character:GetTeam(), true)
     -- The car is driven by Client/Car.lua through velocity changes. The engine only makes sound
     -- and the wheels are just suspension: not powered, no brakes and little grip, so they don't
     -- fight the controller.
