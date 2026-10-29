@@ -184,10 +184,12 @@ Events.Subscribe('UpdateCountDownTime', function (second) {
    BOOST METER
    Fired by Client/Car.lua when the rounded boost changes
 ===================================================== */
+const boostContainerEl = document.querySelector('#boost-container')
 const boostValueEl = document.querySelector('#boost-value')
 const boostFillEl = document.querySelector('#boost-fill')
 
 Events.Subscribe('UpdateBoost', (boost) => {
+  boostContainerEl.classList.remove('hidden')
   boostValueEl.textContent = boost.toString()
   boostFillEl.style.width = `${boost}%`
 })

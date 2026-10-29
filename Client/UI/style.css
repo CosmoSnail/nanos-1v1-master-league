@@ -398,6 +398,11 @@ body {
   gap: 8px;
 }
 
+/* shown by the first UpdateBoost: never with infinite boost */
+.boost-container.hidden {
+  display: none;
+}
+
 .boost-value {
   font-size: 56px;
   font-weight: 800;

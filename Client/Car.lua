@@ -361,7 +361,10 @@ Client.Subscribe("Tick", function(dt)
         -- no regen while the button is held on an empty meter, or boost would flicker on and off every frame
         car.boost = math.min(100, car.boost + CarTuning.BoostRegen * dt)
     end
-    UpdateBoostMeter()
+    -- infinite boost: the meter stays hidden in the HUD
+    if CarTuning.BoostDrain > 0 then
+        UpdateBoostMeter()
+    end
 
     local deltaV
     if car.grounded then
