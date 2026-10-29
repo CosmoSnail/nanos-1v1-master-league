@@ -61,7 +61,7 @@ function ImpulseAllVehicles(fromLocation)
             local direction = (vehicle:GetLocation() - fromLocation)
             direction:Normalize()
             direction = direction + Vector(0, 0, 0.3)
-            vehicle:AddImpulse(direction * 40000000)
+            vehicle:AddImpulse(direction * 55000000)
         end
     end
 end
