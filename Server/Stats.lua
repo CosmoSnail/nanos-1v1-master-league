@@ -46,14 +46,16 @@ function AddBallTouch(player)
     dirty = true
 end
 
--- The goal goes to the last player of the scoring team who touched the ball (even if an opponent touched it
--- last and put it in their own goal), the assist to the teammate who touched it before them.
+-- The last touch decides: the goal goes to whoever touched the ball last if they are on the scoring team, the
+-- assist to the teammate who touched it before them. If an opponent touched it last it's their own goal and
+-- nobody scores (Goal.lua shows them with "own goal").
 -- Returns the scorer and the assister, either may be nil
 function CreditGoal(team)
     local scorer, scorer_index
     for i = #touches, 1, -1 do
         local touch = touches[i]
-        if touch.team == team and touch.player:IsValid() then
+        if touch.team ~= team then break end
+        if touch.player:IsValid() then
             scorer, scorer_index = touch.player, i
             break
         end
