@@ -10,7 +10,7 @@ season). Same game and controls: cars driven by `Client/Car.lua`, a ball, two go
   the fireworks; the HUD uses the same ones (`Client/UI/style.css`).
 - **The ball** is a giant jack-o'-lantern with a carved face glowing from inside and a candle flickering in
   it, and it bonks when hit (`Client/PumpkinBall.lua`). Only its look changes: same size and physics.
-- **Cars**: glossy metallic red for the Witches, blue for the Skeletons (`PaintVehicle` in `Server/Vehicle.lua`,
+- **Cars**: glossy metallic purple for the Witches, white for the Skeletons (`PaintVehicle` in `Server/Vehicle.lua`,
   colors in `Server/Config.lua`); the Witches wear witch hats, the Skeletons a giant skull (the default pack's
   `SM_HumanSkeleton_Head_Full`; `Server/Hats.lua`). Boost flames burn purple with a slime green core for the Witches,
   pale blue round a white core for the Skeletons, soul fire (`Client/BoostFX.lua`).

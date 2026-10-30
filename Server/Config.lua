@@ -22,9 +22,9 @@ Config = {
     -- Witches and Skeletons (Shared/Theme.lua)
     ColorA = Theme.Teams[1].color,
     ColorB = Theme.Teams[2].color,
-    -- the car bodies' paint (PaintVehicle in Vehicle.lua): red Witches, blue Skeletons
-    PaintA = Color(0.9, 0.05, 0.03),
-    PaintB = Color(0.02, 0.16, 0.9),
+    -- the car bodies' paint (PaintVehicle in Vehicle.lua): purple Witches, bone white Skeletons
+    PaintA = Color(0.4, 0.06, 0.85),
+    PaintB = Color(0.92, 0.92, 0.95),
     -- render distance of the ball, cars and everything attached to them (whole arena)
     RenderCullDistance = 1000000,
     -- seconds between two lightning strikes over the graveyard (Weather.lua) when a game starts, closing in
