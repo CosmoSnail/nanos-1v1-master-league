@@ -2,7 +2,7 @@
 
 Car soccer under a Halloween moon: rocket cars, a haunted glass dome, and a **giant jack-o'-lantern** for a ball. 🚀 **Kick the pumpkin, score a ghoul!** 🎃👻
 
-- 🧙‍♀️ **The Witches** drive in pointy hats, leaving trails of purple and slime green fire behind them.
+- 🧙‍♀️ **The Witches** drive in pointy hats, leaving trails of purple fire behind them.
 - 💀 **The Skeletons** drive wearing a giant skull, burning with pale blue soul fire.
 - 🎃 **The ball** is a huge pumpkin with a glowing carved face and a candle flickering inside. It *bonks* when you hit it!
 - ⚽ **Score a GHOUL!** The pumpkin bursts into a shower of little pumpkins, ghosts spiral out of the goal wailing, and a swarm of bats (or a rattle of bones) fills the arena.
