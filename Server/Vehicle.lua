@@ -42,6 +42,7 @@ function SpawnVehicle(character)
     AttachVehicleLights(vehicle, character:GetTeam())
     AttachVehiclePlayerName(vehicle, character:GetPlayer(), character:GetTeam())
     AttachVehicleHat(vehicle, character:GetTeam())
+    PaintVehicle(vehicle, character:GetTeam())
     KeepVisible(vehicle)
     -- always sync cars at full rate, even from the other end of the arena
     vehicle:SetDistanceOptimizationMultiplier(0)
@@ -49,6 +50,15 @@ function SpawnVehicle(character)
     character:EnterVehicle(vehicle)
     character:SetVisibility(Config.ShowCharactersOnVehicles)
 
+end
+
+-- The Offroad's body (its "body" attachable, material 0) in a glossy metallic paint of the team's color: the
+-- default pack's MI_Surface_Plastic, plain, with no texture to slide over the car as it moves
+function PaintVehicle(vehicle, team)
+    vehicle:SetMaterial("nanos-world::MI_Surface_Plastic", 0, "body")
+    vehicle:SetMaterialColorParameter("Tint", Ternary(team == Team.TeamA, Config.PaintA, Config.PaintB), 0, "body")
+    vehicle:SetMaterialScalarParameter("Metallic", 0.6, 0, "body")
+    vehicle:SetMaterialScalarParameter("Roughness", 0.25, 0, "body")
 end
 
 function AttachVehicleHat(vehicle, team)
