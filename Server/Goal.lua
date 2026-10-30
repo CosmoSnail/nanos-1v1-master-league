@@ -1,19 +1,41 @@
 Package.Require("Ball.lua")
 Package.Require("Tables.lua")
 
-local triggerA = Trigger(Config.GoalPointA, Rotator(), Vector(950, 4500, 800), TriggerType.Box, Config.ShowTriggers, Config.ColorA, {"Prop"})
+local GOAL_EXTENT = Vector(950, 4500, 800)
+
+-- Who scored is decided this long after the ball goes in: the scorer's own client tells the server about their touch
+-- (Client/BallTouch.lua), and with their ping that can arrive just after the goal (Ball.lua still takes it)
+local GOAL_CREDIT_DELAY = 300 -- ms
+
+local triggerA = Trigger(Config.GoalPointA, Rotator(), GOAL_EXTENT, TriggerType.Box, Config.ShowTriggers, Config.ColorA, {"Prop"})
 triggerA:Subscribe("BeginOverlap", function(self, other)
     if other:IsA(Ball) then
         HandleGoal(other, Team.TeamB)
     end
 end)
 
-local triggerB = Trigger(Config.GoalPointB, Rotator(), Vector(950, 4500, 800), TriggerType.Box, Config.ShowTriggers, Config.ColorB, {"Prop"})
+local triggerB = Trigger(Config.GoalPointB, Rotator(), GOAL_EXTENT, TriggerType.Box, Config.ShowTriggers, Config.ColorB, {"Prop"})
 triggerB:Subscribe("BeginOverlap", function(self, other)
     if other:IsA(Ball) then
         HandleGoal(other, Team.TeamA)
     end
 end)
+
+-- Whether a location is inside one of the goals (past the goal line)
+function InGoal(location)
+    for _, point in ipairs({ Config.GoalPointA, Config.GoalPointB }) do
+        local d = location - point
+        if math.abs(d.X) <= GOAL_EXTENT.X and math.abs(d.Y) <= GOAL_EXTENT.Y and math.abs(d.Z) <= GOAL_EXTENT.Z then
+            return true
+        end
+    end
+    return false
+end
+
+-- Whether a goal was just scored and its scorer not decided yet (Ball.lua still counts touches told until then)
+function GoalPending()
+    return Game.PendingGoal ~= nil
+end
 
 function HandleGoal(ball, teamScored)
     if Game.State ~= State.Running then
@@ -22,26 +44,45 @@ function HandleGoal(ball, teamScored)
 
     SpawnFireworksGoal(teamScored)
 
-    -- the card shows the scorer (Stats.lua), or whoever put it in their own goal
+    if teamScored == Team.TeamA then
+        Game.ScoreA = Game.ScoreA + 1
+        Events.BroadcastRemote("UpdateScoreA", Reliability.Reliable, Game.ScoreA)
+    else
+        Game.ScoreB = Game.ScoreB + 1
+        Events.BroadcastRemote("UpdateScoreB", Reliability.Reliable, Game.ScoreB)
+    end
+
+    local location = ball:GetLocation()
+    Game.PendingGoal = { team = teamScored, location = location }
+    Timer.SetTimeout(function() AnnounceGoal(teamScored, location) end, GOAL_CREDIT_DELAY)
+
+    local particle = Particle(
+        location,
+        Rotator(0, 0, 0),
+        "nanos-world::P_Explosion",
+        true,
+        true
+    )
+    particle:SetScale(50)
+    KeepVisible(particle)
+    ImpulseAllVehicles(location)
+    Game.State = State.Scored
+    Game.ScoredTimer = Config.ScoredDuration
+    DestroyBall()
+end
+
+-- The scorer, once the late touches are in: the card shows them (Stats.lua), or whoever put it in their own goal
+function AnnounceGoal(teamScored, location)
+    Game.PendingGoal = nil
     local scorer, assister = CreditGoal(teamScored)
     local lastHitter = GetLastPlayerHitBall()
     local shown = scorer or lastHitter
     local lastCharacter = Game.LastPlayerHitBall and Game.LastPlayerHitBall:IsValid() and Game.LastPlayerHitBall:GetControlledCharacter()
     local ownGoal = not scorer and lastCharacter and lastCharacter:GetTeam() ~= teamScored
 
-    if teamScored == Team.TeamA then
-        print("The Witches scored! " .. "(" .. shown:GetName() .. ")")
-        Game.ScoreA = Game.ScoreA + 1
-        Events.BroadcastRemote("UpdateScoreA", Reliability.Reliable, Game.ScoreA)
-
-    else
-        print("The Skeletons scored! " .. "(" .. shown:GetName() .. ")")
-        Game.ScoreB = Game.ScoreB + 1
-        Events.BroadcastRemote("UpdateScoreB", Reliability.Reliable, Game.ScoreB)
-    end
+    print("The " .. (teamScored == Team.TeamA and "Witches" or "Skeletons") .. " scored! (" .. shown:GetName() .. ")")
 
     -- x, y, z: where the pumpkin burst, for the clients' celebration (Client/Spooks.lua)
-    local location = ball:GetLocation()
     Events.BroadcastRemote("GoalScored", Reliability.Reliable, {
         playerName = shown:GetName(),
         playerImageUrl = shown:GetAccountIconURL(),
@@ -52,20 +93,6 @@ function HandleGoal(ball, teamScored)
         y = location.Y,
         z = location.Z,
     })
-
-    local particle = Particle(
-        ball:GetLocation(),
-        Rotator(0, 0, 0),
-        "nanos-world::P_Explosion",
-        true,
-        true
-    )
-    particle:SetScale(50)
-    KeepVisible(particle)
-    ImpulseAllVehicles(ball:GetLocation())
-    Game.State = State.Scored
-    Game.ScoredTimer = Config.ScoredDuration
-    DestroyBall()
 end
 
 function ImpulseAllVehicles(fromLocation)

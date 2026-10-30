@@ -10,24 +10,38 @@ local ribbon
 -- it late, each by its own client's ping (a car at full speed covers 5 m in a tenth of a second)
 local TOUCH_CHECK_DISTANCE = 1500
 
--- A touch of the ball by this player, from a Hit event or told by their own client (Client/BallTouch.lua)
+-- A touch of the ball by this player, from a Hit event or told by their own client (Client/BallTouch.lua); one
+-- told just after a goal still counts until its scorer is decided (Goal.lua)
 local function RegisterBallTouch(player)
     if IsNewTouch(player) then
         LogBallTouch(player)
-        if Game.State == State.Running then
+        if Game.State == State.Running or GoalPending() then
             AddBallTouch(player)
         end
-        ToggleRibbon(player:GetControlledCharacter():GetTeam())
+        if ball and ball:IsValid() then
+            ToggleRibbon(player:GetControlledCharacter():GetTeam())
+        end
     end
     Game.LastPlayerHitBall = player
 end
 
-Events.SubscribeRemote("BallTouch", function(player)
-    if not ball or not ball:IsValid() then return end
+-- ball_location: where the driver saw the ball when they touched it
+Events.SubscribeRemote("BallTouch", function(player, ball_location)
     local character = player:GetControlledCharacter()
     local vehicle = character and character:GetVehicle()
     if not vehicle or not vehicle:IsValid() then return end
-    if (vehicle:GetLocation() - ball:GetLocation()):Size() > TOUCH_CHECK_DISTANCE then return end
+    -- already past the goal line: a touch after the goal (a keeper chasing it into the net), not before it
+    local ok, in_goal = pcall(InGoal, ball_location)
+    if ok and in_goal then return end
+    local where
+    if ball and ball:IsValid() then
+        where = ball:GetLocation()
+    elseif GoalPending() then
+        where = Game.PendingGoal.location
+    else
+        return
+    end
+    if (vehicle:GetLocation() - where):Size() > TOUCH_CHECK_DISTANCE then return end
     RegisterBallTouch(player)
 end)
 
@@ -116,6 +130,8 @@ end
 function ResetBall()
     DestroyBall()
     ClearBallTouches()
+    -- a goal before anyone touches the new ball has no scorer (not whoever touched the last one)
+    Game.LastPlayerHitBall = nil
     InitBall()
 end
 

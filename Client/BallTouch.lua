@@ -42,6 +42,6 @@ Client.Subscribe("Tick", function()
     local now = Client.GetTime() / 1000
     if now - last_report >= REPORT_EVERY and Gap(vehicle, current:GetLocation()) < TOUCH_MARGIN then
         last_report = now
-        Events.CallRemote("BallTouch", Reliability.Reliable)
+        Events.CallRemote("BallTouch", Reliability.Reliable, current:GetLocation())
     end
 end)
