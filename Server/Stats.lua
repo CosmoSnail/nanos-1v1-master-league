@@ -38,11 +38,18 @@ function ClearBallTouches()
     touches = {}
 end
 
-function AddBallTouch(player)
+-- time: when it happened (a touch told by a client comes in late, Ball.lua), now if not given
+function AddBallTouch(player, time)
+    time = time or Server.GetTime()
     local s = GetStats(player)
     s.hits = s.hits + 1
     s.score = s.score + POINTS_HIT
-    table.insert(touches, { player = player, team = GetPlayerTeam(player), time = Server.GetTime() })
+    -- kept in the order they happened, not the order they came in
+    local i = #touches + 1
+    while i > 1 and touches[i - 1].time > time do
+        i = i - 1
+    end
+    table.insert(touches, i, { player = player, team = GetPlayerTeam(player), time = time })
     dirty = true
 end
 

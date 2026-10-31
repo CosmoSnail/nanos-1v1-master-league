@@ -53,7 +53,7 @@ function HandleGoal(ball, teamScored)
     end
 
     local location = ball:GetLocation()
-    Game.PendingGoal = { team = teamScored, location = location }
+    Game.PendingGoal = { team = teamScored, location = location, time = Server.GetTime() }
     Timer.SetTimeout(function() AnnounceGoal(teamScored, location) end, GOAL_CREDIT_DELAY)
 
     local particle = Particle(

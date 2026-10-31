@@ -10,19 +10,54 @@ local ribbon
 -- it late, each by its own client's ping (a car at full speed covers 5 m in a tenth of a second)
 local TOUCH_CHECK_DISTANCE = 1500
 
--- A touch of the ball by this player, from a Hit event or told by their own client (Client/BallTouch.lua); one
--- told just after a goal still counts until its scorer is decided (Goal.lua)
-local function RegisterBallTouch(player)
+-- Where the ball was lately, by server time: a touch told by a client is dated by when the ball was where they
+-- saw it, since their report comes in late by their ping and they see the ball late by the ball's owner's ping and
+-- theirs (two touches arriving out of order made a defender who touched it first look like the last touch: an own goal)
+local HISTORY_LENGTH = 2000 -- ms
+local history = {}           -- { time, location }, oldest first
+
+-- The latest touch so far, by when it happened (the scorer is whoever touched it last, Goal.lua)
+local lastHitTime = -math.huge
+
+function RecordBallPosition()
+    if not ball or not ball:IsValid() then return end
+    local now = Server.GetTime()
+    table.insert(history, { time = now, location = ball:GetLocation() })
+    while history[1].time < now - HISTORY_LENGTH do
+        table.remove(history, 1)
+    end
+end
+
+-- When the ball was nearest to a location (the latest such moment, if it stood still)
+local function BallTimeAt(location)
+    local time, best = Server.GetTime(), math.huge
+    for i = #history, 1, -1 do
+        local d = (history[i].location - location):SizeSquared()
+        if d < best then
+            time, best = history[i].time, d
+        end
+    end
+    return time
+end
+
+-- A touch of the ball by this player at that time, from a Hit event or told by their own client
+-- (Client/BallTouch.lua); one told just after a goal still counts until its scorer is decided (Goal.lua), if it
+-- happened before the ball went in
+local function RegisterBallTouch(player, time)
+    if GoalPending() and time >= Game.PendingGoal.time then return end
     if IsNewTouch(player) then
-        LogBallTouch(player)
+        LogBallTouch(player, time)
         if Game.State == State.Running or GoalPending() then
-            AddBallTouch(player)
+            AddBallTouch(player, time)
         end
         if ball and ball:IsValid() then
             ToggleRibbon(player:GetControlledCharacter():GetTeam())
         end
     end
-    Game.LastPlayerHitBall = player
+    if time >= lastHitTime then
+        lastHitTime = time
+        Game.LastPlayerHitBall = player
+    end
 end
 
 -- ball_location: where the driver saw the ball when they touched it
@@ -32,7 +67,7 @@ Events.SubscribeRemote("BallTouch", function(player, ball_location)
     if not vehicle or not vehicle:IsValid() then return end
     -- already past the goal line: a touch after the goal (a keeper chasing it into the net), not before it
     local ok, in_goal = pcall(InGoal, ball_location)
-    if ok and in_goal then return end
+    if not ok or in_goal then return end
     local where
     if ball and ball:IsValid() then
         where = ball:GetLocation()
@@ -42,7 +77,7 @@ Events.SubscribeRemote("BallTouch", function(player, ball_location)
         return
     end
     if (vehicle:GetLocation() - where):Size() > TOUCH_CHECK_DISTANCE then return end
-    RegisterBallTouch(player)
+    RegisterBallTouch(player, BallTimeAt(ball_location))
 end)
 
 function InitBall()
@@ -72,7 +107,7 @@ function InitBall()
             local driver = other:GetPassenger(0)
             local player = driver and driver:GetPlayer()
             if not player then return end
-            RegisterBallTouch(player)
+            RegisterBallTouch(player, Server.GetTime())
         end
     end)
 end
@@ -89,11 +124,15 @@ function IsNewTouch(player)
     return new
 end
 
-function LogBallTouch(player)
+function LogBallTouch(player, time)
     if not Config.LogBallTouches then return end
 
     local team = TeamName(player:GetControlledCharacter():GetTeam())
     local message = player:GetName() .. " (" .. team .. ") touched the pumpkin"
+    local ago = math.floor(Server.GetTime() - time)
+    if ago > 0 then
+        message = message .. " (" .. ago .. " ms ago)"
+    end
     print(message)
     -- in dev mode it also goes to the chat
     if Config.EnableCommands and Config.LogLevel ~= LogLevel.GameChat then
@@ -130,8 +169,10 @@ end
 function ResetBall()
     DestroyBall()
     ClearBallTouches()
+    history = {}
     -- a goal before anyone touches the new ball has no scorer (not whoever touched the last one)
     Game.LastPlayerHitBall = nil
+    lastHitTime = -math.huge
     InitBall()
 end
 

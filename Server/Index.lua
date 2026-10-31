@@ -115,5 +115,6 @@ Timer.SetInterval(function()
 end, 1000)
 
 Server.Subscribe("Tick", function(delta_time)
+  RecordBallPosition()
   UpdateBallRibbon()
 end)
