@@ -330,6 +330,13 @@ Events.Subscribe('UpdateMyName', (name, team) => {
 })
 
 /* =====================================================
+   VERSION
+===================================================== */
+Events.Subscribe('UpdateVersion', (version) => {
+  document.querySelector('#version').textContent = version ? 'v' + version : ''
+})
+
+/* =====================================================
    CONTROLS
    Fired by Client/Help.lua: the list (with the keys bound) and H to open it
 ===================================================== */

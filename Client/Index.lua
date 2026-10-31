@@ -14,6 +14,9 @@ Package.Require("Spooks.lua")
 
 local main_hud = WebUI("Main HUD", "file://UI/index.html")
 main_hud:Subscribe("Ready", SendControls)
+main_hud:Subscribe("Ready", function()
+  main_hud:CallEvent("UpdateVersion", Package.GetVersion())
+end)
 
 -- With the dev_commands setting on, script errors also go to the server log (once each, so a broken Tick
 -- doesn't flood it); the ones before the server answers wait in pending_errors

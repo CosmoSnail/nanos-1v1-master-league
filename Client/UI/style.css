@@ -608,6 +608,19 @@ svg.ball-cam-icon {
 }
 
 /* =====================================================
+   VERSION
+===================================================== */
+.version {
+  position: absolute;
+  right: 8px;
+  bottom: 4px;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  color: rgba(var(--bone), 0.3);
+  pointer-events: none;
+}
+
+/* =====================================================
    CONTROLS
 ===================================================== */
 .controls-container {
